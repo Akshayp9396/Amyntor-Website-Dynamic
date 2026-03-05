@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@theme {
+    /* Custom vibrant blue/cyan theme based on requested hex codes */
+    /* --color-brand-primary: #0FBBEB; */
+    --color-brand-primary: #2563eb;
+    /* Primary vibrant blue */
+    --color-brand-light: #0000FF;
+    /* Lighter cyan-blue */
+    /* --color-brand-dark: #0096FF; */
+    --color-brand-dark: #02a1fd;
+    /* Deeper navy for contrast */
+}
