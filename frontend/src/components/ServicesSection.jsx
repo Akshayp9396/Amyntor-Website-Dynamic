@@ -28,6 +28,7 @@ const mockServicesData = [
     {
         id: 1,
         title: "IT Infrastructure",
+        slug: "it-infrastructure",
         description: "Secure, scalable IT infrastructure solutions for networks, servers, data centers, virtualization, and business continuity support.",
         icon: Shield,
         image: Service1Image
@@ -35,6 +36,7 @@ const mockServicesData = [
     {
         id: 2,
         title: "Cloud and DevOps",
+        slug: "cloud-and-devops",
         description: "We deliver cloud and DevOps solutions to build scalable, secure systems, enabling faster development and seamless collaboration.",
         icon: Cloud,
         image: Service2Image
@@ -42,6 +44,7 @@ const mockServicesData = [
     {
         id: 3,
         title: "Cyber Security",
+        slug: "cyber-security",
         description: "Cybersecurity services including Red Teaming, VAPT, SOC monitoring, compliance, and security training to protect businesses.",
         icon: Server,
         image: Service3Image
@@ -49,6 +52,7 @@ const mockServicesData = [
     {
         id: 4,
         title: "Managed Services",
+        slug: "managed-services",
         description: "Managed IT and security services with 24/7 monitoring, cloud management, backup, support, and threat protection for businesses.",
         icon: Lock,
         image: Service4Image
@@ -56,6 +60,7 @@ const mockServicesData = [
     {
         id: 5,
         title: "Digital Personal Data Protection",
+        slug: "dpdp",
         description: "DPDP Act 2023 compliance services ensuring data privacy, security, and seamless regulatory adherence for your business.",
         icon: Code,
         image: Service5Image
@@ -184,7 +189,7 @@ const ServicesSection = () => {
                                             </p>
                                             {/* Pill-shaped Outline Learn More Button */}
                                             <Link
-                                                to="/services"
+                                                to={`/services/${service.slug}`}
                                                 onClick={(e) => {
                                                     if (activeCard !== service.id) {
                                                         e.preventDefault();

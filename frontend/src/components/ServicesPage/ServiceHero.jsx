@@ -42,8 +42,8 @@ const ServiceHero = () => {
                 <div className="absolute inset-0 z-0">
                     <img
                         src={hero.backgroundImage}
-                        alt="About Us Background"
-                        className="w-full h-full object-cover opacity-[0.35]"
+                        alt="Background"
+                        className="w-full h-full object-cover object-[center_75%] opacity-[0.35]"
                     />
                     {/* Deep gradient overlays matching screenshot vibe */}
                     <div className="absolute inset-0 bg-[#050B14]/40 mix-blend-multiply"></div>

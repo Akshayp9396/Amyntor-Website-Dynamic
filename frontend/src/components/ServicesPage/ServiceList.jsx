@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Fingerprint, ServerCog, CloudCog, Headphones, Boxes, FileKey, ArrowRight, CheckCircle2 } from 'lucide-react';
@@ -23,6 +23,7 @@ const iconMap = {
 const ServiceList = () => {
     const { servicesList } = mockServicesPageData;
     const navigate = useNavigate();
+    const [activeCard, setActiveCard] = useState(null);
 
     // Framer motion variants
     const containerVariants = {
@@ -85,35 +86,50 @@ const ServiceList = () => {
                             <motion.div
                                 key={service.id}
                                 variants={cardVariants}
-                                whileHover={{ y: -8 }}
-                                onClick={() => navigate(`/services/${service.slug}`)}
-                                className="group relative bg-white/80 rounded-[2rem] p-8 md:p-10 flex flex-col items-center text-center shadow-sm border-[3px] border-transparent overflow-hidden hover:shadow-[0_20px_40px_rgba(2,161,253,0.08)] hover:bg-white/40 hover:backdrop-blur-2xl hover:border-white/70 cursor-pointer active:scale-[0.98]"
-                                style={{ transition: "box-shadow 0.5s, background-color 0.5s, backdrop-filter 0.5s, border-color 0.5s, transform 0.2s" }}
+                                className="h-[450px]"
                             >
-
-                                {/* Sleek Minimalist Icon Ring */}
-                                <div className="relative w-24 h-24 mb-8 rounded-full flex items-center justify-center bg-transparent border-[1.5px] border-gray-100 transition-transform duration-500 group-hover:scale-110 group-hover:border-brand-primary/20 z-10">
-                                    <IconComponent size={40} strokeWidth={1.5} className="text-brand-primary transition-opacity duration-500 group-hover:opacity-80" />
-                                </div>
-
-                                {/* Title */}
-                                <h3 className="text-[22px] font-bold text-[#0b1021] mb-5 leading-snug z-10 relative">
-                                    {service.title}
-                                </h3>
-
-                                {/* Description */}
-                                <p className="text-slate-500 text-[15px] leading-relaxed flex-grow z-10 relative text-justify">
-                                    {previewText}
-                                </p>
-
-                                {/* Action Button */}
                                 <div
-                                    className="mt-8 w-full py-3 px-6 rounded-full border border-gray-200 bg-white text-[#0b1021] text-[11px] tracking-[0.2em] font-bold flex items-center justify-center gap-3 transition-all duration-300 group-hover:bg-brand-primary group-hover:border-brand-primary group-hover:text-white group-hover:shadow-lg group-hover:shadow-brand-primary/30 z-10 relative"
+                                    className="relative w-full h-[450px] rounded-[2rem] overflow-hidden group cursor-pointer shadow-xl transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 hover:shadow-brand-primary/20"
+                                    onMouseEnter={() => setActiveCard(service.id)}
+                                    onMouseLeave={() => setActiveCard(null)}
+                                    onClick={() => navigate(`/services/${service.slug}`)}
                                 >
-                                    EXPLORE MORE
-                                    <ArrowRight size={14} strokeWidth={2.5} className="transition-transform duration-300 group-hover:translate-x-1" />
-                                </div>
+                                    {/* Image Background */}
+                                    <div className="absolute inset-0 w-full h-full">
+                                        <img
+                                            src={service.image}
+                                            alt={service.title}
+                                            className={`w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 ${activeCard === service.id ? 'scale-110' : ''}`}
+                                        />
+                                    </div>
 
+                                    {/* Dark Gradient Overlay for base text readability */}
+                                    <div className={`absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent transition-opacity duration-500 ${activeCard === service.id ? 'opacity-90' : 'opacity-80 group-hover:opacity-90'}`} />
+
+                                    {/* Dynamic Glassmorphism Content Box (Expands on Hover) */}
+                                    <div className={`absolute bottom-4 left-4 right-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 p-6 flex flex-col justify-start overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] z-20 shadow-2xl ${activeCard === service.id ? 'h-[260px]' : 'h-[90px] group-hover:h-[260px]'}`}>
+
+                                        {/* Always Visible: Title and Icon */}
+                                        <div className="flex items-center justify-between shrink-0 h-[42px]">
+                                            <h3 className="text-xl md:text-xl font-bold text-white pr-4">{service.title}</h3>
+                                            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#02A1FD] to-[#0167F3] flex items-center justify-center text-white shrink-0 shadow-lg shadow-brand-primary/40">
+                                                <IconComponent size={20} />
+                                            </div>
+                                        </div>
+
+                                        {/* Hidden Content: Appears on Hover */}
+                                        <div className={`transform transition-all duration-500 delay-100 mt-6 flex flex-col ${activeCard === service.id ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 group-hover:opacity-100 group-hover:translate-y-0'}`}>
+                                            <p className="text-gray-200 text-sm leading-relaxed mb-6 line-clamp-3 text-justify">
+                                                {previewText}
+                                            </p>
+                                            <div className="inline-flex items-center space-x-2 text-white border border-white/40 rounded-full px-5 py-2 hover:bg-white/10 transition-colors font-medium group/btn w-fit backdrop-blur-sm">
+                                                <span className="text-sm">Explore More</span>
+                                                <ArrowRight size={16} className="transform group-hover/btn:translate-x-1 transition-transform" />
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
                             </motion.div>
                         );
                     })}

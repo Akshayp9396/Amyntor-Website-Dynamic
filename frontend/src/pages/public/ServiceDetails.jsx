@@ -9,7 +9,7 @@
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronRight, ArrowRight, ShieldCheck, ServerCog, CloudCog, Headphones, Boxes, FileKey } from 'lucide-react';
+import { ChevronRight, ArrowRight, ShieldCheck, ServerCog, CloudCog, Headphones, Boxes, FileKey, Target, SearchCode, FileCheck2, ServerCrash, Activity, Briefcase, GraduationCap } from 'lucide-react';
 import { mockServicesPageData } from '../../components/ServicesPage/servicesData';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
@@ -21,6 +21,11 @@ const iconMap = {
     Headset: Headphones,
     Boxes: Boxes,
     FileKey: FileKey
+};
+
+// Map specifically for the generated metric cards to prevent crashes
+const iconMapCards = {
+    Target, SearchCode, FileCheck2, ServerCrash, Activity, Briefcase, GraduationCap
 };
 
 const ServiceDetails = () => {
@@ -131,23 +136,43 @@ const ServiceDetails = () => {
                                     {service.description}
                                 </p>
 
-                                {/* Placeholder Content Block for further details */}
-                                <div className="mt-12 pt-12 border-t border-slate-100 grid md:grid-cols-2 gap-8">
-                                    <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                                        <h3 className="font-bold text-[#0b1021] mb-3">Key Benefits</h3>
-                                        <ul className="space-y-3 text-slate-600">
-                                            <li className="flex items-start gap-2"><CheckCircle2 className="text-brand-primary mt-1 shrink-0" size={16} /> Scalable architecture to grow with your needs</li>
-                                            <li className="flex items-start gap-2"><CheckCircle2 className="text-brand-primary mt-1 shrink-0" size={16} /> 24/7 proactive monitoring and rapid response</li>
-                                            <li className="flex items-start gap-2"><CheckCircle2 className="text-brand-primary mt-1 shrink-0" size={16} /> Ensure complete data privacy and regulatory compliance</li>
-                                        </ul>
+                                {/* Scalable Dynamic Grid Core */}
+                                {service.cards && service.cards.length > 0 && (
+                                    <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6 pb-2">
+                                        {service.cards.map((card, idx) => {
+                                            const CardIcon = iconMapCards[card.icon] || ShieldCheck;
+                                            return (
+                                                <div
+                                                    key={idx}
+                                                    className="p-8 rounded-[2rem] transition-all duration-300 bg-white shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-slate-100 hover:shadow-[0_20px_50px_rgba(2,161,253,0.08)] hover:-translate-y-1"
+                                                >
+                                                    {/* Gradient Blue Circle Icon Wrapper */}
+                                                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-[#02A1FD] to-[#0167F3] text-white flex items-center justify-center mb-6 shadow-md shadow-brand-primary/30">
+                                                        <CardIcon size={22} strokeWidth={2} />
+                                                    </div>
+
+                                                    <h3 className="text-[19px] font-bold mb-4 leading-tight text-[#0b1021]">
+                                                        {card.title}
+                                                    </h3>
+
+                                                    <p className="text-[14.5px] leading-relaxed text-slate-600">
+                                                        {card.description}
+                                                    </p>
+                                                </div>
+                                            );
+                                        })}
                                     </div>
-                                    <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                                        <h3 className="font-bold text-[#0b1021] mb-3">Our Approach</h3>
-                                        <p className="text-slate-600 text-sm leading-relaxed">
-                                            We employ a systematic, framework-driven methodology to guarantee the highest level of execution. By aligning tightly with global standards, we ensure operational resilience and strategic technology advantages for our partners.
+                                )}
+
+                                {/* Conclusion Block */}
+                                {service.conclusion && (
+                                    <div className="mt-12 pt-10 border-t border-slate-100">
+                                        <h3 className="text-[22px] font-bold text-brand-primary mb-6">Conclusion</h3>
+                                        <p className="text-slate-700 leading-relaxed text-[15.5px]">
+                                            {service.conclusion}
                                         </p>
                                     </div>
-                                </div>
+                                )}
                             </div>
                         </motion.div>
 
@@ -165,7 +190,7 @@ const ServiceDetails = () => {
                                 <p className="text-slate-300 mb-8 relative z-10 text-sm">
                                     Speak directly with our engineering team to architect a solution perfectly fitted to your enterprise.
                                 </p>
-                                <Link to="/contact" className="inline-flex items-center gap-2 px-8 py-3 bg-brand-primary text-white font-bold text-sm tracking-wider rounded-full hover:bg-white hover:text-brand-primary transition-all duration-300 relative z-10 shadow-[0_0_20px_rgba(2,161,253,0.3)]">
+                                <Link to="/contact" className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-[#02A1FD] to-[#0167F3] text-white font-bold text-sm tracking-wider rounded-full relative z-10 shadow-[0_0_20px_rgba(2,161,253,0.3)] hover:shadow-[0_0_30px_rgba(2,161,253,0.5)] transition-shadow">
                                     GET IN TOUCH <ArrowRight size={16} />
                                 </Link>
                             </div>

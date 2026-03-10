@@ -1,0 +1,84 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import { ChevronRight, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
+
+const ContactHero = () => {
+    // Framer Motion Variants for Staggered Entrance
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.2, // Sequential staggered entrance timing
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 30 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: { duration: 0.8, ease: "easeInOut" }
+        }
+    };
+
+    return (
+        <section className="w-full bg-slate-50 px-4 md:px-8 py-4 md:py-6">
+            {/* Rounded Frame Wrapper spanning viewport minus padding */}
+            <div className="relative w-full h-[50vh] min-h-[380px] max-h-[500px] rounded-[2rem] md:rounded-[2.5rem] flex flex-col items-center justify-center bg-[#050B14] overflow-hidden shadow-2xl">
+
+                {/* Background Overlay */}
+                <div className="absolute inset-0 z-0">
+                    <img
+                        src="https://images.unsplash.com/photo-1451187580459-43490279c0fa"
+                        alt="Contact Us Background"
+                        className="w-full h-full object-cover opacity-[0.35]"
+                    />
+                    <div className="absolute inset-0 bg-[#050B14]/40 mix-blend-multiply"></div>
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050B14]/30 to-[#050B14]/90"></div>
+                </div>
+
+                {/* Main Content Area */}
+                <div className="relative z-10 text-center px-6 max-w-4xl mx-auto w-full">
+                    <motion.div
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className="flex flex-col items-center"
+                    >
+                        {/* 1. Solid Blue Rounded Icon Badge */}
+                        <motion.div variants={itemVariants} className="mb-6">
+                            <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-[#0066FF] to-blue-500 text-white text-[13px] sm:text-sm font-semibold tracking-wide shadow-lg shadow-blue-500/25">
+                                <ExternalLink size={16} strokeWidth={2.5} />
+                                Get In Touch
+                            </span>
+                        </motion.div>
+
+                        {/* 2. Bold, Large Main Title */}
+                        <motion.h1 variants={itemVariants} className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 tracking-tight drop-shadow-md">
+                            Contact Us
+                        </motion.h1>
+
+                        {/* 3. Clean Text Breadcrumbs */}
+                        <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-white/80 text-[15px] font-medium mb-12">
+                            <Link to="/" className="hover:text-white transition-colors drop-shadow-sm">
+                                Home
+                            </Link>
+                            <ChevronRight size={14} className="text-white/60" />
+                            <span className="text-white">Contact Us</span>
+                        </motion.div>
+
+                        {/* 4. Small Clean Tagline */}
+                        <motion.p variants={itemVariants} className="text-[15px] md:text-base text-white/90 max-w-[85%] sm:max-w-2xl mx-auto leading-relaxed font-light drop-shadow-sm">
+                            At Amyntor, we believe technology should empower businesses to grow, adapt, and thrive in an ever-changing digital landscape. Let's connect and discuss your requirements.
+                        </motion.p>
+                    </motion.div>
+                </div>
+            </div>
+        </section>
+    );
+};
+
+export default ContactHero;

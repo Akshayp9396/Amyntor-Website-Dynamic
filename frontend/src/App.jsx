@@ -10,6 +10,14 @@ import Home from './pages/public/Home';
 import About from './pages/public/About';
 import Services from './pages/public/Services';
 import ServiceDetails from './pages/public/ServiceDetails';
+import Contact from './pages/public/Contact';
+import CaseStudy from './pages/public/CaseStudy';
+import CaseStudyDetails from './pages/public/CaseStudyDetails';
+import BlogPage from './pages/public/BlogPage';
+import GalleryPage from './pages/public/GalleryPage';
+import CareersPage from './pages/public/CareersPage';
+import CareersDetails from './pages/public/CareersDetails';
+
 
 function App() {
   return (
@@ -24,11 +32,13 @@ function App() {
         {/* Placeholder Routes for pending sections */}
         <Route path="/services" element={<Services />} />
         <Route path="/services/:serviceId" element={<ServiceDetails />} />
-        <Route path="/case-study" element={<div className="p-8 flex justify-center items-center h-screen text-2xl font-bold text-gray-400">Case Study Page (Under Construction)</div>} />
-        <Route path="/gallery" element={<div className="p-8 flex justify-center items-center h-screen text-2xl font-bold text-gray-400">Gallery Page (Under Construction)</div>} />
-        <Route path="/blogs" element={<div className="p-8 flex justify-center items-center h-screen text-2xl font-bold text-gray-400">Blogs Page (Under Construction)</div>} />
-        <Route path="/careers" element={<div className="p-8 flex justify-center items-center h-screen text-2xl font-bold text-gray-400">Careers Page (Under Construction)</div>} />
-        <Route path="/contact" element={<div className="p-8 flex justify-center items-center h-screen text-2xl font-bold text-gray-400">Contact Us Page (Under Construction)</div>} />
+        <Route path="/case-study" element={<CaseStudy />} />
+        <Route path="/case-study/:projectId" element={<CaseStudyDetails />} />
+        <Route path="/gallery" element={<GalleryPage />} />
+        <Route path="/blogs" element={<BlogPage />} />
+        <Route path="/careers" element={<CareersPage />} />
+        <Route path="/careers/:jobSlug" element={<CareersDetails />} />
+        <Route path="/contact" element={<Contact />} />
         <Route path="/quote" element={<div className="p-8 flex justify-center items-center h-screen text-2xl font-bold text-gray-400">Get Quote Page (Under Construction)</div>} />
       </Routes>
     </Router>

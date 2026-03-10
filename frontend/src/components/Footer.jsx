@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Phone, Mail, Clock, MapPin, Facebook, Twitter, Linkedin, Instagram, ArrowRight } from 'lucide-react';
 import Logo from '../assets/images/amyntor-logo.png';
 import ContactBg from '../assets/images/contact-bg.png';
@@ -48,49 +48,54 @@ const mockFooterData = {
 };
 
 const Footer = () => {
+    const location = useLocation();
+    const isContactPage = location.pathname === '/contact';
+
     return (
-        <div className="w-full px-4 md:px-8 pb-8 pt-48 flex justify-center">
-            <footer className="relative bg-[#03091e] text-slate-300 rounded-[2.5rem] pt-30 pb-1 overflow-visible w-full max-w-[1500px] shadow-2xl">
+        <div className={`w-full px-4 md:px-8 pb-8 ${isContactPage ? 'pt-12' : 'pt-48'} flex justify-center`}>
+            <footer className={`relative bg-[#03091e] text-slate-300 rounded-[2.5rem] ${isContactPage ? 'pt-12' : 'pt-30'} pb-1 overflow-visible w-full max-w-[1500px] shadow-2xl`}>
 
                 {/* 1. Floating Top CTA Bar */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] md:w-[80%] max-w-[1050px] z-20">
-                    <div className="rounded-3xl shadow-2xl py-6 px-8 md:py-8 md:px-12 flex flex-col lg:flex-row items-center justify-between gap-6 border border-cyan-500/20 relative overflow-hidden bg-[#050B14]">
+                {!isContactPage && (
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] md:w-[80%] max-w-[1050px] z-20">
+                        <div className="rounded-3xl shadow-2xl py-6 px-8 md:py-8 md:px-12 flex flex-col lg:flex-row items-center justify-between gap-6 border border-cyan-500/20 relative overflow-hidden bg-[#050B14]">
 
-                        {/* Responsive Background Image Layer */}
-                        <img
-                            src={ContactBg}
-                            alt=""
-                            className="absolute inset-0 z-0 w-full h-full object-cover object-right md:object-center scale-110 md:scale-105"
-                        />
+                            {/* Responsive Background Image Layer */}
+                            <img
+                                src={ContactBg}
+                                alt=""
+                                className="absolute inset-0 z-0 w-full h-full object-cover object-right md:object-center scale-110 md:scale-105"
+                            />
 
-                        {/* Very subtle gradient overlay to ensure text stays crisp on the left while the network nodes stay bright on the right */}
-                        <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#020617]/80 via-[#020617]/40 to-transparent pointer-events-none"></div>
+                            {/* Very subtle gradient overlay to ensure text stays crisp on the left while the network nodes stay bright on the right */}
+                            <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#020617]/80 via-[#020617]/40 to-transparent pointer-events-none"></div>
 
-                        {/* Left/Center Content */}
-                        <div className="flex flex-col md:flex-row items-center md:items-start lg:items-center gap-4 md:gap-6 relative z-10 w-full lg:w-2/3">
-                            <div className="bg-white/10 backdrop-blur-md p-3.5 rounded-2xl border border-white/20 shrink-0">
-                                <Mail size={28} className="text-white" />
+                            {/* Left/Center Content */}
+                            <div className="flex flex-col md:flex-row items-center md:items-start lg:items-center gap-4 md:gap-6 relative z-10 w-full lg:w-2/3">
+                                <div className="bg-white/10 backdrop-blur-md p-3.5 rounded-2xl border border-white/20 shrink-0">
+                                    <Mail size={28} className="text-white" />
+                                </div>
+                                <div className="text-center md:text-left">
+                                    <h3 className="text-xl md:text-2xl font-bold text-white mb-1.5">Contact Us</h3>
+                                    <p className="text-white/90 text-sm md:text-base font-medium leading-relaxed">
+                                        We build greater futures through innovation and collective knowledge.
+                                    </p>
+                                </div>
                             </div>
-                            <div className="text-center md:text-left">
-                                <h3 className="text-xl md:text-2xl font-bold text-white mb-1.5">Contact Us</h3>
-                                <p className="text-white/90 text-sm md:text-base font-medium leading-relaxed">
-                                    We build greater futures through innovation and collective knowledge.
-                                </p>
-                            </div>
-                        </div>
 
-                        {/* Right Button */}
-                        <div className="shrink-0 relative z-10 w-full md:w-auto flex justify-center lg:justify-end mt-2 lg:mt-0">
-                            <Link
-                                to="/contact"
-                                className="group flex items-center gap-2 bg-white text-brand-primary px-6 py-3 rounded-full font-bold text-[15px] hover:bg-slate-50 transition-colors shadow-lg"
-                            >
-                                Get In Touch
-                                <ArrowRight size={18} className="transform group-hover:translate-x-1 transition-transform" />
-                            </Link>
+                            {/* Right Button */}
+                            <div className="shrink-0 relative z-10 w-full md:w-auto flex justify-center lg:justify-end mt-2 lg:mt-0">
+                                <Link
+                                    to="/contact"
+                                    className="group flex items-center gap-2 bg-white text-brand-primary px-6 py-3 rounded-full font-bold text-[15px] hover:bg-slate-50 transition-colors shadow-lg"
+                                >
+                                    Get In Touch
+                                    <ArrowRight size={18} className="transform group-hover:translate-x-1 transition-transform" />
+                                </Link>
+                            </div>
                         </div>
                     </div>
-                </div>
+                )}
 
                 {/* Subtle textured background wave effect inside footer body (Optional abstract shape) */}
                 <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-900 via-transparent to-transparent"></div>
