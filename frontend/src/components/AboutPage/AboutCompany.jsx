@@ -51,9 +51,9 @@ const AboutCompany = () => {
                 >
                     {/* Left Column: Title Area (Takes up 4/12 of space) */}
                     <div className="lg:col-span-4 flex flex-col gap-4">
-                        <motion.span variants={slideUpVariants} className="text-brand-primary text-xs md:text-sm font-bold tracking-[0.2em] uppercase">
-                            {aboutCompany.tag}
-                        </motion.span>
+                        <motion.div variants={slideUpVariants} className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-[#EEF4FF] border border-[#D1E0FF] w-fit">
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-dark to-brand-primary font-semibold text-sm uppercase tracking-[0.2em]">{aboutCompany.tag}</span>
+                        </motion.div>
                         <motion.h2
                             variants={slideUpVariants}
                             className="text-2xl md:text-3xl lg:text-4xl text-left font-extrabold text-[#0b1021] leading-[1.15] tracking-tight "

@@ -1,4 +1,4 @@
-import heroBg from '../../assets/images/service-hero.jpg';
+import heroBg from '../../assets/images/blog-bg.jpg';
 
 export const mockBlogPageData = {
     hero: {

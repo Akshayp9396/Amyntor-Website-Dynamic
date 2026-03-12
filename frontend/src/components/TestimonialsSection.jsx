@@ -91,9 +91,9 @@ const TestimonialsSection = () => {
                 >
                     {/* Left Side: Tag & Title */}
                     <motion.div variants={itemVariants} className="max-w-2xl">
-                        <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full border border-brand-primary/30 bg-white mb-6 shadow-sm">
-                            <CheckCircle size={14} className="text-brand-primary" fill="currentColor" stroke="white" />
-                            <span className="text-brand-primary font-medium text-sm">Testimonial</span>
+                        <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-[#EEF4FF] border border-[#D1E0FF] mb-6">
+                            <div className="w-2 h-2 rounded-full bg-gradient-to-r from-brand-dark to-brand-primary"></div>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-dark to-brand-primary font-semibold text-sm">Testimonial</span>
                         </div>
                         <h2 className="text-2xl md:text-5xl font-bold text-slate-900 leading-tight">
                             What Our Customers  <br />

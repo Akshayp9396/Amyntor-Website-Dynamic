@@ -171,9 +171,9 @@ const AboutSection = () => {
                         {/* Content Container (No Box) */}
                         <div className="p-4 md:p-8 relative">
                             {/* Tag */}
-                            <motion.div variants={slideUpVariants} className="inline-flex items-center space-x-2 px-4 py-2 rounded-full border border-brand-primary/30 bg-white/50 text-brand-primary text-sm font-semibold mb-3">
-                                <CheckCircle2 size={16} className="text-brand-primary" fill="currentColor" stroke="white" />
-                                <span>{mockAboutData.tag}</span>
+                            <motion.div variants={slideUpVariants} className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-[#EEF4FF] border border-[#D1E0FF] mb-3">
+                                <div className="w-2 h-2 rounded-full bg-gradient-to-r from-brand-dark to-brand-primary"></div>
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-dark to-brand-primary font-semibold text-sm">{mockAboutData.tag}</span>
                             </motion.div>
 
                             {/* Headline */}

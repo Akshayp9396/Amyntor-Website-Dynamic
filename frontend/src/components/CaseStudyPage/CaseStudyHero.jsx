@@ -59,7 +59,7 @@ const CaseStudyHero = () => {
                     >
                         {/* 1. Solid Blue Rounded Icon Badge */}
                         <motion.div variants={itemVariants} className="mb-6">
-                            <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-brand-primary to-brand-light text-white text-[13px] sm:text-sm font-semibold tracking-wide shadow-lg shadow-brand-primary/25">
+                            <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-brand-dark to-brand-primary text-white text-[13px] sm:text-sm font-semibold tracking-wide shadow-lg shadow-brand-primary/25">
                                 <Bookmark size={16} strokeWidth={2.5} />
                                 {hero.tag}
                             </span>

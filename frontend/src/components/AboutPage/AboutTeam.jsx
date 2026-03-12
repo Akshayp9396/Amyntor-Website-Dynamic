@@ -36,10 +36,10 @@ const AboutTeam = () => {
                         initial={{ opacity: 0, y: -10 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="inline-flex items-center gap-2 px-6 py-2 rounded-full border border-brand-primary/30 bg-white shadow-sm"
+                        className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-[#EEF4FF] border border-[#D1E0FF] shadow-sm w-fit mx-auto"
                     >
-                        <CheckCircle2 size={16} strokeWidth={2.5} className="text-brand-dark" />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-dark to-brand-primary text-sm font-semibold tracking-wide">{aboutTeam.tag}</span>
+                        <div className="w-2 h-2 rounded-full bg-gradient-to-r from-brand-dark to-brand-primary"></div>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-dark to-brand-primary font-semibold text-sm uppercase tracking-[0.2em]">{aboutTeam.tag}</span>
                     </motion.div>
 
                     <motion.h2

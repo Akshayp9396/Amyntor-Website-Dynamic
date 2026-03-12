@@ -39,9 +39,12 @@ const ServiceAbout = () => {
                 >
                     {/* Left Column: Title Area (4/12 width) */}
                     <div className="lg:col-span-4 flex flex-col gap-4">
-                        <motion.span variants={slideUpVariants} className="text-brand-primary text-xs md:text-sm font-bold tracking-[0.2em] uppercase">
-                            {serviceIntro.tag}
-                        </motion.span>
+                        <motion.div variants={slideUpVariants} className="inline-flex items-center space-x-2 w-max px-4 py-1.5 rounded-full bg-[#EEF4FF] border border-[#D1E0FF] shadow-sm">
+                            <div className="w-2 h-2 rounded-full bg-gradient-to-r from-brand-dark to-brand-primary"></div>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-dark to-brand-primary font-bold text-xs md:text-sm uppercase tracking-[0.2em]">
+                                {serviceIntro.tag}
+                            </span>
+                        </motion.div>
                         <motion.h2
                             variants={slideUpVariants}
                             className="text-3xl md:text-4xl lg:text-[40px] text-left font-extrabold text-[#0b1021] leading-[1.15] tracking-tight"

@@ -1,4 +1,4 @@
-import heroBg from '../../assets/images/service-hero.jpg';
+import heroBg from '../../assets/images/career-bg.jpg';
 import introImage from '../../assets/images/about-us1.jpg'; // Placeholder for the intro section right side
 
 export const careersPageData = {

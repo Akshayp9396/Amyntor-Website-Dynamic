@@ -1,4 +1,4 @@
-import heroBg from '../../assets/images/service-hero.jpg';
+import heroBg from '../../assets/images/gallery-bg.jpg';
 
 import Img1 from '../../assets/images/about-us1.jpg';
 import Img2 from '../../assets/images/about-us2.jpg';

@@ -24,7 +24,7 @@ export const mockAboutPageData = {
         backgroundImage: heroBg,
     },
     aboutCompany: {
-        tag: "• ABOUT OUR COMPANY •",
+        tag: "ABOUT OUR COMPANY",
         heading: "Empower Your Business with Agile Solutions",
         description1: "Encompasses a rich tapestry of skills. With our headquarters nestled in Thiruvananthapuram, we extend our presence across the vast expanse of India. As proud sentinels of Cybersecurity Services, complete IT and Cloud Infrastructure solutions, and managed services prowess, we invite you to embark on a remarkable journey with us. Our unwavering dedication has garnered resounding endorsements from customers spanning the globe, attesting to our sterling reputation. Placing paramount importance on exceptional customer service, we fervently prioritize the unique needs and requirements of our esteemed clientele. Our unwavering mission is to deliver services of unparalleled quality, complemented by an unwavering commitment to exceptional after-sales support.",
         // description2: "Committed to the delivering exceptional in the value through our strategic inset, innovative approaches empower.",

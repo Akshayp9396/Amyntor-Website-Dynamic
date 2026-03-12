@@ -2,12 +2,12 @@ import case1 from '../../assets/images/case1.jpg';
 import case2 from '../../assets/images/case2.jpg';
 import case3 from '../../assets/images/case3.jpg';
 import case4 from '../../assets/images/case4.jpg';
-import heroBg from '../../assets/images/about-hero.jpg';
+import heroBg from '../../assets/images/casestudy-herobg.jpg';
 
 export const mockCaseStudyPageData = {
     hero: {
         tag: "Success Stories",
-        title: "Our Case Studies",
+        title: "Case Studies",
         breadcrumbs: [
             { label: "Home", link: "/" },
             { label: "Case Studies", link: "/case-study" }
