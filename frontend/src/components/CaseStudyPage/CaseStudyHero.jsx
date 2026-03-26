@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ChevronRight, Bookmark } from 'lucide-react';
-import { mockCaseStudyPageData } from './caseStudyData';
+import { ChevronRight, LayoutGrid, Bookmark } from 'lucide-react';
+import { useContent } from '../../context/ContentContext';
 
 /**
  * Code Walkthrough
@@ -12,7 +12,9 @@ import { mockCaseStudyPageData } from './caseStudyData';
  * It uses Framer Motion for a staggered, elegant entrance animation.
  */
 const CaseStudyHero = () => {
-    const { hero } = mockCaseStudyPageData;
+    const { caseStudyPageData } = useContent();
+    if (!caseStudyPageData) return null;
+    const { hero } = caseStudyPageData;
 
     // Framer Motion Variants for Staggered Entrance
     const containerVariants = {

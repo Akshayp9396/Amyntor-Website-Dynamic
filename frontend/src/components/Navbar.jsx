@@ -47,8 +47,8 @@ const Navbar = () => {
     ];
 
     return (
-        <nav className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/70 backdrop-blur-md shadow-sm border-b border-white/20' : 'bg-white'}`}>
-            <div className="max-w-[96%] mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
+        <nav className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/70 backdrop-blur-md shadow-sm' : 'bg-white'} border-b border-slate-100`}>
+            <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
 
                 {/* Logo Section */}
                 <div className="flex items-center justify-center">
@@ -94,10 +94,10 @@ const Navbar = () => {
                 </div>
 
                 {/* Actions Section */}
-                <div className="hidden md:flex items-center">
+                <div className="hidden md:flex items-center gap-8">
 
                     {/* Contact Info with Left Separator */}
-                    <div className="flex items-center border-l border-gray-200 pl-6 mr-6">
+                    <div className="flex items-center border-l border-slate-200 pl-8">
                         <div className="flex items-center space-x-2.5">
                             <div className="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-slate-800">
                                 <Phone size={14} fill="currentColor" strokeWidth={0} />
@@ -111,14 +111,14 @@ const Navbar = () => {
 
                     <Link to="/contact">
                         <button className="bg-gradient-to-r from-brand-dark to-brand-primary text-white hover:shadow-lg hover:opacity-90 px-6 py-2.5 rounded-full font-semibold transition-all text-sm whitespace-nowrap shadow-md">
-                            Get In Touch
+                            Contact Us
                         </button>
                     </Link>
 
                 </div>
 
                 {/* Mobile menu button */}
-                <div className="lg:hidden flex items-center">
+                <div className="md:hidden flex items-center">
                     <button onClick={() => setMobileMenuOpen(true)} className="text-gray-700 hover:text-brand-primary focus:outline-none">
                         <Menu size={28} />
                     </button>
@@ -196,7 +196,7 @@ const Navbar = () => {
                                 </div>
                                 <Link to="/contact" onClick={() => setMobileMenuOpen(false)} className="block w-full">
                                     <button className="w-full bg-gradient-to-r from-brand-dark to-brand-primary text-white py-4 rounded-full font-bold shadow-lg hover:shadow-xl transition-shadow shadow-brand-primary/20">
-                                        Get In Touch
+                                        Contact Us
                                     </button>
                                 </Link>
                             </div>

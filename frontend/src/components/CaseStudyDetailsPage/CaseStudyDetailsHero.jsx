@@ -68,9 +68,9 @@ const CaseStudyDetailsHero = ({ project }) => {
                         <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-white/70 text-[14px] font-medium">
                             <Link to="/" className="hover:text-white transition-colors drop-shadow-sm">Home</Link>
                             <ChevronRight size={14} className="text-white/40" />
-                            <Link to="/case-study" className="hover:text-white transition-colors drop-shadow-sm">Case Studies</Link>
+                            <Link to="/case-study" className="hover:text-white transition-colors drop-shadow-sm">Resources</Link>
                             <ChevronRight size={14} className="text-white/40" />
-                            <span className="text-brand-light truncate max-w-[200px] md:max-w-[400px]">Project #{project.id}</span>
+                            <span className="text-white/90 truncate max-w-[200px] md:max-w-[400px]">Case Study</span>
                         </motion.div>
                     </motion.div>
                 </div>

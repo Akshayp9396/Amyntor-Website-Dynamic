@@ -1,17 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2 } from 'lucide-react';
-import { mockAboutPageData } from './aboutData';
+import { useContent } from '../../context/ContentContext';
 
-/**
- * Code Walkthrough
- * This component renders the Team section for the About Us page.
- * It features a 3-column grid of team cards with a complex hover interaction.
- * On hover, the image receives a blue gradient overlay, social icons fade in, 
- * and the outer card container gains a blue solid outline, matching the provided UI screenshots.
- */
 const AboutTeam = () => {
-    const { aboutTeam } = mockAboutPageData;
+    const { aboutPageData } = useContent();
+    const aboutTeam = aboutPageData?.aboutTeam;
+
+    if (!aboutTeam) return null;
 
     const containerVariants = {
         hidden: { opacity: 0 },

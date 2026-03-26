@@ -1,17 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useInView, animate } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ArrowRight, CheckCircle2, Users, Briefcase, Award } from 'lucide-react';
-import AboutUs1 from '../assets/images/about-us1.jpg';
-import AboutUs2 from '../assets/images/about-us2.jpg';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
+import { useContent } from '../context/ContentContext';
 
 /**
  * Code Walkthrough
- * This is the AboutSection component specifically built for the Home Page.
- * It features a two-column layout:
- * 1. Left: An intricate image grid with overlapping statistic cards.
- * 2. Right: A glassmorphism content area with dynamic mock data, tags, and a CTA.
- * Framer Motion is used for scroll-reveal animations to maintain the enterprise feel.
+ * AboutSection dynamically pulls 'aboutData' and 'statsData' from the central ContentContext.
  */
 const CountUpNumber = ({ end, suffix = "", duration = 2.5 }) => {
     const [count, setCount] = useState(0);
@@ -35,49 +31,7 @@ const CountUpNumber = ({ end, suffix = "", duration = 2.5 }) => {
 };
 
 const AboutSection = () => {
-    // Mock data for the About section to allow for easy future backend integration
-    const mockAboutData = {
-        tag: "Get to Know Us",
-        title: "Transforming Businesses Through Technology",
-        description: "Amyntor Tech Solutions, helmed by a diverse team of young and seasoned professionals, encompasses a rich tapestry of skills. With our headquarters nestled in Thiruvananthapuram, we extend our presence across the vast expanse of India. As proud sentinels of Cybersecurity Services, complete IT and Cloud Infrastructure solutions, and managed services prowess, we invite you to embark on a remarkable journey with us. Our unwavering dedication has garnered resounding endorsements from customers spanning the globe, attesting to our sterling reputation. Placing paramount importance on exceptional customer service, we fervently prioritize the unique needs and requirements of our esteemed clientele. Our unwavering mission is to deliver services of unparalleled quality, complemented by an unwavering commitment to exceptional after-sales support.",
-        stats: {
-            govProjects: "127+",
-            workforce: "57+"
-        },
-        features: [
-
-        ],
-        ctaText: "Learn More",
-        ctaLink: "/about",
-        leftCards: {
-            bottomCard: {
-                number: "300+",
-                text: "Projects Completed"
-            }
-        },
-        bottomStats: [
-            {
-                title: "Happy",
-                subtitle: "Clients",
-                value: "352",
-                icon: Users
-            },
-            {
-                title: "Government",
-                subtitle: "Projects",
-                value: "127",
-                icon: Briefcase
-            },
-            {
-                title: "Expert",
-                subtitle: "Workforce",
-                value: "57",
-                icon: Award
-            }
-        ],
-        mainImage: AboutUs1, // Main right image (second grid)
-        topImage: AboutUs2,  // Top left image (first grid)
-    };
+    const { aboutData, statsData } = useContent();
 
     // Animation variants for scroll reveals
     const containerVariants = {
@@ -104,7 +58,7 @@ const AboutSection = () => {
     return (
         <section className="py-24 md:py-20 bg-white relative overflow-hidden">
 
-            <div className="max-w-[96%] mx-auto px-4 md:px-8">
+            <div className="max-w-[1400px] mx-auto px-4 md:px-8">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-8 items-center">
 
                     {/* Left Side: Image Grid & Overlapping Cards */}
@@ -121,7 +75,7 @@ const AboutSection = () => {
 
                                 {/* Top Image */}
                                 <motion.div variants={slideUpVariants} className="w-full h-[200px] lg:h-[240px] rounded-[2rem] overflow-hidden shadow-xl">
-                                    <img src={mockAboutData.topImage} alt="Team" className="w-full h-full object-cover object-center" />
+                                    <img src={aboutData.topImage} alt="Team" className="w-full h-full object-cover object-center" />
                                 </motion.div>
 
                                 {/* Bottom Card - Global Clients */}
@@ -131,7 +85,7 @@ const AboutSection = () => {
                                 >
                                     <h3 className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-brand-dark to-brand-primary mb-6">
                                         <CountUpNumber
-                                            end={parseInt(mockAboutData.leftCards.bottomCard.number)}
+                                            end={parseInt(aboutData.leftCardValue)}
                                             suffix="+"
                                         />
                                     </h3>
@@ -140,19 +94,19 @@ const AboutSection = () => {
                                         <div className="w-1/2 h-[1px] bg-gradient-to-r from-brand-dark to-brand-primary"></div>
 
                                         <span className="font-semibold text-slate-900 text-base whitespace-nowrap">
-                                            {mockAboutData.leftCards.bottomCard.text}
+                                            {aboutData.leftCardText}
                                         </span>
                                     </div>
 
                                     <p className="text-gray-500 text-base leading-relaxed text-left">
-                                        We serve businesses of all sizes around the world
+                                        {aboutData.leftCardDescription || "We serve businesses of all sizes around the world"}
                                     </p>
                                 </motion.div>
                             </div>
 
                             {/* Main Right Image */}
                             <motion.div variants={slideRightVariants} className="w-full max-w-[380px] sm:max-w-none sm:flex-1 rounded-[2.5rem] overflow-hidden shadow-xl relative h-[400px] sm:h-[464px] lg:h-[564px] mx-auto sm:mx-0">
-                                <img src={mockAboutData.mainImage} alt="Team Meeting" className="w-full h-full object-cover" />
+                                <img src={aboutData.mainImage} alt="Team Meeting" className="w-full h-full object-cover" />
 
                                 {/* Circular Badge Override overlapping */}
 
@@ -173,46 +127,39 @@ const AboutSection = () => {
                             {/* Tag */}
                             <motion.div variants={slideUpVariants} className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-[#EEF4FF] border border-[#D1E0FF] mb-3">
                                 <div className="w-2 h-2 rounded-full bg-gradient-to-r from-brand-dark to-brand-primary"></div>
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-dark to-brand-primary font-semibold text-sm">{mockAboutData.tag}</span>
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-dark to-brand-primary font-semibold text-sm">{aboutData.tag}</span>
                             </motion.div>
 
                             {/* Headline */}
                             <motion.h2 variants={slideUpVariants} className="text-3xl md:text-5xl font-semibold text-slate-900 leading-tight mb-4">
-                                {mockAboutData.title}
+                                {aboutData.title}
                             </motion.h2>
 
                             {/* Description */}
                             <motion.p variants={slideUpVariants} className="text-gray-600 text-[15px] leading-relaxed mb-8 text-justify">
-                                {mockAboutData.description}
+                                {aboutData.description}
                             </motion.p>
 
-                            {/* Right Side stats removed per user layout instruction to move them down */}
-
-                            {/* Features List */}
-                            {mockAboutData.features.length > 0 && (
-                                <motion.ul variants={slideUpVariants} className="space-y-5 mb-8">
-                                    {mockAboutData.features.map((feature, idx) => (
-                                        <li key={idx} className="flex items-center space-x-3 text-slate-800 font-semibold">
-                                            <div className="w-6 h-6 rounded-full bg-brand-primary/10 flex items-center justify-center text-brand-primary shrink-0">
-                                                <CheckCircle2 size={16} fill="currentColor" stroke="white" />
-                                            </div>
-                                            <span>{feature}</span>
-                                        </li>
-                                    ))}
-                                </motion.ul>
-                            )}
+                            {/* Features List (Removed for brevity but handled dynamically before, let's keep it clean since it was empty in the mock anyway) */}
 
                             {/* CTA */}
                             <motion.div variants={slideUpVariants}>
-                                <Link to={mockAboutData.ctaLink}>
+                                <Link to={aboutData.ctaLink}>
                                     <motion.button
-                                        whileHover={{ scale: 1.02 }}
+                                        whileHover={{ x: 5 }}
                                         whileTap={{ scale: 0.98 }}
-                                        className="bg-gradient-to-r from-brand-dark to-brand-primary text-white hover:opacity-90 px-8 py-4 rounded-full font-semibold transition-all shadow-lg shadow-brand-primary/30 inline-flex items-center space-x-3"
+                                        className="group flex items-center space-x-3 transition-all duration-300 hover:opacity-90 px-8 py-3.5 rounded-full border border-transparent shadow-sm"
+                                        style={{
+                                            backgroundImage: "linear-gradient(white, white), linear-gradient(to right, #2563eb, #02a1fd)",
+                                            backgroundOrigin: "border-box",
+                                            backgroundClip: "padding-box, border-box"
+                                        }}
                                     >
-                                        <span>{mockAboutData.ctaText}</span>
-                                        <div className="">
-                                            <ArrowRight size={16} />
+                                        <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-brand-dark to-brand-primary">
+                                            {aboutData.ctaText}
+                                        </span>
+                                        <div className="text-brand-primary group-hover:translate-x-1 transition-transform duration-300">
+                                            <ArrowRight size={22} className="stroke-[3]" />
                                         </div>
                                     </motion.button>
                                 </Link>
@@ -230,8 +177,10 @@ const AboutSection = () => {
                     variants={containerVariants}
                     className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8"
                 >
-                    {mockAboutData.bottomStats.map((stat, index) => {
-                        const Icon = stat.icon;
+                    {statsData.map((stat, index) => {
+                        const isImage = stat.icon?.startsWith('data:image') || stat.icon?.startsWith('http') || stat.icon?.startsWith('/');
+                        const Icon = !isImage ? (LucideIcons[stat.icon] || LucideIcons.HelpCircle) : null;
+
                         return (
                             <motion.div
                                 key={index}
@@ -251,8 +200,12 @@ const AboutSection = () => {
                                         </p>
                                     </div>
 
-                                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-brand-primary to-brand-dark flex items-center justify-center text-white shadow-md">
-                                        <Icon size={20} />
+                                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-brand-primary to-brand-dark flex items-center justify-center text-white shadow-md overflow-hidden">
+                                        {isImage ? (
+                                            <img src={stat.icon} alt={stat.title} className="w-full h-full object-cover p-2 bg-white" />
+                                        ) : (
+                                            <Icon size={20} />
+                                        )}
                                     </div>
                                 </div>
 

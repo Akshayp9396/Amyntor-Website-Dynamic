@@ -2,10 +2,13 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ChevronRight, Briefcase } from 'lucide-react';
-import { careersPageData } from './careersData';
+import { useContent } from '../../context/ContentContext';
 
 const CareersHero = () => {
-    const { hero } = careersPageData;
+    const { careersPageData } = useContent();
+    const hero = careersPageData?.hero;
+
+    if (!hero) return null;
 
     const containerVariants = {
         hidden: { opacity: 0 },

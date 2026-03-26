@@ -1,12 +1,15 @@
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { galleryPageData } from './galleryData';
+import { useContent } from '../../context/ContentContext';
 
 const GalleryGrid = () => {
+    const { galleryPageData } = useContent();
+    
     // 1. Sort the items dynamically so the newest date is always first
     const sortedImages = useMemo(() => {
+        if (!galleryPageData?.images) return [];
         return [...galleryPageData.images].sort((a, b) => new Date(b.date) - new Date(a.date));
-    }, [galleryPageData.images]);
+    }, [galleryPageData?.images]);
 
     return (
         <section className="py-24 bg-white">

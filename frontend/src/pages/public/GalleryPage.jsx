@@ -11,7 +11,7 @@ const GalleryPage = () => {
     }, []);
 
     return (
-        <div className="min-h-screen bg-white overflow-hidden">
+        <div className="min-h-screen bg-white flex flex-col">
             <Navbar />
 
             <main>

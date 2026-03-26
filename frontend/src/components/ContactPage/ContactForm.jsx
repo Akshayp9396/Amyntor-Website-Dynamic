@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { User, Mail, Phone, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
+import { useContent } from '../../context/ContentContext';
 
 const ContactForm = () => {
+    const { contactPageData } = useContent();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -45,7 +47,7 @@ const ContactForm = () => {
                 </p>
                 <button
                     onClick={() => setStatus('idle')}
-                    className="px-8 py-3.5 bg-[#0066FF] hover:bg-blue-700 text-white rounded-full font-semibold transition-all inline-flex items-center gap-2"
+                    className="px-8 py-3.5 bg-brand-primary hover:bg-brand-dark text-white rounded-full font-semibold transition-all inline-flex items-center gap-2"
                 >
                     Send Another Message <ArrowRight size={18} />
                 </button>
@@ -53,17 +55,17 @@ const ContactForm = () => {
         );
     }
 
+    const googleMapsUrl = contactPageData?.info?.googleMapsUrl || "https://maps.google.com/maps?q=Amyntor%20Tech%20Solutions%20Pvt%20Ltd.,%20Trivandrum&t=&z=14&ie=UTF8&iwloc=&output=embed";
+
     return (
         <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-[0_0_50px_rgba(0,0,0,0.03)] h-full">
             <h3 className="text-3xl font-bold text-[#0b1021] mb-10">Let's Connect with us</h3>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Name Input */}
                     <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                            <User size={18} className="text-[#0066FF]" strokeWidth={1.5} />
+                            <User size={18} className="text-[#0b1021]/60" strokeWidth={1.5} />
                         </div>
                         <input
                             type="text"
@@ -72,14 +74,13 @@ const ContactForm = () => {
                             onChange={handleChange}
                             placeholder="Your Name *"
                             required
-                            className="w-full bg-white border border-slate-200 text-slate-700 rounded-full pl-12 pr-6 py-4 focus:outline-none focus:border-[#0066FF] focus:ring-1 focus:ring-[#0066FF] transition-all placeholder:text-slate-400"
+                            className="w-full bg-white border border-slate-200 text-slate-700 rounded-full pl-12 pr-6 py-4 focus:outline-none focus:border-slate-300 focus:ring-1 focus:ring-slate-300 transition-all placeholder:text-slate-400"
                         />
                     </div>
 
-                    {/* Email Input */}
                     <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                            <Mail size={18} className="text-[#0066FF]" strokeWidth={1.5} />
+                            <Mail size={18} className="text-[#0b1021]/60" strokeWidth={1.5} />
                         </div>
                         <input
                             type="email"
@@ -87,16 +88,15 @@ const ContactForm = () => {
                             value={formData.email}
                             onChange={handleChange}
                             placeholder="Email Address (Optional)"
-                            className="w-full bg-white border border-slate-200 text-slate-700 rounded-full pl-12 pr-6 py-4 focus:outline-none focus:border-[#0066FF] focus:ring-1 focus:ring-[#0066FF] transition-all placeholder:text-slate-400"
+                            className="w-full bg-white border border-slate-200 text-slate-700 rounded-full pl-12 pr-6 py-4 focus:outline-none focus:border-slate-300 focus:ring-1 focus:ring-slate-300 transition-all placeholder:text-slate-400"
                         />
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Phone Input */}
                     <div className="relative">
                         <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                            <Phone size={18} className="text-[#0066FF]" strokeWidth={1.5} />
+                            <Phone size={18} className="text-[#0b1021]/60" strokeWidth={1.5} />
                         </div>
                         <input
                             type="tel"
@@ -105,17 +105,16 @@ const ContactForm = () => {
                             onChange={handleChange}
                             placeholder="Phone No. *"
                             required
-                            className="w-full bg-white border border-slate-200 text-slate-700 rounded-full pl-12 pr-6 py-4 focus:outline-none focus:border-[#0066FF] focus:ring-1 focus:ring-[#0066FF] transition-all placeholder:text-slate-400"
+                            className="w-full bg-white border border-slate-200 text-slate-700 rounded-full pl-12 pr-6 py-4 focus:outline-none focus:border-slate-300 focus:ring-1 focus:ring-slate-300 transition-all placeholder:text-slate-400"
                         />
                     </div>
 
-                    {/* Service Select (No left icon in mockup) */}
                     <div className="relative">
                         <select
                             name="service"
                             value={formData.service}
                             onChange={handleChange}
-                            className="w-full bg-white border border-slate-200 text-slate-600 rounded-full px-6 py-4 focus:outline-none focus:border-[#0066FF] focus:ring-1 focus:ring-[#0066FF] transition-all appearance-none"
+                            className="w-full bg-white border border-slate-200 text-slate-600 rounded-full px-6 py-4 focus:outline-none focus:border-slate-300 focus:ring-1 focus:ring-slate-300 transition-all appearance-none"
                         >
                             <option value="">Select Service</option>
                             <option value="cyber-security">Cyber Security</option>
@@ -131,7 +130,6 @@ const ContactForm = () => {
                     </div>
                 </div>
 
-                {/* Textarea */}
                 <div className="relative">
                     <textarea
                         name="message"
@@ -140,23 +138,42 @@ const ContactForm = () => {
                         placeholder="Write Message *"
                         required
                         rows="5"
-                        className="w-full bg-white border border-slate-200 text-slate-700 rounded-3xl px-6 py-5 focus:outline-none focus:border-[#0066FF] focus:ring-1 focus:ring-[#0066FF] transition-all placeholder:text-slate-400 resize-none"
+                        className="w-full bg-white border border-slate-200 text-slate-700 rounded-3xl px-6 py-5 focus:outline-none focus:border-slate-300 focus:ring-1 focus:ring-slate-300 transition-all placeholder:text-slate-400 resize-none"
                     ></textarea>
                 </div>
 
-                {/* Submit Button */}
                 <button
                     type="submit"
                     disabled={status === 'submitting'}
-                    className="mt-6 px-10 py-4 bg-[#0066FF] hover:bg-blue-700 text-white rounded-full font-semibold transition-all inline-flex items-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed group shadow-lg shadow-blue-500/20"
+                    className="mt-6 px-10 py-4 bg-white border border-slate-200 text-[#0b1021] rounded-full font-bold transition-all duration-300 inline-flex items-center gap-4 disabled:opacity-70 disabled:cursor-not-allowed group hover:shadow-md focus:outline-none"
                 >
                     {status === 'submitting' ? (
-                        <Loader2 size={18} className="animate-spin" />
+                        <>
+                            <Loader2 size={18} className="animate-spin text-brand-primary" />
+                            <span className="text-slate-400 font-semibold">Submitting...</span>
+                        </>
                     ) : (
                         <>
-                            Submit Now
-                            <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-[#0066FF] transition-transform group-hover:translate-x-1">
-                                <ArrowRight size={14} strokeWidth={2.5} />
+                            <span className="relative z-10 transition-all duration-300 group-hover:bg-clip-text group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-brand-dark group-hover:to-brand-primary">
+                                Submit Now
+                            </span>
+                            <div className="relative z-10">
+                                {/* Premium Gradient Icon */}
+                                <svg className="w-6 h-6 transition-all duration-300 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <defs>
+                                        <linearGradient id="submit-grad-final" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stopColor="#2563eb" />
+                                            <stop offset="100%" stopColor="#02a1fd" />
+                                        </linearGradient>
+                                    </defs>
+                                    <path 
+                                        d="M5 12H19M19 12L12 5M19 12L12 19" 
+                                        className="stroke-[#0b1021]/60 group-hover:stroke-[url(#submit-grad-final)]" 
+                                        strokeWidth="2.5" 
+                                        strokeLinecap="round" 
+                                        strokeLinejoin="round" 
+                                    />
+                                </svg>
                             </div>
                         </>
                     )}
@@ -166,7 +183,7 @@ const ContactForm = () => {
             {/* Location Map */}
             <div className="mt-10 overflow-hidden rounded-2xl border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] h-[250px] relative">
                 <iframe
-                    src="https://maps.google.com/maps?q=Amyntor%20Tech%20Solutions%20Pvt%20Ltd.,%20Trivandrum&t=&z=14&ie=UTF8&iwloc=&output=embed"
+                    src={googleMapsUrl}
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}

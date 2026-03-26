@@ -2,8 +2,15 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ChevronRight, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useContent } from '../../context/ContentContext';
 
 const ContactHero = () => {
+    const { contactPageData } = useContent();
+
+    if (!contactPageData) return null;
+
+    const { hero } = contactPageData;
+
     // Framer Motion Variants for Staggered Entrance
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -32,7 +39,7 @@ const ContactHero = () => {
                 {/* Background Overlay */}
                 <div className="absolute inset-0 z-0">
                     <img
-                        src="https://images.unsplash.com/photo-1451187580459-43490279c0fa"
+                        src={hero.backgroundImage}
                         alt="Contact Us Background"
                         className="w-full h-full object-cover opacity-[0.35]"
                     />
@@ -50,15 +57,15 @@ const ContactHero = () => {
                     >
                         {/* 1. Solid Blue Rounded Icon Badge */}
                         <motion.div variants={itemVariants} className="mb-6">
-                            <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-[#0066FF] to-blue-500 text-white text-[13px] sm:text-sm font-semibold tracking-wide shadow-lg shadow-blue-500/25">
+                            <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-brand-dark to-brand-primary text-white text-[13px] sm:text-sm font-semibold tracking-wide shadow-lg shadow-blue-500/25">
                                 <ExternalLink size={16} strokeWidth={2.5} />
-                                Get In Touch
+                                {hero.tag}
                             </span>
                         </motion.div>
 
                         {/* 2. Bold, Large Main Title */}
                         <motion.h1 variants={itemVariants} className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 tracking-tight drop-shadow-md">
-                            Contact Us
+                            {hero.title}
                         </motion.h1>
 
                         {/* 3. Clean Text Breadcrumbs */}
@@ -72,7 +79,7 @@ const ContactHero = () => {
 
                         {/* 4. Small Clean Tagline */}
                         <motion.p variants={itemVariants} className="text-[15px] md:text-base text-white/90 max-w-[85%] sm:max-w-2xl mx-auto leading-relaxed font-light drop-shadow-sm">
-                            At Amyntor, we believe technology should empower businesses to grow, adapt, and thrive in an ever-changing digital landscape. Let's connect and discuss your requirements.
+                            {hero.tagline}
                         </motion.p>
                     </motion.div>
                 </div>

@@ -2,17 +2,13 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ChevronRight, Share2 } from 'lucide-react';
-import { mockAboutPageData } from './aboutData';
+import { useContent } from '../../context/ContentContext';
 
-/**
- * Code Walkthrough
- * This component renders the Hero section of the About Us page.
- * It features a dark-themed background image with a responsive overlay to ensure text readability across all devices.
- * The content is dynamically pulled from mockAboutPageData to maintain a strict separation of concerns.
- * Smooth entrance animations are handled by Framer Motion, utilizing stagger rules to fade-in and slide-up the tag, title, breadcrumbs, and tagline sequentially.
- */
 const AboutHero = () => {
-    const { hero } = mockAboutPageData;
+    const { aboutPageData } = useContent();
+    const hero = aboutPageData?.hero;
+
+    if (!hero) return null;
 
     // Framer Motion Variants for Staggered Entrance
     const containerVariants = {

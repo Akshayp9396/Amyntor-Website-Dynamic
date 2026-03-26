@@ -2,9 +2,11 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ChevronRight, Image as ImageIcon } from 'lucide-react';
-import { galleryPageData } from './galleryData';
+import { useContent } from '../../context/ContentContext';
 
 const GalleryHero = () => {
+    const { galleryPageData } = useContent();
+    if (!galleryPageData) return null;
     const { hero } = galleryPageData;
 
     // Framer Motion Variants for Staggered Entrance

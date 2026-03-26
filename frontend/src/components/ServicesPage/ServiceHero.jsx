@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ChevronRight, Share2 } from 'lucide-react';
-import { mockServicesPageData } from './servicesData';
+import { useContent } from '../../context/ContentContext';
 
 /**
  * Code Walkthrough
@@ -11,7 +11,8 @@ import { mockServicesPageData } from './servicesData';
  * Content is dynamically sourced from mockServicesPageData.
  */
 const ServiceHero = () => {
-    const { hero } = mockServicesPageData;
+    const { servicesPageData } = useContent();
+    const hero = servicesPageData?.hero || {};
 
     // Framer Motion Variants for Staggered Entrance
     const containerVariants = {

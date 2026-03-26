@@ -7,40 +7,13 @@ import Testimonial1 from '../assets/images/testimonial1.png';
 import 'swiper/css';
 import { motion } from 'framer-motion';
 import { Star, CheckCircle, Quote } from 'lucide-react';
+import { useContent } from '../context/ContentContext';
 
 /**
  * Code Walkthrough
  * This component renders the Testimonials Section on the Home Page.
- * It features a split header with a 'Trusted Clients' element.
- * The layout uses CSS Grid to display two testimonial cards and a custom stylized
- * 'Status Card' on the right side.
- * Framer Motion is used for staggered entry animations and smooth hover scaling.
- * 
- * Technical Note: The 'Status Card' background is built entirely out of CSS radial
- * gradients and absolute positioned decorative circles to avoid blurry static images
- * and maintain crisp retina quality.
+ * Now pulling dynamic data from ContentContext.
  */
-
-const mockTestimonialData = [
-    {
-        id: 1,
-        name: "Maisha Jakulin",
-        designation: "UI/UX Designer",
-        quote: "Amazing Services!",
-        feedback: "Technically sound chains main business and paids marketplace technology that's targeted audience simplify interoperable vortals via reliable done",
-
-        avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150"
-    },
-    {
-        id: 2,
-        name: "Jobaer Khanom",
-        designation: "App Developer",
-        quote: "Amazing Services!",
-        feedback: "Technically sound chains main business and paids marketplace technology that's targeted audience simplify interoperable vortals via reliable done",
-
-        avatar: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&q=80&w=150"
-    }
-];
 
 const mockAvatars = [
     "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=100",
@@ -77,9 +50,11 @@ const ArrowIcon = () => (
 
 
 const TestimonialsSection = () => {
+    const { testimonials, testimonialHeader } = useContent();
+
     return (
         <section className="py-24 md:py-32 bg-[#F3F6FA] relative overflow-hidden">
-            <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
+            <div className="max-w-[1400px] mx-auto px-4 md:px-8 relative z-10">
 
                 {/* Split Header */}
                 <motion.div
@@ -93,11 +68,10 @@ const TestimonialsSection = () => {
                     <motion.div variants={itemVariants} className="max-w-2xl">
                         <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-[#EEF4FF] border border-[#D1E0FF] mb-6">
                             <div className="w-2 h-2 rounded-full bg-gradient-to-r from-brand-dark to-brand-primary"></div>
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-dark to-brand-primary font-semibold text-sm">Testimonial</span>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-dark to-brand-primary font-semibold text-sm">{testimonialHeader?.tag || 'Testimonial'}</span>
                         </div>
-                        <h2 className="text-2xl md:text-5xl font-bold text-slate-900 leading-tight">
-                            What Our Customers  <br />
-                            Are Saying
+                        <h2 className="text-2xl md:text-5xl font-bold text-slate-900 leading-tight whitespace-pre-line">
+                            {testimonialHeader?.title || "What Our Customers\nAre Saying"}
                         </h2>
                     </motion.div>
 
@@ -137,11 +111,11 @@ const TestimonialsSection = () => {
                     className="grid grid-cols-1 lg:grid-cols-3 gap-6"
                 >
                     {/* Testimonial Cards (Left and Center) */}
-                    {mockTestimonialData.map((testimonial) => (
+                    {testimonials.map((testimonial) => (
                         <motion.div
                             key={testimonial.id}
                             variants={itemVariants}
-                            className="bg-white rounded-[2rem] p-8 shadow-sm hover:shadow-xl hover:scale-[1.02] transition-all duration-300 relative group flex flex-col"
+                            className="bg-white rounded-[2rem] p-8 shadow-sm hover:shadow-xl hover:scale-[1.02] transition-all duration-300 relative group flex flex-col h-[380px] lg:h-[400px]"
                         >
                             {/* User Info */}
                             <div className="flex items-center gap-4 mb-8">
@@ -178,7 +152,7 @@ const TestimonialsSection = () => {
                     {/* Status Custom Background Card (Right) */}
                     <motion.div
                         variants={itemVariants}
-                        className="bg-[#0b1021] rounded-[2rem] shadow-2xl hover:scale-[1.02] transition-all duration-300 relative overflow-hidden flex flex-col justify-end min-h-[450px] md:min-h-[500px] lg:min-h-0 lg:h-auto w-full max-w-[420px] mx-auto lg:max-w-none"
+                        className="bg-[#0b1021] rounded-[2rem] shadow-2xl hover:scale-[1.02] transition-all duration-300 relative overflow-hidden flex flex-col justify-end h-[380px] lg:h-[400px] w-full max-w-[420px] mx-auto lg:max-w-none"
                     >
                         {/* Pre-designed Background & Subject Combined Image */}
                         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">

@@ -2,21 +2,26 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { mockCaseStudyPageData } from './caseStudyData';
+import { useContent } from '../../context/ContentContext';
 
 /**
  * Code Walkthrough
  * This component renders the Case Studies in a responsive CSS Grid.
- * It reuses the exact visual design of the Home Page's CaseStudySection cards,
- * but drops the Embla Carousel to allow a vertically scrollable list view.
+ * It has been restored to its original stable design featuring:
+ * - Background Image with Zoom (scale 1.1)
+ * - Bottom Tag & Title content that fades on hover
+ * - 'View Case Study' glassmorphism overlay on hover
  */
 const CaseStudyGrid = () => {
+    const { caseStudyPageData } = useContent();
+    const caseStudies = caseStudyPageData?.caseStudies || [];
+
     return (
         <section className="py-20 bg-[#F8FAFC]">
             <div className="max-w-[1400px] mx-auto px-4 md:px-8">
                 {/* CSS Grid for the Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {mockCaseStudyPageData.caseStudies.map((study) => (
+                    {caseStudies.map((study) => (
                         <div key={study.id} className="w-full">
                             <Link to={`/case-study/${study.id}`} className="block h-full w-full">
                                 <motion.article
@@ -34,7 +39,7 @@ const CaseStudyGrid = () => {
                                     />
 
                                     {/* Dark Gradient Overlay for text readability */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-[#0b1021]/90 via-[#0b1021]/30 to-transparent"></div>
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#0b1021]/90 via-[#0b1021]/30 to-transparent transition-opacity duration-300 group-hover:opacity-0"></div>
 
                                     {/* Content Layer positioned at the bottom */}
                                     <div className="absolute inset-x-0 bottom-0 p-8 flex flex-col justify-end z-10 transition-opacity duration-300 group-hover:opacity-0">

@@ -2,10 +2,11 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, MapPin, Clock, Users, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { careersPageData } from './careersData';
+import { useContent } from '../../context/ContentContext';
 
 const JobBoard = () => {
-    const { openRoles } = careersPageData;
+    const { careersPageData } = useContent();
+    const { openRoles } = careersPageData || { openRoles: [] };
 
     return (
         <section id="open-roles-section" className="py-24 bg-[#F5F8FA]">
@@ -15,8 +16,8 @@ const JobBoard = () => {
                     <h2 className="text-3xl md:text-4xl font-bold text-[#0b1021] mb-4">
                         Current Openings
                     </h2>
-                    <p className="text-lg text-[#0b1021]/80">
-                        We have <span className="font-bold text-brand-primary">{openRoles.length} listed jobs</span> matching your potential.
+                    <p className="text-lg text-[#0b1021]/80 font-medium">
+                        <span className="font-bold text-brand-primary">{openRoles.length}</span> Jobs Listed
                     </p>
                 </div>
 

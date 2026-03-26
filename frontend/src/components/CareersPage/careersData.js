@@ -9,7 +9,6 @@ export const careersPageData = {
         backgroundImage: heroBg,
         breadcrumbs: [
             { label: "Home", link: "/" },
-            { label: "Company", link: "#" },
             { label: "Careers", link: "/careers" }
         ]
     },
@@ -41,7 +40,8 @@ export const careersPageData = {
                 "Industry certifications such as CISSP, CISM, CEH, or OSCP are highly preferred.",
                 "Strong understanding of network protocols, operating systems, and cloud security."
             ],
-            skills: ["Threat Hunting", "Incident Response", "SIEM (Splunk/QRadar)", "Vulnerability Management", "Network Security"]
+            skills: ["Threat Hunting", "Incident Response", "SIEM (Splunk/QRadar)", "Vulnerability Management", "Network Security"],
+            howToApply: "To apply for this position, please send your resume to hr@amyntortech.com. Be sure to include the job title in the subject line."
         },
         {
             id: 2,
@@ -65,7 +65,8 @@ export const careersPageData = {
                 "Proven experience with React.js and its core principles.",
                 "Familiarity with RESTful APIs and modern frontend build pipelines."
             ],
-            skills: ["React.js", "JavaScript (ES6+)", "Tailwind CSS", "HTML5 & Vanilla CSS", "Framer Motion", "Git"]
+            skills: ["React.js", "JavaScript (ES6+)", "Tailwind CSS", "HTML5 & Vanilla CSS", "Framer Motion", "Git"],
+            howToApply: "To apply for this position, please send your resume to hr@amyntortech.com. Be sure to include the job title in the subject line."
         },
         {
             id: 3,
@@ -89,7 +90,8 @@ export const careersPageData = {
                 "Strong analytical and problem-solving skills.",
                 "Excellent attention to detail and communication skills."
             ],
-            skills: ["Manual Testing", "Bug Tracking (Jira)", "Test Case Design", "Attention to Detail", "Basic SQL / API Testing"]
+            skills: ["Manual Testing", "Bug Tracking (Jira)", "Test Case Design", "Attention to Detail", "Basic SQL / API Testing"],
+            howToApply: "To apply for this position, please send your resume to hr@amyntortech.com. Be sure to include the job title in the subject line."
         },
         {
             id: 4,
@@ -113,7 +115,8 @@ export const careersPageData = {
                 "Advanced certifications (e.g., AWS Certified Solutions Architect - Professional, Azure Solutions Architect Expert).",
                 "Deep expertise in networking, computing, storage, and database services in the cloud."
             ],
-            skills: ["AWS / Azure Core Services", "Infrastructure as Code (Terraform/CloudFormation)", "Kubernetes / Docker", "CI/CD Pipelines", "Cloud Security Architecture"]
+            skills: ["AWS / Azure Core Services", "Infrastructure as Code (Terraform/CloudFormation)", "Kubernetes / Docker", "CI/CD Pipelines", "Cloud Security Architecture"],
+            howToApply: "To apply for this position, please send your resume to hr@amyntortech.com. Be sure to include the job title in the subject line."
         }
     ]
 };

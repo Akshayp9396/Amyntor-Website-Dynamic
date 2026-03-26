@@ -2,47 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import ShieldImage from '../assets/images/cybersecurity-shield.jpg';
-import DataCenterImage from '../assets/images/data-center.jpg';
-import ResilienceImage from '../assets/images/resilience.jpg';
+import { useContent } from '../context/ContentContext';
 
 /**
  * Code Walkthrough
  * This is the Hero component serving as the main landing banner.
- * It's a 3-slide carousel built with Framer Motion for premium "cybersecurity" feel animations.
- * It uses a custom hook/effect to auto-play the carousel and allows manual navigation via dots.
- * Data is mocked currently, simulating content fetched from a CMS.
+ * It consumes dynamic 'heroSlides' from the central ContentContext.
  */
 const Hero = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
-
-    // Mock data representing slides based on Amyntor Tech content
-    const slides = [
-        {
-            id: 1,
-            tag: "CYBERSECURITY EXCELLENCE",
-            title: "Ensuring IT Excellence and Cybersecurity",
-            subtitle: "Securing your digital future with IT excellence and cybersecurity expertise.",
-            image: ShieldImage,
-            buttonText: "Start A Project"
-        },
-        {
-            id: 2,
-            tag: "CLOUD TRANSFORMATION",
-            title: "Unleashing the Potential of Cloud Technology",
-            subtitle: "Secure your transition to the cloud. We design zero-trust architectures to ensure continuous compliance and data integrity.",
-            image: DataCenterImage,
-            buttonText: "Start A Project"
-        },
-        {
-            id: 3,
-            tag: "FUTURE-PROOF INFRASTRUCTURE",
-            title: "Enabling Digital Resilience, Today and Tomorrow",
-            subtitle: "Building digital resilience for a secure and adaptable future.",
-            image: ResilienceImage,
-            buttonText: "Start A Project"
-        }
-    ];
+    const { heroSlides: slides } = useContent();
 
     // Auto-play interval
     useEffect(() => {
@@ -74,8 +43,8 @@ const Hero = () => {
     };
 
     return (
-        <div className="w-full bg-white px-2 md:px-4 py-4 md:py-8">
-            <div className="relative h-[85vh] min-h-[600px] max-h-[900px] w-[98%] mx-auto overflow-hidden rounded-[2rem] bg-black">
+        <div className="w-full bg-white px-4 md:px-8 py-4 md:py-8">
+            <div className="relative h-[85vh] min-h-[600px] max-h-[900px] w-full mx-auto overflow-hidden rounded-[2rem] bg-black">
                 <AnimatePresence mode="sync">
                     <motion.div
                         key={currentSlide}
@@ -98,7 +67,7 @@ const Hero = () => {
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent z-10" />
 
                         {/* Content Container */}
-                        <div className="relative z-20 h-full max-w-7xl mx-auto px-4 md:px-8 flex flex-col justify-center">
+                        <div className="relative z-20 h-full max-w-[1400px] mx-auto px-4 md:px-8 flex flex-col justify-center">
 
                             <motion.div
                                 variants={containerVariants}
@@ -122,7 +91,7 @@ const Hero = () => {
                                     <Link to="/contact" className="inline-block">
                                         <motion.button
                                             whileHover="hover"
-                                            className="flex items-center space-x-2 bg-gradient-to-r from-brand-dark to-brand-primary hover:opacity-90 text-white px-8 py-3 rounded-full font-semibold transition-all shadow-lg shadow-brand-primary/30"
+                                            className="flex items-center space-x-2 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white px-8 py-3 rounded-full font-semibold transition-all shadow-xl shadow-black/10"
                                         >
                                             <span>{slides[currentSlide].buttonText}</span>
                                             <motion.div variants={{ hover: { x: 5 } }}>

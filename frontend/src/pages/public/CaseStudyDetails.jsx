@@ -6,7 +6,7 @@ import Footer from '../../components/Footer';
 import CaseStudyDetailsHero from '../../components/CaseStudyDetailsPage/CaseStudyDetailsHero';
 import CaseStudyDetailsContent from '../../components/CaseStudyDetailsPage/CaseStudyDetailsContent';
 import CaseStudySidebar from '../../components/CaseStudyDetailsPage/CaseStudySidebar';
-import { mockCaseStudyPageData } from '../../components/CaseStudyPage/caseStudyData';
+import { useContent } from '../../context/ContentContext';
 
 /**
  * Code Walkthrough
@@ -16,14 +16,17 @@ import { mockCaseStudyPageData } from '../../components/CaseStudyPage/caseStudyD
  */
 const CaseStudyDetails = () => {
     const { projectId } = useParams();
+    const { caseStudyPageData } = useContent();
 
     // Scroll to top automatically when navigating to a new project
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [projectId]);
 
-    // Find the specific project from the mock data (simulating a DB fetch)
-    const project = mockCaseStudyPageData.caseStudies.find(
+    if (!caseStudyPageData) return null;
+
+    // Find the specific project from the context
+    const project = caseStudyPageData.caseStudies.find(
         (p) => p.id === parseInt(projectId)
     );
 

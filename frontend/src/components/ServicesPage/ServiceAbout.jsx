@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2 } from 'lucide-react';
-import { mockServicesPageData } from './servicesData';
+import { useContent } from '../../context/ContentContext';
 
 /**
  * Code Walkthrough
@@ -9,7 +9,8 @@ import { mockServicesPageData } from './servicesData';
  * It strictly reuses the successful asymmetric top-grid layout structure from the AboutCompany component.
  */
 const ServiceAbout = () => {
-    const { serviceIntro } = mockServicesPageData;
+    const { servicesPageData } = useContent();
+    const serviceIntro = servicesPageData?.serviceIntro || { features: [] };
 
     // Framer Motion staggered entrance
     const containerVariants = {
@@ -55,7 +56,7 @@ const ServiceAbout = () => {
 
                     {/* Right Column: Paragraph and Features (8/12 width) */}
                     <div className="lg:col-span-8 flex flex-col justify-start gap-6 pt-6 lg:pt-4">
-                        <motion.p variants={slideUpVariants} className="whitespace-pre-line text-slate-600 text-[15.5px] md:text-lg leading-relaxed w-full">
+                        <motion.p variants={slideUpVariants} className="whitespace-pre-line text-slate-600 text-[15.5px] md:text-lg leading-relaxed w-full text-justify">
                             {serviceIntro.description}
                         </motion.p>
 

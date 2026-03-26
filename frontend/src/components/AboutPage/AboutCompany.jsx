@@ -1,19 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Goal, Lightbulb, ShieldCheck } from 'lucide-react';
-import { mockAboutPageData } from './aboutData';
+import { useContent } from '../../context/ContentContext';
 
-/**
- * Code Walkthrough
- * The AboutCompany component represents the core 'Our Mission, Vision, Values' section.
- * It's structured in two areas:
- * 1. A top split-layout containing the section title and descriptive paragraphs.
- * 2. A bottom grid containing 3 cards utilizing Framer Motion for interactive hover scaling.
- * 
- * We map the icon strings from the mock data to actual Lucide React components dynamically.
- */
-
-// Icon Mapping dictionary
 const iconMap = {
     Target: Goal,
     Eye: Lightbulb,
@@ -21,7 +10,10 @@ const iconMap = {
 };
 
 const AboutCompany = () => {
-    const { aboutCompany } = mockAboutPageData;
+    const { aboutPageData } = useContent();
+    const aboutCompany = aboutPageData?.aboutCompany;
+
+    if (!aboutCompany) return null;
 
     // Framer Motion staggered entrance
     const containerVariants = {
@@ -52,6 +44,7 @@ const AboutCompany = () => {
                     {/* Left Column: Title Area (Takes up 4/12 of space) */}
                     <div className="lg:col-span-4 flex flex-col gap-4">
                         <motion.div variants={slideUpVariants} className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-[#EEF4FF] border border-[#D1E0FF] w-fit">
+                            <span className="w-2 h-2 rounded-full bg-brand-primary"></span>
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-dark to-brand-primary font-semibold text-sm uppercase tracking-[0.2em]">{aboutCompany.tag}</span>
                         </motion.div>
                         <motion.h2
@@ -64,7 +57,7 @@ const AboutCompany = () => {
 
                     {/* Right Column: Paragraphs (Takes up 8/12 of space) */}
                     <div className="lg:col-span-8 flex flex-col justify-start gap-6 pt-6 lg:pt-4">
-                        <motion.p variants={slideUpVariants} className="text-slate-600 text-[15.5px] md:text-lg leading-relaxed w-full">
+                        <motion.p variants={slideUpVariants} className="text-slate-600 text-[15.5px] md:text-lg leading-relaxed w-full text-justify">
                             {aboutCompany.description1}
                         </motion.p>
                         {aboutCompany.description2 && (
@@ -102,8 +95,11 @@ const AboutCompany = () => {
                             >
                                 {/* Left Section: Icon & Title */}
                                 <div className="lg:col-span-4 flex items-center gap-6">
-                                    <div className="flex-shrink-0 w-16 h-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                                        <IconComponent size={36} strokeWidth={1.5} color="url(#amyntorGradient)" />
+                                    <div className="flex-shrink-0 w-16 h-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500 overflow-hidden">
+                                        {card.icon?.startsWith('data:image') || card.icon?.startsWith('/') || card.icon?.startsWith('http') 
+                                            ? <img src={card.icon} alt="" className="w-full h-full object-contain" />
+                                            : <IconComponent size={36} strokeWidth={1.5} color="url(#amyntorGradient)" />
+                                        }
                                     </div>
                                     <h3 className="text-[24px] md:text-[28px] font-bold text-[#0b1021] tracking-tight">
                                         {card.title}

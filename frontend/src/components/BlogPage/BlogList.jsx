@@ -78,11 +78,6 @@ const BlogList = () => {
                                     draggable="false"
                                 />
 
-                                {/* Glassmorphism Category Overlay */}
-                                <div className="absolute top-6 left-6 px-4 py-1.5 bg-white/20 backdrop-blur-md border border-white/20 rounded-full text-white font-bold text-xs shadow-lg tracking-wider">
-                                    {blog.category}
-                                </div>
-
                                 {/* Dynamic Cutout Date Badge Overlay */}
                                 <div className="absolute bottom-0 left-0 bg-white pr-6 pl-4 pt-4 rounded-tr-[2rem]">
                                     <div className="flex items-center gap-2">

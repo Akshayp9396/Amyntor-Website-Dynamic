@@ -1,13 +1,30 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 
 @theme {
     /* Custom vibrant blue/cyan theme based on requested hex codes */
     --color-brand-primary: #02a1fd;
-    /* Primary vibrant blue (cyan) */
-
     --color-brand-light: #0fbbeb;
-    /* Lighter cyan-blue */
-
     --color-brand-dark: #2563eb;
-    /* Deeper navy for contrast */
+
+    /* Global Font Overrides for Tailwind Utility Classes */
+    --font-sans: "General Sans Regular", "Open Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+    /* Aggressive global font reset for both public and admin sides */
+    *, ::before, ::after {
+        font-family: "General Sans Regular", "Open Sans", ui-sans-serif, system-ui, sans-serif !important;
+    }
+
+    html, body, #root {
+        font-family: "General Sans Regular", "Open Sans", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Ensure form elements and buttons inherit the font */
+    button, input, optgroup, select, textarea {
+        font-family: inherit;
+    }
 }

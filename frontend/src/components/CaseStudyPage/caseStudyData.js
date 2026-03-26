@@ -105,5 +105,18 @@ export const mockCaseStudyPageData = {
             },
             conclusion: "The successful modernization resulted in enhanced productivity and zero operational friction for the enterprise."
         }))
-    ]
+    ],
+    sidebar: {
+        cta: {
+            title: "Need a Similar Solution?",
+            description: "Our engineering team is ready to architect a custom, secure, and scalable infrastructure tailored exactly to your operational needs.",
+            buttonText: "Start Your Project",
+            buttonLink: "/contact"
+        },
+        contact: {
+            phone: "+91 471 2080 478",
+            phoneRaw: "+914712080478",
+            email: "Info@amyntortech.com"
+        }
+    }
 };

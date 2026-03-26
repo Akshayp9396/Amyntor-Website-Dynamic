@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Fingerprint, ServerCog, CloudCog, Headphones, Boxes, FileKey, ArrowRight, CheckCircle2 } from 'lucide-react';
-import { mockServicesPageData } from './servicesData';
+import { Fingerprint, ServerCog, CloudCog, Headphones, Boxes, FileKey, ArrowRight, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { useContent } from '../../context/ContentContext';
 
 /**
  * Code Walkthrough
@@ -21,7 +21,8 @@ const iconMap = {
 };
 
 const ServiceList = () => {
-    const { servicesList } = mockServicesPageData;
+    const { servicesPageData } = useContent();
+    const servicesList = servicesPageData?.servicesList || { items: [] };
     const navigate = useNavigate();
     const [activeCard, setActiveCard] = useState(null);
 
@@ -112,8 +113,11 @@ const ServiceList = () => {
                                         {/* Always Visible: Title and Icon */}
                                         <div className="flex items-center justify-between shrink-0 h-[42px]">
                                             <h3 className="text-xl md:text-xl font-bold text-white pr-4">{service.title}</h3>
-                                            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#02A1FD] to-[#0167F3] flex items-center justify-center text-white shrink-0 shadow-lg shadow-brand-primary/40">
-                                                <IconComponent size={20} />
+                                            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#02A1FD] to-[#0167F3] flex items-center justify-center text-white shrink-0 shadow-lg shadow-brand-primary/40 overflow-hidden">
+                                                {service.icon && (service.icon.startsWith('data:image') || service.icon.startsWith('/') || service.icon.startsWith('http')) 
+                                                    ? <img src={service.icon} alt={service.title} className="w-full h-full object-contain p-2" />
+                                                    : <IconComponent size={20} />
+                                                }
                                             </div>
                                         </div>
 

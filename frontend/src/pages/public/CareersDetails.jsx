@@ -8,16 +8,17 @@ import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, SearchX, Briefcase, Calendar, Clock, MapPin } from 'lucide-react';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
-import { careersPageData } from '../../components/CareersPage/careersData';
+import { useContent } from '../../context/ContentContext';
 
 const CareersDetails = () => {
+    const { careersPageData } = useContent();
     const { jobSlug } = useParams();
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [jobSlug]);
 
-    const job = careersPageData.openRoles.find(r => r.slug === jobSlug);
+    const job = careersPageData?.openRoles.find(r => r.slug === jobSlug);
 
     if (!job) {
         return (
@@ -75,29 +76,35 @@ const CareersDetails = () => {
                     {/* Left Column (Job Details) */}
                     <div className="lg:col-span-2 bg-white rounded-[2rem] p-8 md:p-12 shadow-sm border border-slate-100">
                         <h2 className="text-2xl font-bold text-[#0b1021] mb-6">Role Overview</h2>
-                        <p className="text-slate-600 text-[15.5px] md:text-lg leading-relaxed mb-8">
+                        <p className="text-slate-600 text-[15.5px] md:text-lg leading-relaxed mb-8 text-justify">
                             {job.roleOverview}
                         </p>
 
                         <h3 className="text-xl font-bold text-[#0b1021] mb-4">Job Responsibilities</h3>
                         <ul className="list-disc pl-5 space-y-3 text-slate-600 text-[15.5px] mb-8 marker:text-brand-primary">
                             {job.responsibilities?.map((item, index) => (
-                                <li key={index} className="leading-relaxed">{item}</li>
+                                <li key={index} className="leading-relaxed text-justify">{item}</li>
                             ))}
                         </ul>
 
                         <h3 className="text-xl font-bold text-[#0b1021] mb-4">Qualifications and General Skills</h3>
                         <ul className="list-disc pl-5 space-y-3 text-slate-600 text-[15.5px] mb-8 marker:text-brand-primary">
                             {job.qualifications?.map((item, index) => (
-                                <li key={index} className="leading-relaxed">{item}</li>
+                                <li key={index} className="leading-relaxed text-justify">{item}</li>
                             ))}
                         </ul>
 
                         {/* Apply Section moved to bottom of Left Column */}
                         <div className="mt-8">
                             <h3 className="text-xl font-bold text-[#0b1021] mb-4">How to Apply</h3>
-                            <p className="text-slate-600 text-[15.5px] md:text-lg leading-relaxed">
-                                To apply for this position, please send your resume to <a href={`mailto:hr@amyntortech.com?subject=Application for ${job.title}`} className="text-brand-primary font-semibold hover:underline">hr@amyntortech.com</a>. Be sure to include the job title in the subject line.
+                            <p className="text-slate-600 text-[15.5px] md:text-lg leading-relaxed text-justify">
+                                {job.howToApply ? (
+                                    <span>{job.howToApply}</span>
+                                ) : (
+                                    <>
+                                        To apply for this position, please send your resume to <a href={`mailto:hr@amyntortech.com?subject=Application for ${job.title}`} className="text-brand-primary font-semibold hover:underline">hr@amyntortech.com</a>. Be sure to include the job title in the subject line.
+                                    </>
+                                )}
                             </p>
                         </div>
                     </div>

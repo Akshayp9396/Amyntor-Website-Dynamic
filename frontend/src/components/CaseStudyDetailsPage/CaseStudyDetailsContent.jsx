@@ -26,7 +26,7 @@ const CaseStudyDetailsContent = ({ project }) => {
             {/* 1. Introduction */}
             <section className="mb-10">
                 <h2 className="text-[22px] font-bold text-[#0b1021] mb-5">Introduction</h2>
-                <p className="text-slate-700 leading-relaxed text-[15px]">
+                <p className="text-slate-700 leading-relaxed text-[15px] text-justify">
                     {project.introduction}
                 </p>
             </section>
@@ -34,7 +34,7 @@ const CaseStudyDetailsContent = ({ project }) => {
             {/* 2. Scope of Work */}
             <section className="mb-10">
                 <h2 className="text-[22px] font-bold text-[#0b1021] mb-5">Scope of Work</h2>
-                <p className="text-slate-700 leading-relaxed text-[15px] mb-4">
+                <p className="text-slate-700 leading-relaxed text-[15px] mb-4 text-justify">
                     {project.scopeOfWork.intro}
                 </p>
                 <ul className="pl-1">
@@ -47,14 +47,14 @@ const CaseStudyDetailsContent = ({ project }) => {
             {/* 3. Site Actions Taken */}
             <section className="mb-10">
                 <h2 className="text-[22px] font-bold text-[#0b1021] mb-5">Site Actions Taken</h2>
-                <p className="text-slate-700 leading-relaxed text-[15px] mb-6">
+                <p className="text-slate-700 leading-relaxed text-[15px] mb-6 text-justify">
                     {project.siteActionsIntro}
                 </p>
                 <div className="flex flex-col gap-6">
                     {project.siteActions.map((action, idx) => (
                         <div key={idx}>
                             <h3 className="text-[16px] font-bold text-[#0b1021] mb-2">{action.title}</h3>
-                            <p className="text-slate-700 leading-relaxed text-[15px]">{action.description}</p>
+                            <p className="text-slate-700 leading-relaxed text-[15px] text-justify">{action.description}</p>
                         </div>
                     ))}
                 </div>
@@ -63,7 +63,7 @@ const CaseStudyDetailsContent = ({ project }) => {
             {/* 4. Results and Benefits */}
             <section className="mb-10">
                 <h2 className="text-[22px] font-bold text-[#0b1021] mb-5">Results and Benefits</h2>
-                <p className="text-slate-700 leading-relaxed text-[15px] mb-5">
+                <p className="text-slate-700 leading-relaxed text-[15px] mb-5 text-justify">
                     {project.resultsAndBenefits.intro}
                 </p>
                 <ul className="pl-1 space-y-4">
@@ -79,7 +79,7 @@ const CaseStudyDetailsContent = ({ project }) => {
             {/* 5. Conclusion */}
             <section>
                 <h2 className="text-[22px] font-bold text-[#0b1021] mb-5">Conclusion</h2>
-                <p className="text-slate-700 leading-relaxed text-[15px]">
+                <p className="text-slate-700 leading-relaxed text-[15px] text-justify">
                     {project.conclusion}
                 </p>
             </section>

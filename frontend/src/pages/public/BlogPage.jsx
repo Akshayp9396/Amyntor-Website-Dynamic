@@ -11,7 +11,7 @@ const BlogPage = () => {
     }, []);
 
     return (
-        <div className="min-h-screen bg-[#F5F8FA] overflow-hidden">
+        <div className="min-h-screen bg-[#F5F8FA] flex flex-col">
             <Navbar />
 
             <main>

@@ -78,17 +78,39 @@ const BlogSection = () => {
                     <div className="flex items-center gap-3">
                         <button
                             onClick={scrollPrev}
-                            className="w-14 h-14 rounded-full border-2 border-slate-200 flex items-center justify-center text-slate-600 hover:text-white hover:border-transparent relative overflow-hidden group transition-all auto-hover-fix focus:outline-none"
+                            className="w-14 h-14 rounded-full border-2 border-slate-200 flex items-center justify-center text-slate-600 hover:text-brand-primary transition-all duration-300 focus:outline-none relative group"
+                            style={{
+                                backgroundOrigin: "border-box",
+                                backgroundClip: "padding-box, border-box"
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundImage = "linear-gradient(#f5f8fa, #f5f8fa), linear-gradient(to right, #2563eb, #02a1fd)";
+                                e.currentTarget.style.borderColor = "transparent";
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundImage = "none";
+                                e.currentTarget.style.borderColor = "#e2e8f0"; // slate-200
+                            }}
                         >
-                            <div className="absolute inset-0 bg-gradient-to-r from-brand-dark to-brand-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                            <ChevronLeft size={24} className="relative z-10" />
+                            <ChevronLeft size={28} className="relative z-10 transition-transform group-hover:-translate-x-0.5" />
                         </button>
                         <button
                             onClick={scrollNext}
-                            className="w-14 h-14 rounded-full border-2 border-slate-200 flex items-center justify-center text-slate-600 hover:text-white hover:border-transparent relative overflow-hidden group transition-all auto-hover-fix focus:outline-none"
+                            className="w-14 h-14 rounded-full border-2 border-slate-200 flex items-center justify-center text-slate-600 hover:text-brand-primary transition-all duration-300 focus:outline-none relative group"
+                            style={{
+                                backgroundOrigin: "border-box",
+                                backgroundClip: "padding-box, border-box"
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundImage = "linear-gradient(#f5f8fa, #f5f8fa), linear-gradient(to right, #2563eb, #02a1fd)";
+                                e.currentTarget.style.borderColor = "transparent";
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundImage = "none";
+                                e.currentTarget.style.borderColor = "#e2e8f0"; // slate-200
+                            }}
                         >
-                            <div className="absolute inset-0 bg-gradient-to-r from-brand-dark to-brand-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                            <ChevronRight size={24} className="relative z-10" />
+                            <ChevronRight size={28} className="relative z-10 transition-transform group-hover:translate-x-0.5" />
                         </button>
                     </div>
                 </div>
@@ -111,8 +133,8 @@ const BlogSection = () => {
                                     onClick={() => setActiveCard(blog.id)}
                                     className={`bg-white rounded-[2.5rem] p-0 shadow-sm transition-shadow duration-300 group flex flex-col h-full overflow-hidden border border-slate-100 ${activeCard === blog.id ? 'shadow-xl' : 'hover:shadow-xl'}`}
                                 >
-                                    {/* Image Wrapper */}
-                                    <div className="relative h-[260px] mb-8 bg-slate-100 overflow-hidden">
+                                    {/* Image Wrapper — Reduced height on mobile for compact cards */}
+                                    <div className="relative h-[220px] md:h-[260px] mb-4 md:mb-8 bg-slate-100 overflow-hidden">
 
                                         {/* Zoom-Only Hover Image */}
                                         <motion.img
@@ -124,11 +146,6 @@ const BlogSection = () => {
                                             draggable="false"
                                         />
 
-                                        {/* Glassmorphism Category Overlay */}
-                                        <div className="absolute top-6 left-6 px-4 py-1.5 bg-white/20 backdrop-blur-md border border-white/20 rounded-full text-white font-bold text-xs shadow-lg tracking-wider">
-                                            {blog.category}
-                                        </div>
-
                                         {/* Dynamic Cutout Date Badge Overlay */}
                                         <div className="absolute bottom-0 left-0 bg-white pr-6 pl-4 pt-4 rounded-tr-[2rem]">
                                             <div className="flex items-center gap-2">
@@ -139,13 +156,13 @@ const BlogSection = () => {
                                     </div>
 
                                     {/* Static Content Body */}
-                                    <div className="px-8 flex flex-col flex-grow bg-white">
+                                    <div className="px-6 md:px-8 flex flex-col flex-grow bg-white">
                                         {/* Bold Heading (No text color change on hover) */}
-                                        <h3 className="text-xl md:text-2xl font-bold text-[#0b1021] mb-8 leading-snug">
+                                        <h3 className="text-lg md:text-2xl font-bold text-[#0b1021] mb-4 md:mb-8 leading-snug">
                                             {blog.title}
                                         </h3>
 
-                                        <div className="mt-auto pb-8">
+                                        <div className="mt-auto pb-6 md:pb-8">
                                             <hr className="border-slate-100 mb-6" />
                                             {/* Explore More link (Gradient hover on text) */}
                                             <div className="flex items-center">

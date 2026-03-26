@@ -1,10 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowDown } from 'lucide-react';
-import { careersPageData } from './careersData';
+import { useContent } from '../../context/ContentContext';
 
 const CareersIntro = () => {
-    const { intro } = careersPageData;
+    const { careersPageData } = useContent();
+    const intro = careersPageData?.intro;
+
+    if (!intro) return null;
 
     const handleScrollToRoles = () => {
         document.getElementById('open-roles-section').scrollIntoView({ behavior: 'smooth' });
@@ -27,18 +30,36 @@ const CareersIntro = () => {
                             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#0b1021] leading-tight">
                                 {intro.heading}
                             </h2>
-                            <p className="text-lg text-[#0b1021]/80 leading-relaxed max-w-xl">
+                            <p className="text-lg text-[#0b1021]/80 leading-relaxed max-w-xl text-justify">
                                 {intro.description}
                             </p>
 
                             <div className="pt-8">
                                 <button
                                     onClick={handleScrollToRoles}
-                                    className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-full border border-slate-200 text-[#0b1021] font-semibold overflow-hidden transition-all duration-300 hover:border-transparent hover:shadow-lg focus:outline-none"
+                                    className="group relative inline-flex items-center gap-4 px-10 py-4 rounded-full border border-slate-200 text-[#0b1021] font-bold transition-all duration-300 hover:shadow-md focus:outline-none"
                                 >
-                                    <div className="absolute inset-0 bg-gradient-to-r from-brand-dark to-brand-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"></div>
-                                    <span className="relative z-10 transition-colors duration-300 group-hover:text-white">Explore Open Roles</span>
-                                    <ArrowDown size={20} className="relative z-10 transition-colors duration-300 group-hover:text-white group-hover:translate-y-1" />
+                                    <span className="relative z-10 transition-all duration-300 group-hover:bg-clip-text group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-brand-dark group-hover:to-brand-primary">
+                                        Explore Open Roles
+                                    </span>
+                                    <div className="relative z-10">
+                                        {/* Premium Gradient Icon */}
+                                        <svg className="w-5 h-5 transition-all duration-300 group-hover:translate-y-1" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <defs>
+                                                <linearGradient id="icon-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                    <stop offset="0%" stopColor="#2563eb" />
+                                                    <stop offset="100%" stopColor="#02a1fd" />
+                                                </linearGradient>
+                                            </defs>
+                                            <path 
+                                                d="M12 5V19M12 19L5 12M12 19L19 12" 
+                                                className="stroke-slate-400 group-hover:stroke-[url(#icon-grad)]" 
+                                                strokeWidth="3" 
+                                                strokeLinecap="round" 
+                                                strokeLinejoin="round" 
+                                            />
+                                        </svg>
+                                    </div>
                                 </button>
                             </div>
                         </motion.div>
