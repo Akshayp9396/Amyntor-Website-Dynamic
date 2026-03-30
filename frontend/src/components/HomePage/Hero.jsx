@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { useContent } from '../context/ContentContext';
+import { useContent } from '../../context/ContentContext';
 
 /**
  * Code Walkthrough

@@ -1,3 +1,14 @@
+/**
+ * Code Walkthrough: ManageContact.jsx
+ * 
+ * Purpose: A management suite for the "Contact Us" section, upgraded to the White Glass UI.
+ * Features:
+ * 1. Unified Header and "Save & Push Live" action with "Premium Pill" tab design.
+ * 2. Visual Tabbed interface (Hero Section, Get in Touch, Branches).
+ * 3. Consistent AdminCard usage.
+ * 4. High-fidelity Glassmorphism modals for Branch editing.
+ */
+
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -21,16 +32,8 @@ import {
     ExternalLink
 } from 'lucide-react';
 import { useContent } from '../../context/ContentContext';
+import { AdminCard, FormInput, FormTextarea } from '../components/AdminUI';
 
-/**
- * Code Walkthrough: ManageContact.jsx
- * 
- * Purpose: A management suite for the "Contact Us" section.
- * Features:
- * 1. Hero Management: Control the Contact header visuals and text.
- * 2. Info Section: Edit the "Get in Touch" header and contact methods (Email, Phone, Whatsapp, Socials).
- * 3. Branches CRUD: Full management of branch cards including location, type, contact details, and images.
- */
 const ManageContact = () => {
     const { contactPageData, setContactPageData } = useContent();
     const [activeTab, setActiveTab] = useState('hero');
@@ -49,7 +52,7 @@ const ManageContact = () => {
         image: ""
     });
 
-    if (!contactPageData) return <div className="p-8 text-slate-400">Loading Contact Data...</div>;
+    if (!contactPageData) return <div className="p-8 text-slate-400 font-bold">Loading Contact Data...</div>;
 
     // === Global Handlers ===
 
@@ -57,7 +60,7 @@ const ManageContact = () => {
         setIsSaving(true);
         setTimeout(() => {
             setIsSaving(false);
-            alert("Contact content updated successfully!");
+            alert("Contact content pushed to live successfully!");
         }, 800);
     };
 
@@ -138,9 +141,9 @@ const ManageContact = () => {
     };
 
     const tabs = [
-        { id: 'hero', label: 'Hero Section', icon: LayoutGrid },
-        { id: 'info', label: 'Get in Touch', icon: MessageSquare },
-        { id: 'branches', label: 'Branches', icon: MapPin },
+        { id: 'hero', label: 'Hero Section' },
+        { id: 'info', label: 'Get in Touch' },
+        { id: 'branches', label: 'Branches' },
     ];
 
     return (
@@ -150,42 +153,40 @@ const ManageContact = () => {
             transition={{ duration: 0.3 }}
             className="flex flex-col h-full space-y-6 pb-20"
         >
-            {/* Header */}
-            <div className="flex justify-between items-end px-2">
-                <div>
-                    <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">Contact Management</h1>
+            {/* Header / Navigation & Global Action */}
+            <div className="flex justify-between items-center px-1 py-2">
+                {/* Premium Tab Navigation */}
+                <div className="flex space-x-1 bg-slate-100/50 p-1.5 rounded-[1.5rem] w-fit border border-slate-200/60">
+                    {tabs.map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id)}
+                            className={`px-4 py-2 rounded-[1.1rem] font-bold text-[13px] transition-all duration-300 ${activeTab === tab.id
+                                ? 'bg-white text-slate-900 shadow-lg shadow-slate-200/50 scale-[1.02]'
+                                : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'
+                                }`}
+                        >
+                            {tab.label}
+                        </button>
+                    ))}
                 </div>
+
+                {/* Global Action Button */}
                 <button
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="bg-brand-primary hover:bg-brand-dark text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md shadow-brand-primary/20 flex items-center gap-2"
+                    className="group bg-white/70 backdrop-blur-xl border border-white/20 hover:shadow-2xl hover:shadow-emerald-200/20 text-emerald-600 font-black py-3 px-6 rounded-2xl transition-all flex items-center gap-3 active:scale-95 shadow-sm overflow-hidden relative"
                 >
-                    <Save size={18} />
-                    {isSaving ? 'Syncing...' : 'Save Changes'}
+                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-teal-600/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <Save size={18} strokeWidth={3} className="text-emerald-600 group-hover:scale-110 transition-transform" />
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-700 text-sm">
+                        {isSaving ? 'Pushing...' : 'Save & Push Live'}
+                    </span>
                 </button>
             </div>
 
-            {/* Tabs */}
-            <div className="flex space-x-2 border-b border-slate-200/60 pb-2">
-                {tabs.map((tab) => (
-                    <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
-                        className={`px-5 py-2.5 rounded-t-xl font-bold text-sm transition-all ${activeTab === tab.id
-                            ? 'bg-white text-brand-primary border-t border-x border-slate-200/60 shadow-[0_-4px_10px_-4px_rgba(0,0,0,0.05)] translate-y-[1px]'
-                            : 'bg-transparent text-slate-500 hover:text-slate-700 hover:bg-white/40 border border-transparent'
-                            }`}
-                    >
-                        <div className="flex items-center gap-2">
-                            <tab.icon size={16} />
-                            {tab.label}
-                        </div>
-                    </button>
-                ))}
-            </div>
-
             {/* Content Area */}
-            <div className="bg-white border border-slate-200/60 rounded-b-[2rem] rounded-tr-[2rem] shadow-sm p-8 min-h-[500px]">
+            <div className="min-h-[600px]">
                 <AnimatePresence mode="wait">
                     {activeTab === 'hero' && (
                         <motion.div
@@ -193,68 +194,50 @@ const ManageContact = () => {
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: 10 }}
-                            className="space-y-12"
+                            className="grid grid-cols-1 lg:grid-cols-3 gap-6"
                         >
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                                <div className="lg:col-span-2 space-y-6">
-                                    <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-5">
-                                        <div className="flex items-center gap-3 mb-2">
-                                            <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center"><LayoutGrid size={16} /></div>
-                                            <h3 className="text-lg font-bold text-slate-800">Hero Section</h3>
-                                        </div>
-                                        <div className="space-y-4">
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                <div>
-                                                    <label className="text-xs font-bold text-slate-600 block mb-1">Badge Tag</label>
-                                                    <input
-                                                        type="text"
-                                                        value={contactPageData.hero.tag}
-                                                        onChange={(e) => setContactPageData({ ...contactPageData, hero: { ...contactPageData.hero, tag: e.target.value } })}
-                                                        className="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-brand-primary outline-none font-bold"
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <label className="text-xs font-bold text-slate-600 block mb-1">Heading</label>
-                                                    <input
-                                                        type="text"
-                                                        value={contactPageData.hero.title}
-                                                        onChange={(e) => setContactPageData({ ...contactPageData, hero: { ...contactPageData.hero, title: e.target.value } })}
-                                                        className="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-brand-primary outline-none font-black"
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <label className="text-xs font-bold text-slate-600 block mb-1">Tagline</label>
-                                                <textarea
-                                                    rows="4"
-                                                    value={contactPageData.hero.tagline}
-                                                    onChange={(e) => setContactPageData({ ...contactPageData, hero: { ...contactPageData.hero, tagline: e.target.value } })}
-                                                    className="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-brand-primary outline-none leading-relaxed"
-                                                />
-                                            </div>
-                                        </div>
+                            <div className="lg:col-span-2 space-y-6">
+                                <AdminCard title="Hero Section">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+                                        <FormInput
+                                            label=" Tag"
+                                            value={contactPageData.hero.tag}
+                                            onChange={(e) => setContactPageData({ ...contactPageData, hero: { ...contactPageData.hero, tag: e.target.value } })}
+                                        />
+                                        <FormInput
+                                            label="Main Heading"
+                                            value={contactPageData.hero.title}
+                                            onChange={(e) => setContactPageData({ ...contactPageData, hero: { ...contactPageData.hero, title: e.target.value } })}
+                                        />
                                     </div>
-                                </div>
+                                    <div className="mt-6">
+                                        <FormTextarea
+                                            label="Hero Tagline"
+                                            rows={2}
+                                            value={contactPageData.hero.tagline}
+                                            onChange={(e) => setContactPageData({ ...contactPageData, hero: { ...contactPageData.hero, tagline: e.target.value } })}
+                                        />
+                                    </div>
+                                </AdminCard>
+                            </div>
 
-                                <div className="space-y-4">
-                                    <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 h-full">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <h3 className="text-lg font-bold text-slate-800 tracking-tight">Hero Background</h3>
-                                            <span className="text-[10px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded font-bold uppercase">Image Preview</span>
+                            <div className="space-y-6">
+                                <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-4">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <h3 className="text-lg font-bold text-slate-800 tracking-tight">Hero Visuals</h3>
+                                        <span className="text-[10px] font-bold text-brand-primary uppercase tracking-tighter">Recommended: 1920 x 1080 PX</span>
+                                    </div>
+                                    <div className="relative group overflow-hidden rounded-[2rem] bg-slate-900 border border-slate-200 aspect-video flex items-center justify-center shadow-inner">
+                                        <img
+                                            src={contactPageData.hero.backgroundImage}
+                                            className="w-full h-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-110"
+                                            alt="Hero background preview"
+                                        />
+                                        <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[4px] opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white cursor-pointer pointer-events-none">
+                                            <ImageIcon size={28} className="mb-2" />
+                                            <p className="text-[11px] font-black uppercase tracking-widest">Change Media</p>
                                         </div>
-                                        <div className="relative group overflow-hidden rounded-2xl bg-slate-900 aspect-[4/3] flex items-center justify-center border border-slate-200 shadow-inner">
-                                            <img
-                                                src={contactPageData.hero.backgroundImage}
-                                                className="w-full h-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-105"
-                                                alt="Hero Preview"
-                                            />
-                                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20 backdrop-blur-[2px]">
-                                                <label className="cursor-pointer bg-white text-slate-900 px-5 py-2.5 rounded-xl text-xs font-bold shadow-2xl flex items-center gap-2 hover:scale-105 active:scale-95 transition-all">
-                                                    <ImageIcon size={14} /> Replace Background
-                                                    <input type="file" className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, 'hero.backgroundImage')} />
-                                                </label>
-                                            </div>
-                                        </div>
+                                        <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept="image/*" onChange={(e) => handleImageUpload(e, 'hero.backgroundImage')} />
                                     </div>
                                 </div>
                             </div>
@@ -267,105 +250,59 @@ const ManageContact = () => {
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: 10 }}
-                            className="space-y-8"
+                            className="space-y-6"
                         >
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                                {/* Text Content */}
-                                <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-5">
-                                    <div className="flex items-center gap-3 mb-2">
-                                        <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center"><MessageSquare size={16} /></div>
-                                        <h3 className="text-lg font-bold text-slate-800">Heading & Description</h3>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <AdminCard title="Heading & Description">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+                                        <FormInput
+                                            label=" Tag"
+                                            value={contactPageData.info.tag}
+                                            onChange={(e) => setContactPageData({ ...contactPageData, info: { ...contactPageData.info, tag: e.target.value } })}
+                                        />
+                                        <FormInput
+                                            label="Main Heading"
+                                            value={contactPageData.info.title}
+                                            onChange={(e) => setContactPageData({ ...contactPageData, info: { ...contactPageData.info, title: e.target.value } })}
+                                        />
                                     </div>
-                                    <div className="space-y-4">
-                                        <div>
-                                            <label className="text-xs font-bold text-slate-600 block mb-1">Badge Tag</label>
-                                            <input
-                                                type="text"
-                                                value={contactPageData.info.tag}
-                                                onChange={(e) => setContactPageData({ ...contactPageData, info: { ...contactPageData.info, tag: e.target.value } })}
-                                                className="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-brand-primary outline-none font-bold"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="text-xs font-bold text-slate-600 block mb-1">Section Title</label>
-                                            <input
-                                                type="text"
-                                                value={contactPageData.info.title}
-                                                onChange={(e) => setContactPageData({ ...contactPageData, info: { ...contactPageData.info, title: e.target.value } })}
-                                                className="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-brand-primary outline-none font-black"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="text-xs font-bold text-slate-600 block mb-1">Description</label>
-                                            <textarea
-                                                rows="3"
-                                                value={contactPageData.info.description}
-                                                onChange={(e) => setContactPageData({ ...contactPageData, info: { ...contactPageData.info, description: e.target.value } })}
-                                                className="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-brand-primary outline-none leading-relaxed"
-                                            />
-                                        </div>
+                                    <div className="mt-6">
+                                        <FormTextarea
+                                            label="Description"
+                                            rows={3}
+                                            value={contactPageData.info.description}
+                                            onChange={(e) => setContactPageData({ ...contactPageData, info: { ...contactPageData.info, description: e.target.value } })}
+                                        />
                                     </div>
-                                </div>
+                                </AdminCard>
 
-                                {/* Phone & Whatsapp */}
-                                <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-6">
-                                    <div className="flex items-center gap-3 mb-2">
-                                        <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center"><Phone size={16} /></div>
-                                        <h3 className="text-lg font-bold text-slate-800">Call & Support</h3>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div className="space-y-4">
-                                            <div>
-                                                <label className="text-xs font-bold text-slate-600 block mb-1">Phone Number</label>
-                                                <input
-                                                    type="text"
-                                                    value={contactPageData.info.phone.number}
-                                                    onChange={(e) => setContactPageData({ ...contactPageData, info: { ...contactPageData.info, phone: { ...contactPageData.info.phone, number: e.target.value } } })}
-                                                    className="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-brand-primary outline-none font-bold"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="text-xs font-bold text-slate-600 block mb-1">Operating Hours</label>
-                                                <textarea
-                                                    rows="2"
-                                                    value={contactPageData.info.phone.hours}
-                                                    onChange={(e) => setContactPageData({ ...contactPageData, info: { ...contactPageData.info, phone: { ...contactPageData.info.phone, hours: e.target.value } } })}
-                                                    className="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-brand-primary outline-none leading-relaxed"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="space-y-4">
-                                            <div>
-                                                <label className="text-xs font-bold text-slate-600 block mb-1">Whatsapp Number</label>
-                                                <input
-                                                    type="text"
-                                                    value={contactPageData.info.whatsapp.number}
-                                                    onChange={(e) => setContactPageData({ ...contactPageData, info: { ...contactPageData.info, whatsapp: { ...contactPageData.info.whatsapp, number: e.target.value } } })}
-                                                    className="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-brand-primary outline-none font-bold"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="text-xs font-bold text-slate-600 block mb-1">Support Label</label>
-                                                <input
-                                                    type="text"
-                                                    value={contactPageData.info.whatsapp.label}
-                                                    onChange={(e) => setContactPageData({ ...contactPageData, info: { ...contactPageData.info, whatsapp: { ...contactPageData.info.whatsapp, label: e.target.value } } })}
-                                                    className="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-brand-primary outline-none font-bold"
-                                                />
-                                            </div>
+                                <AdminCard title="Call & Support">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+                                        <FormInput
+                                            label="Phone Number"
+                                            value={contactPageData.info.phone.number}
+                                            onChange={(e) => setContactPageData({ ...contactPageData, info: { ...contactPageData.info, phone: { ...contactPageData.info.phone, number: e.target.value } } })}
+                                        />
+                                        <FormInput
+                                            label="Whatsapp Number"
+                                            value={contactPageData.info.whatsapp.number}
+                                            onChange={(e) => setContactPageData({ ...contactPageData, info: { ...contactPageData.info, whatsapp: { ...contactPageData.info.whatsapp, number: e.target.value } } })}
+                                        />
+                                        <div className="md:col-span-2">
+                                            <FormInput
+                                                label="Operating Hours"
+                                                value={contactPageData.info.phone.hours}
+                                                onChange={(e) => setContactPageData({ ...contactPageData, info: { ...contactPageData.info, phone: { ...contactPageData.info.phone, hours: e.target.value } } })}
+                                            />
                                         </div>
                                     </div>
-                                </div>
+                                </AdminCard>
                             </div>
 
-                            {/* Emails */}
-                            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
-                                <div className="flex items-center justify-between mb-6">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-lg bg-violet-50 text-violet-600 flex items-center justify-center"><Mail size={16} /></div>
-                                        <h3 className="text-lg font-bold text-slate-800">Email Addresses</h3>
-                                    </div>
-                                    <button 
+                            <AdminCard
+                                title="Email Addresses"
+                                actions={
+                                    <button
                                         onClick={() => setContactPageData({
                                             ...contactPageData,
                                             info: {
@@ -373,37 +310,39 @@ const ManageContact = () => {
                                                 emails: [...contactPageData.info.emails, { id: Date.now(), label: "New Email", value: "info@amyntortech.com" }]
                                             }
                                         })}
-                                        className="text-[10px] font-bold text-brand-primary bg-white border border-brand-primary/20 px-3 py-1.5 rounded-lg hover:bg-brand-primary hover:text-white transition-all uppercase tracking-widest"
+                                        className="group relative flex items-center gap-2 px-6 py-2 bg-white border border-slate-200/60 rounded-xl text-[13px] font-black transition-all hover:shadow-xl hover:shadow-slate-200/50 active:scale-95 overflow-hidden"
                                     >
-                                        + Add email department
+                                        <Plus size={16} strokeWidth={3} className="text-brand-primary group-hover:scale-110 transition-transform" />
+                                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-primary to-brand-dark">
+                                            Add Email
+                                        </span>
                                     </button>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                }
+                            >
+                                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-4">
                                     {contactPageData.info.emails.map((email, idx) => (
-                                        <div key={email.id} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
-                                            <div className="flex-grow grid grid-cols-2 gap-3">
-                                                <input
-                                                    type="text"
+                                        <div key={email.id} className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center gap-4">
+                                            <div className="flex-grow space-y-3">
+                                                <FormInput
+                                                    label="Department Label"
                                                     value={email.label}
                                                     onChange={(e) => {
                                                         const newEmails = [...contactPageData.info.emails];
                                                         newEmails[idx].label = e.target.value;
                                                         setContactPageData({ ...contactPageData, info: { ...contactPageData.info, emails: newEmails } });
                                                     }}
-                                                    className="border-none bg-slate-50 rounded-lg px-3 py-1.5 text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-brand-primary transition-all"
                                                 />
-                                                <input
-                                                    type="text"
+                                                <FormInput
+                                                    label="Email Address"
                                                     value={email.value}
                                                     onChange={(e) => {
                                                         const newEmails = [...contactPageData.info.emails];
                                                         newEmails[idx].value = e.target.value;
                                                         setContactPageData({ ...contactPageData, info: { ...contactPageData.info, emails: newEmails } });
                                                     }}
-                                                    className="border-none bg-slate-50 rounded-lg px-3 py-1.5 text-xs font-medium text-slate-500 outline-none focus:ring-2 focus:ring-brand-primary transition-all"
                                                 />
                                             </div>
-                                            <button 
+                                            <button
                                                 onClick={() => setContactPageData({
                                                     ...contactPageData,
                                                     info: {
@@ -411,25 +350,20 @@ const ManageContact = () => {
                                                         emails: contactPageData.info.emails.filter(e => e.id !== email.id)
                                                     }
                                                 })}
-                                                className="p-1 px-2 text-slate-300 hover:text-rose-600 transition-colors"
+                                                className="p-2 text-slate-300 hover:text-rose-600 transition-colors bg-white border border-slate-200 rounded-lg shadow-sm"
                                             >
                                                 <Trash2 size={16} />
                                             </button>
                                         </div>
                                     ))}
                                 </div>
-                            </div>
+                            </AdminCard>
 
-                            {/* Google Maps URL */}
-                            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200">
-                                <div className="flex items-center gap-3 mb-6">
-                                    <div className="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center"><MapPin size={16} /></div>
-                                    <h3 className="text-lg font-bold text-slate-800">Google Maps Location</h3>
-                                </div>
-                                <div className="space-y-4">
+                            <AdminCard title="Google Maps Integration">
+                                <div className="space-y-4 mt-2">
                                     <div className="flex items-center justify-between px-1">
-                                        <label className="text-xs font-bold text-slate-600">Maps Embed URL</label>
-                                        <a href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer" className="text-[10px] font-bold text-brand-primary hover:underline flex items-center gap-1">
+                                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Maps Embed URL</label>
+                                        <a href="https://www.google.com/maps" target="_blank" rel="noopener noreferrer" className="text-[10px] font-bold text-brand-primary hover:underline flex items-center gap-1 uppercase tracking-widest">
                                             Get Link from Google Maps <ExternalLink size={10} />
                                         </a>
                                     </div>
@@ -441,13 +375,10 @@ const ManageContact = () => {
                                             info: { ...contactPageData.info, googleMapsUrl: e.target.value }
                                         })}
                                         placeholder="Paste the <iframe> src URL here..."
-                                        className="w-full bg-white border border-slate-300 rounded-lg p-3 text-xs outline-none focus:ring-2 focus:ring-brand-primary transition-all font-medium text-slate-600"
+                                        className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl px-5 py-3 text-[15px] focus:border-slate-400 focus:bg-white transition-all outline-none font-medium placeholder:text-slate-400"
                                     />
-                                    <p className="text-[10px] text-slate-400 italic px-1">
-                                        Note: Only paste the URL inside the 'src' attribute of the Google Maps embed code.
-                                    </p>
                                 </div>
-                            </div>
+                            </AdminCard>
                         </motion.div>
                     )}
 
@@ -457,212 +388,191 @@ const ManageContact = () => {
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: 10 }}
-                            className="space-y-8"
+                            className="space-y-6"
                         >
-                            {/* Section Header Editor */}
-                            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-5">
-                                <div className="flex items-center gap-3 mb-2">
-                                    <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center"><MapPin size={16} /></div>
-                                    <h3 className="text-lg font-bold text-slate-800">Branch Section Header</h3>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="text-xs font-bold text-slate-600 block mb-1">Badge Tag</label>
-                                        <input
-                                            type="text"
-                                            value={contactPageData.branches.tag}
-                                            onChange={(e) => setContactPageData({ ...contactPageData, branches: { ...contactPageData.branches, tag: e.target.value } })}
-                                            className="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-brand-primary outline-none font-bold"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="text-xs font-bold text-slate-600 block mb-1">Section Title</label>
-                                        <input
-                                            type="text"
-                                            value={contactPageData.branches.title}
-                                            onChange={(e) => setContactPageData({ ...contactPageData, branches: { ...contactPageData.branches, title: e.target.value } })}
-                                            className="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-brand-primary outline-none font-black"
-                                        />
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="text-xs font-bold text-slate-600 block mb-1">Description</label>
-                                    <textarea
-                                        rows="3"
-                                        value={contactPageData.branches.description}
-                                        onChange={(e) => setContactPageData({ ...contactPageData, branches: { ...contactPageData.branches, description: e.target.value } })}
-                                        className="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-brand-primary outline-none leading-relaxed"
+                            <AdminCard title="Branch Section Header">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+                                    <FormInput
+                                        label=" Tag"
+                                        value={contactPageData.branches.tag}
+                                        onChange={(e) => setContactPageData({ ...contactPageData, branches: { ...contactPageData.branches, tag: e.target.value } })}
+                                    />
+                                    <FormInput
+                                        label="Main Heading"
+                                        value={contactPageData.branches.title}
+                                        onChange={(e) => setContactPageData({ ...contactPageData, branches: { ...contactPageData.branches, title: e.target.value } })}
                                     />
                                 </div>
-                            </div>
-
-                            {/* Branches List */}
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between px-2">
-                                    <h3 className="text-lg font-bold text-slate-800 tracking-tight">Branch Offices</h3>
-                                    <button 
-                                        onClick={handleOpenAddBranch}
-                                        className="bg-slate-900 hover:bg-black text-white px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-lg"
-                                    >
-                                        <Plus size={16} /> Add New Branch
-                                    </button>
+                                <div className="mt-6">
+                                    <FormTextarea
+                                        label="Description"
+                                        rows={2}
+                                        value={contactPageData.branches.description}
+                                        onChange={(e) => setContactPageData({ ...contactPageData, branches: { ...contactPageData.branches, description: e.target.value } })}
+                                    />
                                 </div>
+                            </AdminCard>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <AdminCard
+                                title="Branch Offices"
+                                actions={
+                                    <button
+                                        onClick={handleOpenAddBranch}
+                                        className="group relative flex items-center gap-2 px-6 py-2.5 bg-white border border-slate-200/60 rounded-2xl text-[13px] font-black transition-all hover:shadow-xl hover:shadow-slate-200/50 active:scale-95 overflow-hidden"
+                                    >
+                                        <Plus size={16} strokeWidth={3} className="text-brand-primary group-hover:scale-110 transition-transform" />
+                                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-primary to-brand-dark">
+                                            Add New Branch
+                                        </span>
+                                    </button>
+                                }
+                            >
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
                                     {contactPageData.branches.cards.map((branch, idx) => (
-                                        <div key={branch.id || idx} className="bg-white border border-slate-200 rounded-[2rem] p-6 shadow-sm group hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
+                                        <div key={branch.id || idx} className="bg-slate-50 border border-slate-200 rounded-[2rem] p-6 group hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
                                             <div className="flex items-center gap-4 mb-6">
                                                 <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 border-2 border-brand-primary/10">
                                                     <img src={branch.image} className="w-full h-full object-cover" alt={branch.city} />
                                                 </div>
                                                 <div>
-                                                    <h4 className="font-bold text-slate-800">{branch.city}</h4>
+                                                    <h4 className="font-black text-slate-800">{branch.city}</h4>
                                                     <p className="text-[10px] font-black text-brand-primary uppercase tracking-widest">{branch.type}</p>
                                                 </div>
                                             </div>
                                             <div className="space-y-3 mb-6">
                                                 <div className="flex items-start gap-2">
-                                                    <MapPin size={12} className="text-slate-300 mt-1 shrink-0" />
-                                                    <p className="text-[11px] text-slate-500 leading-normal line-clamp-2">{branch.address}</p>
+                                                    <MapPin size={12} className="text-slate-400 mt-1 shrink-0" />
+                                                    <p className="text-[11px] text-slate-600 font-medium leading-normal line-clamp-2">{branch.address}</p>
                                                 </div>
                                                 <div className="flex items-center gap-2">
-                                                    <Phone size={12} className="text-slate-300 shrink-0" />
-                                                    <p className="text-[11px] text-slate-500">{branch.phone}</p>
+                                                    <Phone size={12} className="text-slate-400 shrink-0" />
+                                                    <p className="text-[11px] font-bold text-slate-600">{branch.phone}</p>
                                                 </div>
                                                 <div className="flex items-center gap-2">
-                                                    <Mail size={12} className="text-slate-300 shrink-0" />
-                                                    <p className="text-[11px] text-slate-500">{branch.email}</p>
+                                                    <Mail size={12} className="text-slate-400 shrink-0" />
+                                                    <p className="text-[11px] font-bold text-slate-600">{branch.email}</p>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center justify-end gap-2 pt-4 border-t border-slate-50">
-                                                <button onClick={() => handleOpenEditBranch(branch, idx)} className="p-2 text-slate-400 hover:text-brand-primary bg-slate-50 rounded-lg transition-all"><Edit3 size={16} /></button>
-                                                <button onClick={() => handleDeleteBranch(idx)} className="p-2 text-slate-400 hover:text-rose-600 bg-slate-50 rounded-lg transition-all"><Trash2 size={16} /></button>
+                                            <div className="flex items-center justify-end gap-2 pt-4 border-t border-slate-200/60">
+                                                <button onClick={() => handleOpenEditBranch(branch, idx)} className="p-2 text-slate-400 hover:text-brand-primary bg-white border border-slate-200 shadow-sm rounded-xl transition-all"><Edit3 size={16} /></button>
+                                                <button onClick={() => handleDeleteBranch(idx)} className="p-2 text-slate-400 hover:text-rose-600 bg-white border border-slate-200 shadow-sm rounded-xl transition-all"><Trash2 size={16} /></button>
                                             </div>
                                         </div>
                                     ))}
                                 </div>
-                            </div>
+                            </AdminCard>
                         </motion.div>
                     )}
                 </AnimatePresence>
             </div>
 
-            {/* BRANCH MODAL */}
+            {/* BRANCH EDIT MODAL - WHITE GLASS STYLE */}
             <AnimatePresence>
                 {isBranchModalOpen && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4"
+                        className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4"
                     >
                         <motion.div
                             initial={{ scale: 0.95, opacity: 0, y: 20 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
                             exit={{ scale: 0.95, opacity: 0, y: 20 }}
-                            className="bg-white rounded-[3rem] shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col"
+                            className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col"
                         >
-                            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-white">
+                            <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-white">
                                 <div>
-                                    <h3 className="text-xl font-bold text-slate-800">
+                                    <h3 className="text-xl font-black text-slate-800 tracking-tight">
                                         {editingBranchIdx !== null ? "Edit Branch" : "Add New Branch"}
                                     </h3>
-                                    <p className="text-slate-400 text-xs font-medium mt-0.5">Define location details and contact information.</p>
+                                    <p className="text-slate-400 text-[11px] font-bold uppercase tracking-widest mt-1">Global Presence Management</p>
                                 </div>
-                                <button onClick={() => setIsBranchModalOpen(false)} className="p-2 text-slate-400 hover:text-slate-800 transition-all focus:rotate-90"><X size={20}/></button>
+                                <button onClick={() => setIsBranchModalOpen(false)} className="p-3 bg-white border border-slate-100 rounded-2xl text-slate-400 hover:text-rose-500 shadow-sm hover:shadow-md transition-all active:scale-95"><X size={20} strokeWidth={3} /></button>
                             </div>
 
-                            <div className="flex-1 overflow-y-auto p-8 space-y-6 custom-scrollbar bg-slate-50/20">
-                                <div className="grid grid-cols-2 gap-6">
-                                    <div className="col-span-1">
-                                        <label className="text-xs font-bold text-slate-600 ml-1 block mb-1.5">City / Location</label>
-                                        <input
-                                            type="text"
-                                            value={branchFormData.city}
-                                            onChange={(e) => setBranchFormData({...branchFormData, city: e.target.value})}
-                                            className="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm font-bold focus:ring-2 focus:ring-brand-primary outline-none"
-                                        />
-                                    </div>
-                                    <div className="col-span-1">
-                                        <label className="text-xs font-bold text-slate-600 ml-1 block mb-1.5">Branch Type</label>
-                                        <input
-                                            type="text"
-                                            value={branchFormData.type}
-                                            onChange={(e) => setBranchFormData({...branchFormData, type: e.target.value})}
-                                            className="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm font-bold focus:ring-2 focus:ring-brand-primary outline-none"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label className="text-xs font-bold text-slate-600 ml-1 block mb-1.5">Address</label>
-                                    <textarea
-                                        rows="3"
-                                        value={branchFormData.address}
-                                        onChange={(e) => setBranchFormData({...branchFormData, address: e.target.value})}
-                                        className="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm font-bold focus:ring-2 focus:ring-brand-primary outline-none"
+                            <div className="flex-1 overflow-y-auto p-10 space-y-8 custom-scrollbar bg-slate-50/20">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <FormInput
+                                        label="City / Location"
+                                        value={branchFormData.city}
+                                        onChange={(val) => setBranchFormData({ ...branchFormData, city: val })}
+                                    />
+                                    <FormInput
+                                        label="Branch Type"
+                                        value={branchFormData.type}
+                                        onChange={(val) => setBranchFormData({ ...branchFormData, type: val })}
                                     />
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-6">
-                                    <div>
-                                        <label className="text-xs font-bold text-slate-600 ml-1 block mb-1.5">Phone</label>
-                                        <input
-                                            type="text"
-                                            value={branchFormData.phone}
-                                            onChange={(e) => setBranchFormData({...branchFormData, phone: e.target.value})}
-                                            className="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm font-bold focus:ring-2 focus:ring-brand-primary outline-none"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="text-xs font-bold text-slate-600 ml-1 block mb-1.5">Email</label>
-                                        <input
-                                            type="email"
-                                            value={branchFormData.email}
-                                            onChange={(e) => setBranchFormData({...branchFormData, email: e.target.value})}
-                                            className="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm font-bold focus:ring-2 focus:ring-brand-primary outline-none"
-                                        />
-                                    </div>
+                                <FormTextarea
+                                    label="Address"
+                                    rows={3}
+                                    value={branchFormData.address}
+                                    onChange={(val) => setBranchFormData({ ...branchFormData, address: val })}
+                                />
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <FormInput
+                                        label="Phone Number"
+                                        value={branchFormData.phone}
+                                        onChange={(val) => setBranchFormData({ ...branchFormData, phone: val })}
+                                    />
+                                    <FormInput
+                                        label="Email Address"
+                                        value={branchFormData.email}
+                                        onChange={(val) => setBranchFormData({ ...branchFormData, email: val })}
+                                    />
                                 </div>
 
                                 <div>
-                                    <label className="text-xs font-bold text-slate-600 ml-1 block mb-1.5">Location Image</label>
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-20 h-20 rounded-2xl bg-slate-100 overflow-hidden border border-slate-200 flex-shrink-0">
+                                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 block mb-2">Location Image</label>
+                                    <div className="flex items-center gap-6 bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                                        <div className="w-16 h-16 rounded-2xl bg-brand-primary/5 flex items-center justify-center border border-brand-primary/10 overflow-hidden p-2 group relative">
                                             {branchFormData.image ? (
-                                                <img src={branchFormData.image} className="w-full h-full object-cover" alt="Preview" />
+                                                <>
+                                                    <img src={branchFormData.image} className="w-full h-full object-cover" alt="" />
+                                                    <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
+                                                        <ImageIcon size={16} />
+                                                    </div>
+                                                </>
                                             ) : (
-                                                <div className="w-full h-full flex items-center justify-center text-slate-300"><ImageIcon size={24} /></div>
+                                                <ImageIcon size={20} className="text-brand-primary" />
                                             )}
                                         </div>
-                                        <label className="cursor-pointer bg-slate-900 text-white px-4 py-2 rounded-xl text-[11px] font-bold hover:bg-black transition-all">
-                                            Upload Image
-                                            <input 
-                                                type="file" 
-                                                className="hidden" 
-                                                accept="image/*" 
-                                                onChange={(e) => {
-                                                    const file = e.target.files[0];
-                                                    if (file) {
-                                                        const reader = new FileReader();
-                                                        reader.onloadend = () => setBranchFormData({...branchFormData, image: reader.result});
-                                                        reader.readAsDataURL(file);
-                                                    }
-                                                }} 
-                                            />
-                                        </label>
+                                        <div className="flex-1 space-y-2">
+                                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Upload Branch Visual representation</p>
+                                            <div className="relative overflow-hidden inline-block group/btn w-full">
+                                                <button className="w-full bg-white border border-slate-200 py-2.5 px-4 rounded-xl text-[11px] font-black text-slate-600 hover:text-brand-primary hover:border-brand-primary/30 transition-all shadow-sm flex items-center justify-center gap-2">
+                                                    <ImageIcon size={14} strokeWidth={3} />
+                                                    Change Media
+                                                </button>
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={(e) => {
+                                                        const file = e.target.files[0];
+                                                        if (file) {
+                                                            const reader = new FileReader();
+                                                            reader.onloadend = () => setBranchFormData({ ...branchFormData, image: reader.result });
+                                                            reader.readAsDataURL(file);
+                                                        }
+                                                    }}
+                                                    className="absolute inset-0 opacity-0 cursor-pointer"
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="p-6 bg-white border-t border-slate-100 flex justify-end gap-3">
-                                <button onClick={() => setIsBranchModalOpen(false)} className="px-5 py-2.5 text-xs font-bold text-slate-500 hover:text-slate-800 transition-colors uppercase tracking-widest">Cancel</button>
-                                <button 
-                                    onClick={handleSaveBranch} 
-                                    className="bg-brand-primary hover:bg-brand-dark text-white px-10 py-3.5 rounded-xl text-xs font-bold shadow-lg shadow-brand-primary/20 transition-all active:scale-95 flex items-center gap-2"
+                            <div className="p-8 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 rounded-b-[2.5rem]">
+                                <button onClick={() => setIsBranchModalOpen(false)} className="px-6 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors">Discard</button>
+                                <button
+                                    onClick={handleSaveBranch}
+                                    className="bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white px-10 py-3.5 rounded-2xl text-[13px] font-black transition-all shadow-xl shadow-emerald-500/25 active:scale-95 uppercase tracking-widest"
                                 >
-                                    <Save size={16} />
-                                    {editingBranchIdx !== null ? "Update Branch" : "Add Branch"}
+                                    {editingBranchIdx !== null ? "Update" : "Confirm"}
                                 </button>
                             </div>
                         </motion.div>

@@ -9,8 +9,6 @@
  *    - Full Hero control (Tag, Title, Tagline, Background Image).
  * 4. Image Grid Management:
  *    - Add and Remove images from the gallery.
- *    - Metadata control: Title, Category, and Date for each image.
- *    - High-density masonry-style grid for visual management.
  * 5. Advanced UX: Actions are always visible; real-time previews in modals.
  */
 
@@ -30,6 +28,7 @@ import {
     Eye
 } from 'lucide-react';
 import { useContent } from '../../context/ContentContext';
+import { AdminCard, FormInput, FormTextarea } from '../components/AdminUI';
 
 const ManageGallery = () => {
     const { galleryPageData, setGalleryPageData } = useContent();
@@ -38,11 +37,11 @@ const ManageGallery = () => {
 
     // Modal States for Image Entry
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
-    const [imageFormData, setImageFormData] = useState({ 
-        url: "", 
-        title: "Gallery Image", 
-        category: "General", 
-        date: new Date().toISOString().split('T')[0] 
+    const [imageFormData, setImageFormData] = useState({
+        url: "",
+        title: "Gallery Image",
+        category: "General",
+        date: new Date().toISOString().split('T')[0]
     });
 
     if (!galleryPageData) return <div className="p-8 font-bold text-slate-400">Loading Gallery Data...</div>;
@@ -72,11 +71,11 @@ const ManageGallery = () => {
     };
 
     const handleOpenAddImage = () => {
-        setImageFormData({ 
-            url: "", 
-            title: "Gallery Image", 
-            category: "General", 
-            date: new Date().toISOString().split('T')[0] 
+        setImageFormData({
+            url: "",
+            title: "Gallery Image",
+            category: "General",
+            date: new Date().toISOString().split('T')[0]
         });
         setIsImageModalOpen(true);
     };
@@ -88,7 +87,7 @@ const ManageGallery = () => {
         }
 
         const newImages = [...galleryPageData.images];
-        newImages.push({ ...imageFormData, id: Date.now() });
+        newImages.unshift({ ...imageFormData, id: Date.now() });
 
         setGalleryPageData({
             ...galleryPageData,
@@ -119,8 +118,8 @@ const ManageGallery = () => {
     };
 
     const tabs = [
-        { id: 'hero', label: 'Hero Section' },
-        { id: 'grid', label: 'Image Grid' },
+        { id: 'hero', label: 'Gallery Hero' },
+        { id: 'grid', label: 'Visual Archive' },
     ];
 
     return (
@@ -130,39 +129,41 @@ const ManageGallery = () => {
             transition={{ duration: 0.3 }}
             className="flex flex-col h-full space-y-6 pb-20"
         >
-            {/* Header & Global Action */}
-            <div className="flex justify-between items-end px-2">
-                <div>
-                    <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">Gallery Management</h1>
+            {/* Unified Branding Header - Single Row */}
+            <div className="flex justify-between items-center py-2 px-1">
+                {/* Premium Tab Navigation */}
+                <div className="flex space-x-1 bg-slate-100/50 p-1.5 rounded-[1.5rem] w-fit border border-slate-200/60">
+                    {tabs.map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id)}
+                            className={`px-4 py-2 rounded-[1.1rem] font-bold text-[13px] transition-all duration-300 ${activeTab === tab.id
+                                ? 'bg-white text-slate-900 shadow-lg shadow-slate-200/50 scale-[1.02]'
+                                : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'
+                                }`}
+                        >
+                            {tab.label}
+                        </button>
+                    ))}
                 </div>
+
+                {/* Global Commit Action */}
                 <button
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="bg-brand-primary hover:bg-brand-dark text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md shadow-brand-primary/20 flex items-center gap-2"
+                    className="group bg-white/70 backdrop-blur-xl border border-white/20 hover:shadow-2xl hover:shadow-emerald-200/20 text-emerald-600 font-black py-3 px-6 rounded-2xl transition-all flex items-center gap-3 active:scale-95 shadow-sm overflow-hidden relative"
                 >
-                    <Save size={18} />
-                    {isSaving ? 'Syncing...' : 'Save & Sync to Live'}
+                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-teal-600/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <Save size={18} strokeWidth={3} className="text-emerald-600 group-hover:scale-110 transition-transform" />
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-700 text-sm">
+                        {isSaving ? 'Pushing...' : 'Save & Push Live'}
+                    </span>
                 </button>
             </div>
 
-            {/* Custom Tab Navigation */}
-            <div className="flex space-x-2 border-b border-slate-200/60 pb-2">
-                {tabs.map((tab) => (
-                    <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
-                        className={`px-5 py-2.5 rounded-t-xl font-bold text-sm transition-all ${activeTab === tab.id
-                            ? 'bg-white text-brand-primary border-t border-x border-slate-200/60 shadow-[0_-4px_10px_-4px_rgba(0,0,0,0.05)] translate-y-[1px]'
-                            : 'bg-transparent text-slate-500 hover:text-slate-700 hover:bg-white/40 border border-transparent'
-                            }`}
-                    >
-                        {tab.label}
-                    </button>
-                ))}
-            </div>
 
-            {/* Content Area */}
-            <div className="bg-white border border-slate-200/60 rounded-b-[2rem] rounded-tr-[2rem] shadow-sm p-8 min-h-[500px]">
+            {/* Core Workspace */}
+            <div className="min-h-[600px] mt-2">
                 <AnimatePresence mode="wait">
                     {activeTab === 'hero' && (
                         <motion.div
@@ -170,62 +171,61 @@ const ManageGallery = () => {
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: 10 }}
-                            className="space-y-8"
+                            className="grid grid-cols-1 lg:grid-cols-3 gap-6"
                         >
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                                {/* Hero Content */}
-                                <div className="lg:col-span-2 space-y-6">
-                                    <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-5">
-                                        <h3 className="text-lg font-bold text-slate-800">Hero Content</h3>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div>
-                                                <label className="text-xs font-bold text-slate-600 block mb-1">Top Tag</label>
-                                                <input
-                                                    type="text"
-                                                    value={galleryPageData.hero.tag}
-                                                    onChange={(e) => setGalleryPageData({ ...galleryPageData, hero: { ...galleryPageData.hero, tag: e.target.value } })}
-                                                    className="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-brand-primary outline-none font-bold"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="text-xs font-bold text-slate-600 block mb-1">Main Heading</label>
-                                                <input
-                                                    type="text"
-                                                    value={galleryPageData.hero.title}
-                                                    onChange={(e) => setGalleryPageData({ ...galleryPageData, hero: { ...galleryPageData.hero, title: e.target.value } })}
-                                                    className="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-brand-primary outline-none font-black"
-                                                />
-                                            </div>
+                            <div className="lg:col-span-2 space-y-6">
+                                <AdminCard title="Hero Section">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+                                        <div className="space-y-1.5">
+                                            <label className="text-[14px] font-bold text-slate-500 ml-1">Tag</label>
+                                            <input
+                                                type="text"
+                                                value={galleryPageData.hero.tag}
+                                                onChange={(e) => setGalleryPageData({ ...galleryPageData, hero: { ...galleryPageData.hero, tag: e.target.value } })}
+                                                className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl px-5 py-3 text-[15px] focus:border-slate-400 focus:bg-white transition-all outline-none font-medium placeholder:text-slate-400"
+                                            />
                                         </div>
-                                        <div>
-                                            <label className="text-xs font-bold text-slate-600 block mb-1">Hero Tagline</label>
-                                            <textarea
-                                                rows="3"
-                                                value={galleryPageData.hero.tagline}
-                                                onChange={(e) => setGalleryPageData({ ...galleryPageData, hero: { ...galleryPageData.hero, tagline: e.target.value } })}
-                                                className="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-brand-primary outline-none leading-relaxed"
+                                        <div className="space-y-1.5">
+                                            <label className="text-[14px] font-bold text-slate-500 ml-1">Main Heading</label>
+                                            <input
+                                                type="text"
+                                                value={galleryPageData.hero.title}
+                                                onChange={(e) => setGalleryPageData({ ...galleryPageData, hero: { ...galleryPageData.hero, title: e.target.value } })}
+                                                className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl px-5 py-3 text-[15px] focus:border-slate-400 focus:bg-white transition-all outline-none font-medium placeholder:text-slate-400"
                                             />
                                         </div>
                                     </div>
-                                </div>
-
-                                {/* Hero Preview */}
-                                <div className="space-y-6">
-                                    <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-4">
-                                        <h3 className="text-lg font-bold text-slate-800">Hero BG Image</h3>
-                                        <div className="relative group overflow-hidden rounded-2xl bg-slate-900 border border-slate-200 aspect-[4/3] flex items-center justify-center">
-                                            <img
-                                                src={galleryPageData.hero.backgroundImage}
-                                                className="w-full h-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-110"
-                                                alt="Gallery Hero Preview"
+                                    <div className="mt-6">
+                                        <div className="space-y-1.5">
+                                            <label className="text-[14px] font-bold text-slate-500 ml-1">Hero Tagline</label>
+                                            <textarea
+                                                rows={3}
+                                                value={galleryPageData.hero.tagline}
+                                                onChange={(e) => setGalleryPageData({ ...galleryPageData, hero: { ...galleryPageData.hero, tagline: e.target.value } })}
+                                                className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl px-5 py-4 text-[15px] focus:border-slate-400 focus:bg-white transition-all outline-none font-medium leading-relaxed resize-none placeholder:text-slate-400"
                                             />
-                                            <div className="absolute inset-0 flex items-center justify-center">
-                                                <label className="cursor-pointer bg-white/90 backdrop-blur px-5 py-2.5 rounded-xl text-xs font-bold shadow-lg flex items-center gap-2 hover:bg-white transition-all transform group-hover:scale-105">
-                                                    <ImageIcon size={14} /> Replace BG
-                                                    <input type="file" className="hidden" accept="image/*" onChange={handleHeroImageUpload} />
-                                                </label>
-                                            </div>
                                         </div>
+                                    </div>
+                                </AdminCard>
+                            </div>
+
+                            <div className="space-y-6">
+                                <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm space-y-4">
+                                    <div className="flex items-center justify-between px-1">
+                                        <h3 className="text-[15px] font-black text-slate-800 tracking-tight">Hero Visuals</h3>
+                                        <span className="text-[9px] font-black text-blue-500 uppercase tracking-widest">RECOMMENDED: 1920 X 1080 PX</span>
+                                    </div>
+                                    <div className="relative aspect-video rounded-[2rem] overflow-hidden border border-slate-100 bg-slate-900 group shadow-inner">
+                                        <img
+                                            src={galleryPageData.hero.backgroundImage}
+                                            className="w-full h-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-110"
+                                            alt="Hero"
+                                        />
+                                        <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white cursor-pointer pointer-events-none">
+                                            <ImageIcon size={28} className="mb-2" />
+                                            <p className="text-[11px] font-black uppercase tracking-widest">Change Media</p>
+                                        </div>
+                                        <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept="image/*" onChange={handleHeroImageUpload} />
                                     </div>
                                 </div>
                             </div>
@@ -238,92 +238,89 @@ const ManageGallery = () => {
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: 10 }}
-                            className="space-y-6"
+                            className="space-y-8"
                         >
-                            <div className="flex justify-between items-center bg-slate-50 p-6 rounded-2xl border border-slate-200">
-                                <div>
-                                    <h3 className="text-lg font-black text-slate-800 uppercase tracking-wider">Image Collection</h3>
-                                    <p className="text-xs text-slate-500 font-medium">Add or remove visuals from the masonry grid.</p>
-                                </div>
-                                <button
-                                    onClick={handleOpenAddImage}
-                                    className="bg-slate-900 hover:bg-black text-white px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-lg shadow-black/10"
-                                >
-                                    <Plus size={16} /> Add Image
-                                </button>
-                            </div>
-
-                            <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-4 space-y-4">
-                                {galleryPageData.images.map((image, idx) => (
-                                    <div key={idx} className="group relative bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl transition-all break-inside-avoid">
-                                        <img
-                                            src={image.url}
-                                            className="w-full h-auto object-cover"
-                                            alt={image.title}
-                                        />
-                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
-                                            <div className="flex justify-end items-center">
-                                                <div className="flex gap-2">
-                                                    <button onClick={() => handleDeleteImage(idx)} className="bg-white/20 hover:bg-rose-600 p-2 rounded-lg text-white transition-colors border border-white/20"><Trash2 size={14} /></button>
-                                                </div>
+                            <AdminCard
+                                title="Visual Archive Grid"
+                                actions={
+                                    <button
+                                        onClick={handleOpenAddImage}
+                                        className="group relative flex items-center gap-2 px-6 py-2.5 bg-white border border-slate-200/60 rounded-2xl text-[13px] font-black transition-all hover:shadow-xl active:scale-95 overflow-hidden"
+                                    >
+                                        <Plus size={16} strokeWidth={3} className="text-brand-primary group-hover:scale-110 transition-transform" />
+                                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-primary to-brand-dark">Add Image</span>
+                                    </button>
+                                }
+                            >
+                                <div className="columns-1 md:columns-2 lg:columns-3 xl:columns-4 gap-6 space-y-6">
+                                    {galleryPageData.images.map((image, idx) => (
+                                        <div key={idx} className="group relative bg-white border border-slate-100 rounded-[2rem] overflow-hidden hover:shadow-2xl transition-all duration-500 break-inside-avoid shadow-sm hover:-translate-y-1">
+                                            <img
+                                                src={image.url}
+                                                className="w-full h-auto object-cover"
+                                                alt="Gallery Visual"
+                                            />
+                                            <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                                                <button
+                                                    onClick={() => handleDeleteImage(idx)}
+                                                    className="bg-white/80 backdrop-blur-xl hover:bg-rose-500 p-2.5 rounded-xl text-rose-500 hover:text-white transition-all border border-slate-200 shadow-xl active:scale-90"
+                                                >
+                                                    <Trash2 size={16} strokeWidth={2.5} />
+                                                </button>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
+                                    ))}
+                                </div>
+                            </AdminCard>
                         </motion.div>
                     )}
                 </AnimatePresence>
             </div>
 
-            {/* IMAGE MODAL */}
+            {/* ASSET SYNTHESIS MODAL */}
             <AnimatePresence>
                 {isImageModalOpen && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4"
-                    >
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 lg:p-12">
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsImageModalOpen(false)} className="absolute inset-0 bg-slate-900/40 backdrop-blur-md" />
                         <motion.div
-                            initial={{ scale: 0.95, opacity: 0, y: 20 }}
+                            initial={{ scale: 0.95, opacity: 0, y: 30 }}
                             animate={{ scale: 1, opacity: 1, y: 0 }}
-                            exit={{ scale: 0.95, opacity: 0, y: 20 }}
-                            className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-lg overflow-hidden flex flex-col"
+                            exit={{ scale: 0.95, opacity: 0, y: 30 }}
+                            className="relative w-full max-w-lg bg-white rounded-[3rem] shadow-2xl overflow-hidden flex flex-col"
                         >
-                            <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                            <div className="px-10 py-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
                                 <h4 className="font-black text-slate-800 text-sm uppercase tracking-widest">Add Gallery Visual</h4>
-                                <button onClick={() => setIsImageModalOpen(false)} className="bg-white p-2 rounded-xl text-slate-400 hover:text-slate-800 shadow-sm transition-colors border border-slate-200"><X size={18} /></button>
+                                <button onClick={() => setIsImageModalOpen(false)} className="p-3 bg-white border border-slate-100 rounded-2xl text-slate-400 hover:text-rose-500 shadow-sm hover:shadow-md transition-all active:scale-95"><X size={20} strokeWidth={3} /></button>
                             </div>
-                            
+
                             <div className="p-10 flex flex-col items-center justify-center space-y-8">
-                                <div className="w-full relative rounded-2xl overflow-hidden shadow-2xl border border-slate-200 bg-white aspect-square max-w-[300px]">
+                                <div className="w-full relative rounded-3xl overflow-hidden shadow-2xl border border-slate-100 bg-slate-50 aspect-square max-w-[300px] group">
                                     {imageFormData.url ? (
                                         <img src={imageFormData.url} className="w-full h-full object-cover" alt="Preview" />
                                     ) : (
                                         <div className="w-full h-full flex flex-col items-center justify-center text-slate-300">
-                                            <Upload size={48} strokeWidth={1} />
-                                            <span className="text-[10px] mt-2 font-bold uppercase tracking-widest">Awaiting File</span>
+                                            <div className="mb-4 p-4 bg-white rounded-2xl shadow-sm border border-slate-100">
+                                                <Upload size={48} strokeWidth={1.5} className="text-slate-400" />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 px-8 text-center leading-relaxed">Click or drag to upload the gallery visual</span>
                                         </div>
                                     )}
+                                    <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white cursor-pointer pointer-events-none">
+                                        <ImageIcon size={32} className="mb-2" />
+                                        <p className="text-[10px] font-black uppercase tracking-widest">Change Media</p>
+                                    </div>
+                                    <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept="image/*" onChange={handleGalleryImageUpload} />
                                 </div>
-                                <div className="w-full max-w-[300px]">
-                                    <label className="cursor-pointer w-full flex items-center justify-center gap-2 bg-brand-primary text-white hover:bg-brand-dark py-4 rounded-xl text-xs font-black transition-all shadow-lg shadow-brand-primary/20">
-                                        <Upload size={14} /> {imageFormData.url ? "Change Image" : "Select Image Asset"}
-                                        <input type="file" className="hidden" accept="image/*" onChange={handleGalleryImageUpload} />
-                                    </label>
-                                </div>
-                                {/* <p className="text-[10px] text-slate-400 font-medium text-center">Only the image is required. Metadata (titles/dates) is handled automatically for speed.</p> */}
                             </div>
 
-                            <div className="p-8 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 rounded-b-[2.5rem]">
-                                <button onClick={() => setIsImageModalOpen(false)} className="px-6 py-3 text-xs font-bold text-slate-500 hover:text-slate-800 transition-colors">Cancel</button>
-                                <button onClick={handleSaveImage} className="bg-slate-900 text-white px-10 py-4 rounded-xl text-xs font-black shadow-xl shadow-black/20 hover:bg-black transition-all">
-                                    Upload to Gallery
+                            <div className="px-10 py-8 bg-slate-50/50 border-t border-slate-100 flex justify-end gap-3 rounded-b-[3rem]">
+                                <button onClick={() => setIsImageModalOpen(false)} className="px-6 py-3 text-[11px] font-black text-slate-400 hover:text-slate-800 transition-all uppercase tracking-widest">Cancel</button>
+                                <button onClick={handleSaveImage} className="px-10 py-3.5 bg-gradient-to-r from-emerald-600 to-teal-700 text-white font-black text-sm rounded-2xl shadow-xl shadow-emerald-200/40 hover:scale-105 active:scale-95 transition-all">
+                                    Add
                                 </button>
                             </div>
                         </motion.div>
-                    </motion.div>
+                    </div>
                 )}
             </AnimatePresence>
         </motion.div>
@@ -331,4 +328,3 @@ const ManageGallery = () => {
 };
 
 export default ManageGallery;
-

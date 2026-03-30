@@ -24,22 +24,38 @@
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronRight, ArrowRight, Headphones, Share2, Calendar, Tag, CheckCircle2 } from 'lucide-react';
+import { ChevronRight, ArrowRight, Headphones, Share2, Calendar, CheckCircle2 } from 'lucide-react';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
-import { mockBlogPageData } from '../../components/BlogPage/blogData';
+import { useContent } from '../../context/ContentContext';
 
 const BlogDetails = () => {
     const { slug } = useParams();
+    const { blogPageData } = useContent();
 
     // Find the current blog post by slug
-    const blog = mockBlogPageData.blogList.items.find(item => item.slug === slug);
+    const blog = blogPageData?.blogList?.items.find(item => item.slug === slug);
 
     // Get related blogs (all blogs except the current one)
-    const relatedBlogs = mockBlogPageData.blogList.items.filter(item => item.slug !== slug);
+    const relatedBlogs = blogPageData?.blogList?.items.filter(item => item.slug !== slug) || [];
 
     // Hero data for the shared hero section
-    const hero = mockBlogPageData.hero;
+    const hero = blogPageData?.hero;
+
+    const formatDate = (dateStr) => {
+        if (!dateStr) return "N/A";
+        try {
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) return dateStr;
+            return date.toLocaleDateString('en-US', {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        } catch (e) {
+            return dateStr;
+        }
+    };
 
     // Scroll to top whenever the slug changes (user clicks a related blog)
     useEffect(() => {
@@ -171,11 +187,10 @@ const BlogDetails = () => {
                                 {/* Content Body */}
                                 <div className="p-8 md:p-12">
 
-                                    {/* Date + Category Badges */}
                                     <div className="flex flex-wrap items-center gap-4 mb-8">
                                         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-50 border border-slate-100">
                                             <Calendar size={14} className="text-brand-primary" />
-                                            <span className="text-sm font-semibold text-slate-600">{blog.date}</span>
+                                            <span className="text-sm font-semibold text-slate-600">{formatDate(blog.date)}</span>
                                         </div>
                                     </div>
 

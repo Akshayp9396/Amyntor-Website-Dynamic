@@ -1,13 +1,13 @@
 import React from 'react';
 
 import Navbar from '../../components/Navbar';
-import Hero from '../../components/Hero';
-import AboutSection from '../../components/AboutSection';
-import ServicesSection from '../../components/ServicesSection';
-import TestimonialsSection from '../../components/TestimonialsSection';
-import CaseStudySection from '../../components/CaseStudySection';
-import PartnersSection from '../../components/PartnersSection';
-import BlogSection from '../../components/BlogSection';
+import Hero from '../../components/HomePage/Hero';
+import AboutSection from '../../components/HomePage/AboutSection';
+import ServicesSection from '../../components/HomePage/ServicesSection';
+import TestimonialsSection from '../../components/HomePage/TestimonialsSection';
+import CaseStudySection from '../../components/HomePage/CaseStudySection';
+import PartnersSection from '../../components/HomePage/PartnersSection';
+import BlogSection from '../../components/HomePage/BlogSection';
 import Footer from '../../components/Footer';
 /**
  * Code Walkthrough

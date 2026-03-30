@@ -1,12 +1,31 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { mockBlogPageData } from './blogData';
+import { useContent } from '../../context/ContentContext';
 
 const BlogList = () => {
-    const { blogList } = mockBlogPageData;
+    const { blogPageData } = useContent();
+    const blogList = blogPageData?.blogList;
+
     const [activeCard, setActiveCard] = useState(null);
+
+    const formatDate = (dateStr) => {
+        if (!dateStr) return "N/A";
+        try {
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) return dateStr;
+            return date.toLocaleDateString('en-US', {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        } catch (e) {
+            return dateStr;
+        }
+    };
+
+    if (!blogList) return null;
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -79,10 +98,10 @@ const BlogList = () => {
                                 />
 
                                 {/* Dynamic Cutout Date Badge Overlay */}
-                                <div className="absolute bottom-0 left-0 bg-white pr-6 pl-4 pt-4 rounded-tr-[2rem]">
+                                <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-2xl border border-slate-100/50 shadow-sm">
                                     <div className="flex items-center gap-2">
-                                        <span className="w-2.5 h-2.5 rounded-full bg-brand-primary"></span>
-                                        <span className="text-[14px] font-bold text-[#0b1021]">{blog.date}</span>
+                                        <Calendar size={14} className="text-brand-primary" />
+                                        <span className="text-[13px] font-bold text-slate-700">{formatDate(blog.date)}</span>
                                     </div>
                                 </div>
                             </div>

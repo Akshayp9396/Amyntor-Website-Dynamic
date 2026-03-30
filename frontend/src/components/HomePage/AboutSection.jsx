@@ -3,7 +3,7 @@ import { motion, useInView, animate } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
-import { useContent } from '../context/ContentContext';
+import { useContent } from '../../context/ContentContext';
 
 /**
  * Code Walkthrough

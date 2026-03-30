@@ -2,12 +2,10 @@ import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
 
-import Testimonial1 from '../assets/images/testimonial1.png';
-
 import 'swiper/css';
 import { motion } from 'framer-motion';
 import { Star, CheckCircle, Quote } from 'lucide-react';
-import { useContent } from '../context/ContentContext';
+import { useContent } from '../../context/ContentContext';
 
 /**
  * Code Walkthrough
@@ -157,7 +155,7 @@ const TestimonialsSection = () => {
                         {/* Pre-designed Background & Subject Combined Image */}
                         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
                             <img
-                                src={Testimonial1}
+                                src={testimonialHeader?.sideImage}
                                 alt="Satisfied Professional"
                                 className="w-full h-full object-cover object-center"
                             />
@@ -173,8 +171,8 @@ const TestimonialsSection = () => {
                                     <CheckCircle size={16} className="text-brand-primary" fill="currentColor" stroke="white" />
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="text-white font-medium text-lg leading-tight">97% Customers</span>
-                                    <span className="text-gray-300 text-sm">Satisfaction Rate</span>
+                                    <span className="text-white font-medium text-lg leading-tight">{testimonialHeader?.statValue}</span>
+                                    <span className="text-gray-300 text-sm">{testimonialHeader?.statText}</span>
                                 </div>
                             </div>
                         </div>

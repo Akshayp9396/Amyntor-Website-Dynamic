@@ -51,12 +51,12 @@ const CareersIntro = () => {
                                                     <stop offset="100%" stopColor="#02a1fd" />
                                                 </linearGradient>
                                             </defs>
-                                            <path 
-                                                d="M12 5V19M12 19L5 12M12 19L19 12" 
-                                                className="stroke-slate-400 group-hover:stroke-[url(#icon-grad)]" 
-                                                strokeWidth="3" 
-                                                strokeLinecap="round" 
-                                                strokeLinejoin="round" 
+                                            <path
+                                                d="M12 5V19M12 19L5 12M12 19L19 12"
+                                                className="stroke-slate-400 group-hover:stroke-[url(#icon-grad)]"
+                                                strokeWidth="3"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
                                             />
                                         </svg>
                                     </div>

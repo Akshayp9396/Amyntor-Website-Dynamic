@@ -3,7 +3,7 @@ import useEmblaCarousel from 'embla-carousel-react';
 import { motion } from 'framer-motion';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useContent } from '../context/ContentContext';
+import { useContent } from '../../context/ContentContext';
 
 /**
  * Code Walkthrough

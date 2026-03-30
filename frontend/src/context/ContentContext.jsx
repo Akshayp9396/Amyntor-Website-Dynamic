@@ -11,6 +11,9 @@ import { galleryPageData as mockGalleryData } from '../components/GalleryPage/ga
 import { mockCaseStudyPageData } from '../components/CaseStudyPage/caseStudyData';
 import { careersPageData as mockCareersData } from '../components/CareersPage/careersData';
 import { contactPageData as mockContactData } from '../components/ContactPage/contactData';
+import { mockBlogPageData } from '../components/BlogPage/blogData';
+
+import Testimonial1 from '../assets/images/testimonial1.png';
 
 const ContentContext = createContext();
 
@@ -89,7 +92,10 @@ export const ContentProvider = ({ children }) => {
     // 4. Testimonials
     const [testimonialHeader, setTestimonialHeader] = useState({
         tag: "Testimonial",
-        title: "What Our Customers\nAre Saying"
+        title: "What Our Customers\nAre Saying",
+        sideImage: Testimonial1,
+        statValue: "97% Customers",
+        statText: "Satisfaction Rate"
     });
 
     const [testimonials, setTestimonials] = useState([
@@ -134,6 +140,7 @@ export const ContentProvider = ({ children }) => {
     const [caseStudyPageData, setCaseStudyPageData] = useState(mockCaseStudyPageData);
     const [careersPageData, setCareersPageData] = useState(mockCareersData);
     const [contactPageData, setContactPageData] = useState(mockContactData);
+    const [blogPageData, setBlogPageData] = useState(mockBlogPageData);
 
     const value = {
         heroSlides, setHeroSlides,
@@ -151,7 +158,9 @@ export const ContentProvider = ({ children }) => {
         careersPageData,
         setCareersPageData,
         contactPageData,
-        setContactPageData
+        setContactPageData,
+        blogPageData,
+        setBlogPageData
     };
 
     return (

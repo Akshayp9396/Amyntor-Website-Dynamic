@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { 
+import {
     LayoutDashboard,
     Home,
     LogOut,
@@ -10,8 +10,6 @@ import {
     FileText,
     Menu,
     Image as ImageIcon,
-    ChevronDown,
-    Library,
     Mail
 } from 'lucide-react';
 
@@ -28,34 +26,17 @@ import amyntorLogo from '../../assets/images/amyntor-logo.png';
 const AdminLayout = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
-    const location = useLocation();
-    
-    // State for collapsable menus
-    const [isResourcesOpen, setIsResourcesOpen] = useState(false);
-
-    // Automatically open Resources menu if the current path is a sub-resource
-    useEffect(() => {
-        if (location.pathname.includes('/admin/case-studies') || 
-            location.pathname.includes('/admin/blogs') || 
-            location.pathname.includes('/admin/gallery')) {
-            setIsResourcesOpen(true);
-        }
-    }, [location.pathname]);
 
     // Configuration array for dynamic sidebar generation
-    const mainLinks = [
+    const sidebarLinks = [
         { title: 'Home Page', path: '/admin/home', icon: Home },
         { title: 'About Us', path: '/admin/about', icon: LayoutDashboard },
         { title: 'Services', path: '/admin/services', icon: Server },
-    ];
-
-    const careerLink = { title: 'Careers', path: '/admin/careers', icon: Briefcase };
-    const contactLink = { title: 'Contact', path: '/admin/contact', icon: Mail };
-
-    const resourceLinks = [
         { title: 'Case Studies', path: '/admin/case-studies', icon: Briefcase },
         { title: 'Blogs', path: '/admin/blogs', icon: FileText },
         { title: 'Gallery', path: '/admin/gallery', icon: ImageIcon },
+        { title: 'Careers', path: '/admin/careers', icon: Briefcase },
+        { title: 'Contact', path: '/admin/contact', icon: Mail },
     ];
 
     const handleLogout = () => {
@@ -63,35 +44,38 @@ const AdminLayout = () => {
         navigate('/admin/login');
     };
 
-    const renderLink = (link, isSubLink = false) => {
+    const renderLink = (link) => {
         const Icon = link.icon;
         return (
             <NavLink
                 key={link.path}
                 to={link.path}
                 className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-semibold ${
-                        isSubLink ? 'text-[13px] ml-4' : 'text-[15px]'
-                    } ${
-                        isActive
-                            ? 'bg-gradient-to-r from-[#02a1fd] to-[#2563eb] text-white shadow-md shadow-[#02a1fd]/25'
-                            : 'text-slate-500 hover:bg-slate-50 hover:text-[#2563eb]'
+                    `flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-bold text-[15px] ${isActive
+                        ? 'bg-blue-50/50 text-[#02a1fd]'
+                        : 'text-slate-500 hover:bg-slate-50 hover:text-[#2563eb]'
                     }`
                 }
             >
-                <Icon size={isSubLink ? 16 : 20} strokeWidth={isSubLink ? 2 : 2.5} />
-                {link.title}
+                {({ isActive }) => (
+                    <>
+                        <Icon
+                            size={20}
+                            strokeWidth={2.5}
+                            className={isActive ? 'text-[#02a1fd]' : ''}
+                        />
+                        <span className={isActive ? 'bg-clip-text text-transparent bg-gradient-to-r from-[#02a1fd] to-[#2563eb]' : ''}>
+                            {link.title}
+                        </span>
+                    </>
+                )}
             </NavLink>
         );
     };
 
-    const isResourcesActive = location.pathname.includes('/admin/case-studies') || 
-                            location.pathname.includes('/admin/blogs') || 
-                            location.pathname.includes('/admin/gallery');
-
     return (
         <div className="flex h-screen bg-[#f8fafc] font-sans overflow-hidden">
-            
+
             {/* ====== SIDEBAR (Fixed, 260px wide, White Glass style) ====== */}
             <aside className="w-[260px] flex-shrink-0 bg-white/70 backdrop-blur-lg border-r border-slate-200/60 flex flex-col shadow-[4px_0_24px_rgba(0,0,0,0.02)] z-20">
                 {/* Logo Area */}
@@ -101,45 +85,7 @@ const AdminLayout = () => {
 
                 {/* Navigation Links */}
                 <nav className="flex-1 overflow-y-auto py-6 px-4 space-y-1.5 custom-scrollbar">
-                    {/* Main Section */}
-                    {mainLinks.map((link) => renderLink(link))}
-
-                    {/* Resources Dropdown Section */}
-                    <div className="pt-2">
-                        <button
-                            onClick={() => setIsResourcesOpen(!isResourcesOpen)}
-                            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all font-semibold text-[15px] ${
-                                isResourcesActive && !isResourcesOpen
-                                    ? 'bg-slate-100 text-[#2563eb]'
-                                    : 'text-slate-500 hover:bg-slate-50 hover:text-[#2563eb]'
-                            }`}
-                        >
-                            <div className="flex items-center gap-3">
-                                <Library size={20} strokeWidth={2.5} />
-                                Resources
-                            </div>
-                            <ChevronDown 
-                                size={18} 
-                                className={`transition-transform duration-300 ${isResourcesOpen ? 'rotate-180' : ''}`} 
-                            />
-                        </button>
-
-                        <div className={`overflow-hidden transition-all duration-300 space-y-1.5 mt-1.5 ${
-                            isResourcesOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
-                        }`}>
-                            {resourceLinks.map((link) => renderLink(link, true))}
-                        </div>
-                    </div>
-
-                    {/* Careers Section (Moved after Resources) */}
-                    <div className="pt-1.5">
-                        {renderLink(careerLink)}
-                    </div>
-
-                    {/* Contact Section */}
-                    <div className="pt-1.5">
-                        {renderLink(contactLink)}
-                    </div>
+                    {sidebarLinks.map((link) => renderLink(link))}
                 </nav>
 
                 {/* Sidebar Footer / Current User Information */}
@@ -150,7 +96,7 @@ const AdminLayout = () => {
                         </div>
                         <div className="flex flex-col">
                             <span className="text-sm font-bold text-slate-800">{user?.username || 'Admin'}</span>
-                            <span className="text-[11px] font-semibold text-emerald-600 uppercase tracking-wider">Super User</span>
+                            <span className="text-[11px] font-semibold text-emerald-600 uppercase tracking-wider">Amyntor</span>
                         </div>
                     </div>
                 </div>
@@ -158,14 +104,12 @@ const AdminLayout = () => {
 
             {/* ====== MAIN CONTENT AREA (Flexes to fill remaining space) ====== */}
             <div className="flex-1 flex flex-col relative min-w-0 overflow-hidden">
-                
+
                 {/* Topbar (Height 80px, White Glass) */}
                 <header className="h-20 bg-white/70 backdrop-blur-xl border-b border-slate-200/60 flex items-center justify-between px-8 z-10 sticky top-0 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
                     <div className="flex items-center gap-3 text-slate-800">
                         <Menu size={24} className="text-slate-400 cursor-pointer lg:hidden hover:text-[#2563eb] transition-colors" />
-                        <h2 className="text-lg font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-800 to-slate-500">
-                            Dashboard Control
-                        </h2>
+
                     </div>
 
                     <div className="flex items-center space-x-4">
@@ -193,3 +137,4 @@ const AdminLayout = () => {
 };
 
 export default AdminLayout;
+

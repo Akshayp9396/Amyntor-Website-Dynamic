@@ -2,10 +2,13 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ChevronRight, Share2 } from 'lucide-react';
-import { mockBlogPageData } from './blogData';
+import { useContent } from '../../context/ContentContext';
 
 const BlogHero = () => {
-    const { hero } = mockBlogPageData;
+    const { blogPageData } = useContent();
+    const hero = blogPageData?.hero;
+
+    if (!hero) return null;
 
     // Framer Motion Variants for Staggered Entrance
     const containerVariants = {

@@ -4,7 +4,7 @@ import { Shield, Cloud, Server, Lock, Code, ArrowRight, ChevronLeft, ChevronRigh
 import { Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
-import { useContent } from '../context/ContentContext';
+import { useContent } from '../../context/ContentContext';
 
 import 'swiper/css';
 import 'swiper/css/navigation';

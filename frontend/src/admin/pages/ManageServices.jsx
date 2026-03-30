@@ -35,6 +35,7 @@ import {
     ShieldCheck
 } from 'lucide-react';
 import { useContent } from '../../context/ContentContext';
+import { AdminCard, FormInput, FormTextarea } from '../components/AdminUI';
 
 const iconMap = {
     Fingerprint: Fingerprint,
@@ -229,39 +230,39 @@ const ManageServices = () => {
             transition={{ duration: 0.3 }}
             className="flex flex-col h-full space-y-6 pb-20"
         >
-            {/* Header & Global Action */}
-            <div className="flex justify-between items-end">
-                <div>
-                    <h1 className="text-2xl font-extrabold text-slate-800 tracking-tight">Services Page</h1>
+            {/* Header & Global Action - Single Row */}
+            <div className="flex justify-between items-center px-1 py-2">
+                {/* Premium Tab Navigation (Thinner) */}
+                <div className="flex space-x-1 bg-slate-100/50 p-1.5 rounded-[1.5rem] w-fit border border-slate-200/60">
+                    {tabs.map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id)}
+                            className={`px-4 py-2 rounded-[1.1rem] font-bold text-[13px] transition-all duration-300 ${activeTab === tab.id
+                                ? 'bg-white text-slate-900 shadow-lg shadow-slate-200/50 scale-[1.02]'
+                                : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'
+                                }`}
+                        >
+                            {tab.label}
+                        </button>
+                    ))}
                 </div>
+
                 <button
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="bg-brand-primary hover:bg-brand-dark text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md shadow-brand-primary/20 flex items-center gap-2"
+                    className="group bg-white/70 backdrop-blur-xl border border-white/20 hover:shadow-2xl hover:shadow-emerald-200/20 text-emerald-600 font-black py-3 px-6 rounded-2xl transition-all flex items-center gap-3 active:scale-95 shadow-sm overflow-hidden relative"
                 >
-                    <Save size={18} />
-                    {isSaving ? 'Syncing...' : 'Save & Sync to Live'}
+                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-teal-600/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <Save size={18} strokeWidth={3} className="text-emerald-600 group-hover:scale-110 transition-transform" />
+                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-700 text-sm">
+                        {isSaving ? 'Pushing...' : 'Save & Push Live'}
+                    </span>
                 </button>
             </div>
 
-            {/* Custom Tab Navigation - Folder Style */}
-            <div className="flex space-x-2 border-b border-slate-200/60 pb-2">
-                {tabs.map((tab) => (
-                    <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
-                        className={`px-5 py-2.5 rounded-t-xl font-bold text-sm transition-all ${activeTab === tab.id
-                            ? 'bg-white text-brand-primary border-t border-x border-slate-200/60 shadow-[0_-4px_10px_-4px_rgba(0,0,0,0.05)] translate-y-[1px]'
-                            : 'bg-transparent text-slate-500 hover:text-slate-700 hover:bg-white/40 border border-transparent'
-                            }`}
-                    >
-                        {tab.label}
-                    </button>
-                ))}
-            </div>
-
-            {/* Content Area - White Glass Shell */}
-            <div className="bg-white border border-slate-200/60 rounded-b-[2rem] rounded-tr-[2rem] shadow-sm p-8 min-h-[500px]">
+            {/* Content Area */}
+            <div className="min-h-[600px]">
                 <AnimatePresence mode="wait">
                     {activeTab === 'hero' && (
                         <motion.div
@@ -272,94 +273,45 @@ const ManageServices = () => {
                             className="grid grid-cols-1 lg:grid-cols-3 gap-6"
                         >
                             <div className="lg:col-span-2 space-y-6">
-                                <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-5">
-                                    <h3 className="text-lg font-bold text-slate-800">Page Hero Content</h3>
-                                    <div className="space-y-4">
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div>
-                                                <label className="text-xs font-bold text-slate-600 block mb-1">Top Tag</label>
-                                                <input
-                                                    type="text"
-                                                    value={servicesPageData.hero.tag}
-                                                    onChange={(e) => setServicesPageData({ ...servicesPageData, hero: { ...servicesPageData.hero, tag: e.target.value } })}
-                                                    className="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-brand-primary outline-none font-bold"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="text-xs font-bold text-slate-600 block mb-1">Main Heading</label>
-                                                <input
-                                                    type="text"
-                                                    value={servicesPageData.hero.title}
-                                                    onChange={(e) => setServicesPageData({ ...servicesPageData, hero: { ...servicesPageData.hero, title: e.target.value } })}
-                                                    className="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-brand-primary outline-none font-black"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <label className="text-xs font-bold text-slate-600 block mb-1">Hero Tagline</label>
-                                            <textarea
-                                                rows="2"
-                                                value={servicesPageData.hero.tagline}
-                                                onChange={(e) => setServicesPageData({ ...servicesPageData, hero: { ...servicesPageData.hero, tagline: e.target.value } })}
-                                                className="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-brand-primary outline-none leading-relaxed"
-                                            />
-                                        </div>
+                                <AdminCard title=" Hero Section">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+                                        <FormInput label=" Tag" value={servicesPageData.hero.tag} onChange={(e) => setServicesPageData({ ...servicesPageData, hero: { ...servicesPageData.hero, tag: e.target.value } })} />
+                                        <FormInput label="Main Heading" value={servicesPageData.hero.title} onChange={(e) => setServicesPageData({ ...servicesPageData, hero: { ...servicesPageData.hero, title: e.target.value } })} />
                                     </div>
-                                </div>
+                                    <div className="mt-6">
+                                        <FormTextarea label="Hero Tagline" rows={2} value={servicesPageData.hero.tagline} onChange={(e) => setServicesPageData({ ...servicesPageData, hero: { ...servicesPageData.hero, tagline: e.target.value } })} />
+                                    </div>
+                                </AdminCard>
 
-                                <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-5">
-                                    <h3 className="text-lg font-bold text-slate-800">Intro / Solutions Brief</h3>
-                                    <div className="space-y-4">
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div>
-                                                <label className="text-xs font-bold text-slate-600 block mb-1">Small Tag</label>
-                                                <input
-                                                    type="text"
-                                                    value={servicesPageData.serviceIntro.tag}
-                                                    onChange={(e) => setServicesPageData({ ...servicesPageData, serviceIntro: { ...servicesPageData.serviceIntro, tag: e.target.value } })}
-                                                    className="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-brand-primary outline-none font-bold"
-                                                />
-                                            </div>
-                                            <div>
-                                                <label className="text-xs font-bold text-slate-600 block mb-1">Intro Heading</label>
-                                                <input
-                                                    type="text"
-                                                    value={servicesPageData.serviceIntro.heading}
-                                                    onChange={(e) => setServicesPageData({ ...servicesPageData, serviceIntro: { ...servicesPageData.serviceIntro, heading: e.target.value } })}
-                                                    className="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-brand-primary outline-none font-black"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <label className="text-xs font-bold text-slate-600 block mb-1">Main Description (Brief)</label>
-                                            <textarea
-                                                rows="8"
-                                                value={servicesPageData.serviceIntro.description}
-                                                onChange={(e) => setServicesPageData({ ...servicesPageData, serviceIntro: { ...servicesPageData.serviceIntro, description: e.target.value } })}
-                                                className="w-full bg-white border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-brand-primary outline-none leading-relaxed"
-                                            />
-                                        </div>
+                                <AdminCard title="Introduction">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+                                        <FormInput label=" Tag" value={servicesPageData.serviceIntro.tag} onChange={(e) => setServicesPageData({ ...servicesPageData, serviceIntro: { ...servicesPageData.serviceIntro, tag: e.target.value } })} />
+                                        <FormInput label="Main Heading" value={servicesPageData.serviceIntro.heading} onChange={(e) => setServicesPageData({ ...servicesPageData, serviceIntro: { ...servicesPageData.serviceIntro, heading: e.target.value } })} />
                                     </div>
-                                </div>
+                                    <div className="mt-6">
+                                        <FormTextarea label="Description" rows={8} value={servicesPageData.serviceIntro.description} onChange={(e) => setServicesPageData({ ...servicesPageData, serviceIntro: { ...servicesPageData.serviceIntro, description: e.target.value } })} />
+                                    </div>
+                                </AdminCard>
                             </div>
 
                             <div className="space-y-6">
                                 <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-4">
-                                    <h3 className="text-lg font-bold text-slate-800">Hero Overlay Image</h3>
-                                    <div className="relative group overflow-hidden rounded-2xl bg-slate-900 border border-slate-200 aspect-[4/3] flex items-center justify-center">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <h3 className="text-lg font-bold text-slate-800 tracking-tight">Hero Visuals</h3>
+                                        <span className="text-[10px] font-bold text-brand-primary uppercase tracking-tighter">Recommended: 1920 x 1080 PX</span>
+                                    </div>
+                                    <div className="relative group overflow-hidden rounded-[2rem] bg-slate-900 border border-slate-200 aspect-video flex items-center justify-center shadow-inner">
                                         <img
                                             src={servicesPageData.hero.backgroundImage}
                                             className="w-full h-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-110"
                                             alt="Hero background preview"
                                         />
-                                        <div className="absolute inset-0 flex items-center justify-center">
-                                            <label className="cursor-pointer bg-white/90 backdrop-blur px-5 py-2.5 rounded-xl text-xs font-bold shadow-lg flex items-center gap-2 hover:bg-white transition-all transform group-hover:scale-105">
-                                                <ImageIcon size={14} /> Replace Image
-                                                <input type="file" className="hidden" accept="image/*" onChange={(e) => handleImageUpload(e, 'hero', 'backgroundImage')} />
-                                            </label>
+                                        <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white cursor-pointer pointer-events-none">
+                                            <ImageIcon size={28} className="mb-2" />
+                                            <p className="text-[11px] font-black uppercase tracking-widest">Change Media</p>
                                         </div>
+                                        <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept="image/*" onChange={(e) => handleImageUpload(e, 'hero', 'backgroundImage')} />
                                     </div>
-                                    <p className="text-[11px] text-slate-400 text-center font-medium">Recommended: High-res dark background image.</p>
                                 </div>
                             </div>
                         </motion.div>
@@ -373,95 +325,83 @@ const ManageServices = () => {
                             exit={{ opacity: 0, x: 10 }}
                             className="space-y-6"
                         >
-                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                <div className="relative flex-1 max-w-md">
-                                    <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                                    <input
-                                        type="text"
-                                        placeholder="Filter by service name..."
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-brand-primary"
-                                    />
-                                </div>
-                                <button
-                                    onClick={handleOpenAddService}
-                                    className="bg-slate-900 hover:bg-black text-white px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-lg shadow-slate-900/10"
-                                >
-                                    <Plus size={16} /> Create New Service
-                                </button>
-                            </div>
-
-                            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-                                <table className="w-full text-left text-sm whitespace-nowrap">
-                                    <thead className="bg-slate-50/50 border-b border-slate-200">
-                                        <tr>
-                                            <th className="px-6 py-4 font-bold text-slate-500 uppercase tracking-widest text-[10px]">Title & Icon</th>
-                                            <th className="px-6 py-4 font-bold text-slate-500 uppercase tracking-widest text-[10px]">Features</th>
-                                            <th className="px-6 py-4 text-right">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-100">
-                                        {filteredServices.map((service) => (
-                                            <tr key={service.id} className="group hover:bg-slate-50/50 transition-colors">
-                                                <td className="px-6 py-4">
-                                                    <div className="flex items-center gap-4">
-                                                        <div className="w-10 h-10 rounded-xl bg-brand-primary/10 flex items-center justify-center text-brand-primary border border-brand-primary/20 overflow-hidden p-1.5">
-                                                            {service.icon?.startsWith('data:image') || service.icon?.startsWith('/') || service.icon?.startsWith('http') 
-                                                                ? <img src={service.icon} alt="" className="w-full h-full object-contain" />
-                                                                : (() => {
-                                                                    const IconComp = iconMap[service.icon] || Server;
-                                                                    return <IconComp size={20} />;
-                                                                })()
-                                                            }
-                                                        </div>
-                                                        <div>
-                                                            <p className="font-bold text-slate-800">{service.title}</p>
-                                                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{service.description.substring(0, 30)}...</p>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    <div className="flex -space-x-2">
-                                                        {Array.isArray(service.cards) && service.cards.slice(0, 4).map((c, i) => (
-                                                            <div key={i} className="w-7 h-7 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center overflow-hidden">
-                                                                {c.icon?.startsWith('data:image') || c.icon?.startsWith('/') || c.icon?.startsWith('http') 
-                                                                    ? <img src={c.icon} className="w-full h-full object-cover" /> 
+                            <AdminCard
+                                title="Services Explorer"
+                                actions={
+                                    <div className="flex gap-4 w-full md:w-auto mt-4 md:mt-0">
+                                        <button
+                                            onClick={handleOpenAddService}
+                                            className="group relative flex items-center gap-2 px-6 py-2.5 bg-white border border-slate-200/60 rounded-2xl text-[13px] font-black transition-all hover:shadow-xl hover:shadow-slate-200/50 active:scale-95 overflow-hidden"
+                                        >
+                                            <Plus size={16} strokeWidth={3} className="text-brand-primary group-hover:scale-110 transition-transform" />
+                                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-primary to-brand-dark">
+                                                Create New
+                                            </span>
+                                        </button>
+                                    </div>
+                                }
+                            >
+                                <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden mt-4">
+                                    <table className="w-full text-left text-sm whitespace-nowrap">
+                                        <thead className="bg-slate-50/80 border-b border-slate-200">
+                                            <tr>
+                                                <th className="px-6 py-4 font-black text-slate-400 uppercase tracking-widest text-[10px]">Title & Icon</th>
+                                                <th className="px-6 py-4 font-black text-slate-400 uppercase tracking-widest text-[10px]">Features</th>
+                                                <th className="px-6 py-4 text-right font-black text-slate-400 uppercase tracking-widest text-[10px]">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-100">
+                                            {filteredServices.map((service) => (
+                                                <tr key={service.id} className="group hover:bg-slate-50/50 transition-colors">
+                                                    <td className="px-6 py-4">
+                                                        <div className="flex items-center gap-4">
+                                                            <div className="w-10 h-10 rounded-xl bg-brand-primary/10 flex items-center justify-center text-brand-primary border border-brand-primary/20 overflow-hidden p-1.5">
+                                                                {service.icon?.startsWith('data:image') || service.icon?.startsWith('/') || service.icon?.startsWith('http')
+                                                                    ? <img src={service.icon} alt="" className="w-full h-full object-contain" />
                                                                     : (() => {
-                                                                        const CardIconComp = iconMap[c.icon] || ShieldCheck;
-                                                                        return <CardIconComp size={10} className="text-slate-400" />;
+                                                                        const IconComp = iconMap[service.icon] || Server;
+                                                                        return <IconComp size={20} />;
                                                                     })()
                                                                 }
                                                             </div>
-                                                        ))}
-                                                        {Array.isArray(service.cards) && service.cards.length > 4 && (
-                                                            <div className="w-7 h-7 rounded-full border-2 border-white bg-slate-900 text-white text-[9px] flex items-center justify-center font-bold">
-                                                                +{service.cards.length - 4}
+                                                            <div>
+                                                                <p className="font-bold text-slate-800">{service.title}</p>
+                                                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{service.description.substring(0, 30)}...</p>
                                                             </div>
-                                                        )}
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 text-right">
-                                                    <div className="flex items-center justify-end gap-2">
-                                                        <button
-                                                            onClick={() => handleOpenEditService(service)}
-                                                            className="p-2 text-slate-400 hover:text-brand-primary bg-slate-50 hover:bg-brand-primary/10 rounded-lg transition-all flex items-center gap-1.5"
-                                                        >
-                                                            <Edit3 size={16} /><span className="text-[10px] font-bold uppercase">Edit</span>
-                                                        </button>
-                                                        <button
-                                                            onClick={() => handleDeleteService(service.id)}
-                                                            className="p-2 text-slate-400 hover:text-rose-600 bg-slate-50 hover:bg-rose-50 rounded-lg transition-all flex items-center gap-1.5"
-                                                        >
-                                                            <Trash2 size={16} /><span className="text-[10px] font-bold uppercase">Delete</span>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="flex -space-x-2">
+                                                            {Array.isArray(service.cards) && service.cards.slice(0, 4).map((c, i) => (
+                                                                <div key={i} className="w-7 h-7 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center overflow-hidden">
+                                                                    {c.icon?.startsWith('data:image') || c.icon?.startsWith('/') || c.icon?.startsWith('http')
+                                                                        ? <img src={c.icon} className="w-full h-full object-cover" />
+                                                                        : (() => {
+                                                                            const CardIconComp = iconMap[c.icon] || ShieldCheck;
+                                                                            return <CardIconComp size={10} className="text-slate-400" />;
+                                                                        })()
+                                                                    }
+                                                                </div>
+                                                            ))}
+                                                            {Array.isArray(service.cards) && service.cards.length > 4 && (
+                                                                <div className="w-7 h-7 rounded-full border-2 border-white bg-slate-900 text-white text-[9px] flex items-center justify-center font-bold">
+                                                                    +{service.cards.length - 4}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-right">
+                                                        <div className="flex items-center justify-end gap-2">
+                                                            <button onClick={() => handleOpenEditService(service)} className="p-2 text-slate-400 hover:text-brand-primary hover:bg-brand-primary/5 rounded-xl transition-colors"><Edit3 size={16} /></button>
+                                                            <button onClick={() => handleDeleteService(service.id)} className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-colors"><Trash2 size={16} /></button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </AdminCard>
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -494,8 +434,8 @@ const ManageServices = () => {
                                         <div className="flex items-center justify-between mb-3">
                                             <h5 className="font-bold text-white text-xl">{serviceFormData.title || "Service Title"}</h5>
                                             <div className="w-10 h-10 rounded-xl bg-brand-primary flex items-center justify-center text-white overflow-hidden p-2 shadow-lg">
-                                                {serviceFormData.icon && (serviceFormData.icon?.startsWith('data:image') || serviceFormData.icon?.startsWith('/') || serviceFormData.icon?.startsWith('http')) 
-                                                    ? <img src={serviceFormData.icon} className="w-full h-full object-contain" /> 
+                                                {serviceFormData.icon && (serviceFormData.icon?.startsWith('data:image') || serviceFormData.icon?.startsWith('/') || serviceFormData.icon?.startsWith('http'))
+                                                    ? <img src={serviceFormData.icon} className="w-full h-full object-contain" />
                                                     : (() => {
                                                         const PreviewIconComp = iconMap[serviceFormData.icon] || Server;
                                                         return <PreviewIconComp size={20} />;
@@ -509,11 +449,17 @@ const ManageServices = () => {
 
                                 <div className="w-full space-y-4">
                                     <div>
-                                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1.5">Service Icon (PNG)</label>
+                                        <div className="flex justify-between items-center mb-1.5">
+                                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Service Icon (PNG)</label>
+                                            <span className="text-[9px] font-bold text-slate-400 uppercase">Recommended: 512x512</span>
+                                        </div>
                                         <input type="file" accept="image/png" onChange={handleServiceIconUpload} className="w-full text-[10px] file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-brand-primary/10 file:text-brand-primary font-bold cursor-pointer" />
                                     </div>
                                     <div>
-                                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1.5">Card Background</label>
+                                        <div className="flex justify-between items-center mb-1.5">
+                                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Card Background</label>
+                                            <span className="text-[9px] font-bold text-slate-400 uppercase">Recommended: 800x1200</span>
+                                        </div>
                                         <input type="file" accept="image/*" onChange={handleServiceImageUpload} className="w-full text-[10px] file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-slate-200 cursor-pointer font-bold" />
                                     </div>
                                 </div>
@@ -523,29 +469,20 @@ const ManageServices = () => {
                             <div className="flex-1 flex flex-col bg-white">
                                 <div className="p-8 border-b border-slate-100 flex justify-between items-center">
                                     <h3 className="text-xl font-black text-slate-800 tracking-tight">{editingServiceId ? "Update Service Portfolio" : "Design New Service"}</h3>
-                                    <button onClick={() => setIsServiceModalOpen(false)} className="bg-slate-100 p-2 rounded-xl text-slate-400 hover:text-slate-800 transition-colors"><X /></button>
+                                    <button onClick={() => setIsServiceModalOpen(false)} className="p-3 bg-white border border-slate-100 rounded-2xl text-slate-400 hover:text-rose-500 shadow-sm hover:shadow-md transition-all active:scale-95"><X size={20} strokeWidth={3} /></button>
                                 </div>
 
                                 <div className="p-8 overflow-y-auto flex-1 space-y-8 custom-scrollbar">
                                     {/* 1. Core Metadata */}
                                     <section className="space-y-4">
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="col-span-2 md:col-span-1">
+                                        <div className="grid grid-cols-1 gap-4">
+                                            <div className="col-span-1">
                                                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Title</label>
                                                 <input
                                                     type="text"
                                                     value={serviceFormData.title}
-                                                    onChange={(e) => setServiceFormData({ ...serviceFormData, title: e.target.value })}
-                                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-primary outline-none font-bold"
-                                                />
-                                            </div>
-                                            <div className="col-span-2 md:col-span-1">
-                                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Slug (URL)</label>
-                                                <input
-                                                    type="text"
-                                                    value={serviceFormData.slug}
-                                                    onChange={(e) => setServiceFormData({ ...serviceFormData, slug: e.target.value })}
-                                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-brand-primary outline-none font-bold text-brand-primary"
+                                                    onChange={(e) => setServiceFormData({ ...serviceFormData, title: e.target.value, slug: e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') })}
+                                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none font-bold"
                                                 />
                                             </div>
                                         </div>
@@ -555,7 +492,7 @@ const ManageServices = () => {
                                                 rows="3"
                                                 value={serviceFormData.description}
                                                 onChange={(e) => setServiceFormData({ ...serviceFormData, description: e.target.value })}
-                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm focus:ring-2 focus:ring-brand-primary outline-none leading-relaxed"
+                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm focus:border-slate-400 focus:bg-white transition-all outline-none leading-relaxed"
                                             />
                                         </div>
                                     </section>
@@ -566,18 +503,21 @@ const ManageServices = () => {
                                             <h4 className="text-sm font-black text-slate-800 uppercase tracking-wider"> Feature Cards</h4>
                                             <button
                                                 onClick={handleOpenAddCard}
-                                                className="bg-brand-primary hover:bg-brand-dark text-white px-4 py-2 rounded-xl text-[10px] font-black flex items-center gap-1.5 transition-all shadow-md shadow-brand-primary/20"
+                                                className="group relative flex items-center gap-2 px-6 py-2.5 bg-white border border-slate-200/60 rounded-2xl text-[12px] font-bold transition-all hover:shadow-xl hover:shadow-slate-200/40 active:scale-95 overflow-hidden"
                                             >
-                                                <Plus size={14} /> Add Feature Card
+                                                <Plus size={16} strokeWidth={3} className="text-brand-primary group-hover:scale-110 transition-transform" />
+                                                <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-primary to-brand-dark">
+                                                    Add Feature Card
+                                                </span>
                                             </button>
                                         </div>
 
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                             {serviceFormData.cards.map((card, idx) => (
-                                                <div key={idx} className="bg-white border border-slate-200 rounded-2xl p-4 flex items-center gap-4 group hover:shadow-lg transition-all border-l-4 border-l-brand-primary">
+                                                <div key={idx} className="bg-white border border-slate-200 rounded-2xl p-4 flex items-center gap-4 group hover:shadow-lg transition-all">
                                                     <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center overflow-hidden p-1.5">
-                                                        {card.icon && (card.icon?.startsWith('data:image') || card.icon?.startsWith('/') || card.icon?.startsWith('http')) 
-                                                            ? <img src={card.icon} className="w-full h-full object-contain" /> 
+                                                        {card.icon && (card.icon?.startsWith('data:image') || card.icon?.startsWith('/') || card.icon?.startsWith('http'))
+                                                            ? <img src={card.icon} className="w-full h-full object-contain" />
                                                             : (() => {
                                                                 const CardIconComp = iconMap[card.icon] || ShieldCheck;
                                                                 return <CardIconComp size={18} className="text-slate-400" />;
@@ -604,21 +544,21 @@ const ManageServices = () => {
 
                                     {/* 3. Conclusion */}
                                     <section className="bg-slate-50/50 rounded-3xl border border-slate-200 p-6 space-y-3">
-                                        <h4 className="text-[10px] font-black uppercase tracking-widest text-brand-primary">Conclusion</h4>
+                                        <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-800">Conclusion</h4>
                                         <textarea
                                             rows="2"
                                             placeholder="What is the final outcome of this service?"
                                             value={serviceFormData.conclusion}
                                             onChange={(e) => setServiceFormData({ ...serviceFormData, conclusion: e.target.value })}
-                                            className="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs focus:ring-2 focus:ring-brand-primary outline-none text-slate-800 leading-relaxed font-medium"
+                                            className="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs focus:border-slate-400 focus:bg-white transition-all outline-none text-slate-800 leading-relaxed font-medium"
                                         />
                                     </section>
                                 </div>
 
                                 <div className="p-8 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 rounded-br-2xl">
-                                    <button onClick={() => setIsServiceModalOpen(false)} className="px-6 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors">Abort Changes</button>
-                                    <button onClick={handleSaveService} className="bg-brand-primary hover:bg-brand-dark text-white px-12 py-3.5 rounded-2xl text-sm font-black transition-all shadow-xl shadow-brand-primary/25">
-                                        {editingServiceId ? "Update" : "Initialize Service Portfolio"}
+                                    <button onClick={() => setIsServiceModalOpen(false)} className="px-6 py-2.5 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors">Discard</button>
+                                    <button onClick={handleSaveService} className="bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white px-12 py-3.5 rounded-2xl text-sm font-black transition-all shadow-xl shadow-emerald-500/25">
+                                        {editingServiceId ? "Update " : "Confirm"}
                                     </button>
                                 </div>
                             </div>
@@ -644,22 +584,42 @@ const ManageServices = () => {
                         >
                             <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                                 <h4 className="font-black text-slate-800 text-sm">{editingCardIdx !== null ? "Edit Feature Card" : "New Feature Attribute"}</h4>
-                                <button onClick={() => setIsCardModalOpen(false)} className="p-1 text-slate-400 hover:text-black"><X size={20} /></button>
+                                <button onClick={() => setIsCardModalOpen(false)} className="p-3 bg-white border border-slate-100 rounded-2xl text-slate-400 hover:text-rose-500 shadow-sm hover:shadow-md transition-all active:scale-95"><X size={20} strokeWidth={3} /></button>
                             </div>
                             <div className="p-6 space-y-5">
                                 <div>
-                                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Feature Icon (PNG)</label>
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-2xl bg-brand-primary/5 flex items-center justify-center border border-brand-primary/10 overflow-hidden p-2">
-                                            {cardFormData.icon && (cardFormData.icon?.startsWith('data:image') || cardFormData.icon?.startsWith('/') || cardFormData.icon?.startsWith('http')) 
-                                                ? <img src={cardFormData.icon} className="w-full h-full object-contain" /> 
+                                    <div className="flex items-center gap-6 bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                                        <div className="w-16 h-16 rounded-2xl bg-brand-primary/5 flex items-center justify-center border border-brand-primary/10 overflow-hidden p-2 group relative">
+                                            {cardFormData.icon && (cardFormData.icon?.startsWith('data:image') || cardFormData.icon?.startsWith('/') || cardFormData.icon?.startsWith('http'))
+                                                ? (
+                                                    <>
+                                                        <img src={cardFormData.icon} className="w-full h-full object-contain" />
+                                                        <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
+                                                            <ImageIcon size={18} />
+                                                        </div>
+                                                    </>
+                                                )
                                                 : (() => {
                                                     const CardFormIconComp = iconMap[cardFormData.icon] || Upload;
-                                                    return <CardFormIconComp size={18} className="text-brand-primary" />;
+                                                    return <CardFormIconComp size={20} className="text-brand-primary" />;
                                                 })()
                                             }
                                         </div>
-                                        <input type="file" accept="image/png" onChange={handleCardIconUpload} className="flex-1 text-[10px] cursor-pointer" />
+                                        <div className="flex-1 space-y-2">
+                                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Upload Card Media</p>
+                                            <div className="relative overflow-hidden inline-block group/btn w-full">
+                                                <button className="w-full bg-white border border-slate-200 py-2.5 px-4 rounded-xl text-[11px] font-black text-slate-600 hover:text-brand-primary hover:border-brand-primary/30 transition-all shadow-sm flex items-center justify-center gap-2">
+                                                    <ImageIcon size={14} strokeWidth={3} />
+                                                    Change Media
+                                                </button>
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={handleCardIconUpload}
+                                                    className="absolute inset-0 opacity-0 cursor-pointer"
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div>
@@ -668,22 +628,22 @@ const ManageServices = () => {
                                         type="text"
                                         value={cardFormData.title}
                                         onChange={(e) => setCardFormData({ ...cardFormData, title: e.target.value })}
-                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-bold outline-none focus:ring-2 focus:ring-brand-primary"
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm font-bold outline-none focus:border-slate-400 focus:bg-white transition-all"
                                     />
                                 </div>
                                 <div>
-                                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Brief Description</label>
+                                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Description</label>
                                     <textarea
                                         rows="3"
                                         value={cardFormData.description}
                                         onChange={(e) => setCardFormData({ ...cardFormData, description: e.target.value })}
-                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-brand-primary"
+                                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm outline-none focus:border-slate-400 focus:bg-white transition-all"
                                     />
                                 </div>
                             </div>
                             <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-                                <button onClick={() => setIsCardModalOpen(false)} className="text-[11px] font-bold text-slate-500">Cancel</button>
-                                <button onClick={handleSaveCard} className="bg-slate-900 text-white px-6 py-2.5 rounded-xl text-[11px] font-black shadow-lg">Confirm Item</button>
+                                <button onClick={() => setIsCardModalOpen(false)} className="px-6 py-2 text-[11px] font-bold text-slate-500 hover:text-slate-800 transition-colors">Discard</button>
+                                <button onClick={handleSaveCard} className="bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white px-6 py-2.5 rounded-xl text-[11px] font-black shadow-lg shadow-emerald-500/25 transition-all">Confirm</button>
                             </div>
                         </motion.div>
                     </motion.div>
