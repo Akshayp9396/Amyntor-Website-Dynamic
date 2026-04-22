@@ -31,6 +31,8 @@ import {
     ChevronRight
 } from 'lucide-react';
 import { useContent } from '../../context/ContentContext';
+import { useNotification } from '../context/NotificationContext';
+import { API_BASE_URL } from '../../services/contentService';
 import { AdminCard, FormInput, FormTextarea } from '../components/AdminUI';
 
 const iconMap = {
@@ -40,9 +42,26 @@ const iconMap = {
 };
 
 const ManageAbout = () => {
-    const { aboutPageData, setAboutPageData } = useContent();
+    const {
+        aboutPageData, setAboutPageData,
+        loading, refreshContent
+    } = useContent();
+    const { showNotification } = useNotification();
+
+
     const [activeTab, setActiveTab] = useState('hero');
     const [isSaving, setIsSaving] = useState(false);
+
+    // 🕵️ SECURITY GATEKEEPER: Unified Rule for all local image picks
+    const validateFile = (file) => {
+        if (!file) return false;
+        const MAX_SIZE = 5 * 1024 * 1024;
+        if (file.size > MAX_SIZE) {
+            showNotification("Upload failed: File size must be under 5MB.", 'error');
+            return false;
+        }
+        return true;
+    };
 
     // Modal States for Company Cards
     const [isCardModalOpen, setIsCardModalOpen] = useState(false);
@@ -54,30 +73,106 @@ const ManageAbout = () => {
     const [editingMemberIdx, setEditingMemberIdx] = useState(null);
     const [memberFormData, setMemberFormData] = useState({ name: "", role: "", image: "" });
 
-    if (!aboutPageData) return <div className="p-8">Loading About Page Data...</div>;
+    // 🛡️ ARCHITECTURAL GUARD: Ensure live data is established before empowering the editor
+    if (loading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] text-slate-400 gap-4">
+                <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin"></div>
+                <p className="text-sm font-black tracking-widest uppercase">Establishing Total Digital Sync...</p>
+            </div>
+        );
+    }
+
+    // 🕵️ HELPER: Resolve real computer photo paths from the backend (Port 5050)
+    const getImageUrl = (path) => {
+        if (!path) return '';
+        // If it's already a full URL or a data blob, leave it alone
+        if (path.startsWith('http') || path.startsWith('data:')) return path;
+        // If it's a local upload path, point it to the backend server
+        if (path.startsWith('/uploads/')) {
+            return `http://localhost:5050${path}`;
+        }
+        return path;
+    };
 
     // === Global Handlers ===
 
-    const handleSave = () => {
-        setIsSaving(true);
-        setTimeout(() => {
+    // 🕵️ CONCEPT: handleFileUpload (The Delivery Agent)
+    // This sends raw computer photos to the backend's "/uploads" folder.
+    const handleFileUpload = async (file, onUploadSuccess) => {
+        if (!validateFile(file)) return;
+        try {
+            setIsSaving(true);
+            const axios = (await import('axios')).default;
+            const formData = new FormData();
+            formData.append('image', file);
+
+            // 🚥 Knocks on the specialized upload door
+            const response = await axios.post(`${API_BASE_URL.replace('/api/public', '')}/api/public/upload`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+
+            if (response.data.success) {
+                onUploadSuccess(response.data.url);
+                // 🕵️ UI REFINEMENT: Removed alert for a smoother background sync experience.
+            }
+        } catch (err) {
+            console.error("❌ Upload error:", err);
+            showNotification("❌ Failed to upload image.", 'error');
+        } finally {
             setIsSaving(false);
-            alert("About Us Page content updated successfully!");
-        }, 800);
+        }
+    };
+
+    // 🕵️ CONCEPT: handleSave (The Master Sync)
+    // This sends all your changes back to the MySQL "Storage Rooms."
+    const handleSave = async () => {
+        try {
+            setIsSaving(true);
+            const axios = (await import('axios')).default;
+
+            // 🛡️ 1. Save Hero & Company General Info
+            // We use .put() because we are "Updating" existing records.
+            await axios.put(`${API_BASE_URL}/about/content`, {
+                hero: aboutPageData.hero,
+                aboutCompany: aboutPageData.aboutCompany
+            });
+
+            // 🛡️ 2. Save Team Header & Members (Bulk)
+            await axios.put(`${API_BASE_URL}/about/team`, {
+                tag: aboutPageData.teamSection.tag,
+                heading: aboutPageData.teamSection.heading,
+                members: aboutPageData.teamSection.members
+            });
+
+            // 🛡️ 3. Save About Cards (Mission/Vision)
+            await axios.put(`${API_BASE_URL}/about/cards`, {
+                cards: aboutPageData.aboutCompany.cards
+            });
+
+            showNotification("Changes saved successfully!", 'success');
+            await refreshContent();
+        } catch (err) {
+            console.error("Error saving to database", err);
+            showNotification("ERROR: Failed to save changes. Please try again.", 'error');
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     const handleImageUpload = (e, section, key) => {
         const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setAboutPageData({
-                    ...aboutPageData,
-                    [section]: { ...aboutPageData[section], [key]: reader.result }
-                });
-            };
-            reader.readAsDataURL(file);
+        if (!validateFile(file)) {
+            e.target.value = '';
+            return;
         }
+        // 🚥 We call the specialized file uploader
+        handleFileUpload(file, (url) => {
+            setAboutPageData({
+                ...aboutPageData,
+                [section]: { ...aboutPageData[section], [key]: url }
+            });
+        });
     };
 
     const handleOpenAddCard = () => {
@@ -94,7 +189,7 @@ const ManageAbout = () => {
 
     const handleSaveCard = () => {
         if (!cardFormData.title) {
-            alert("Card title is required.");
+            showNotification("Card title is required.", 'error');
             return;
         }
 
@@ -124,13 +219,13 @@ const ManageAbout = () => {
 
     const handleCardIconUpload = (e) => {
         const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setCardFormData({ ...cardFormData, icon: reader.result });
-            };
-            reader.readAsDataURL(file);
+        if (!validateFile(file)) {
+            e.target.value = '';
+            return;
         }
+        handleFileUpload(file, (url) => {
+            setCardFormData({ ...cardFormData, icon: url });
+        });
     };
 
     // --- Team CRUD ---
@@ -148,11 +243,11 @@ const ManageAbout = () => {
 
     const handleSaveMember = () => {
         if (!memberFormData.name || !memberFormData.role) {
-            alert("Name and Role are required.");
+            showNotification("Please fill in all fields before updating.", 'error');
             return;
         }
 
-        const newMembers = [...aboutPageData.aboutTeam.members];
+        const newMembers = [...aboutPageData.teamSection.members];
         if (editingMemberIdx !== null) {
             newMembers[editingMemberIdx] = memberFormData;
         } else {
@@ -161,30 +256,30 @@ const ManageAbout = () => {
 
         setAboutPageData({
             ...aboutPageData,
-            aboutTeam: { ...aboutPageData.aboutTeam, members: newMembers }
+            teamSection: { ...aboutPageData.teamSection, members: newMembers }
         });
         setIsTeamModalOpen(false);
     };
 
     const handleDeleteMember = (idx) => {
         if (window.confirm("Remove this team member?")) {
-            const newMembers = aboutPageData.aboutTeam.members.filter((_, i) => i !== idx);
+            const newMembers = aboutPageData.teamSection.members.filter((_, i) => i !== idx);
             setAboutPageData({
                 ...aboutPageData,
-                aboutTeam: { ...aboutPageData.aboutTeam, members: newMembers }
+                teamSection: { ...aboutPageData.teamSection, members: newMembers }
             });
         }
     };
 
     const handleMemberImageUpload = (e) => {
         const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setMemberFormData({ ...memberFormData, image: reader.result });
-            };
-            reader.readAsDataURL(file);
+        if (!validateFile(file)) {
+            e.target.value = '';
+            return;
         }
+        handleFileUpload(file, (url) => {
+            setMemberFormData({ ...memberFormData, image: url });
+        });
     };
 
     const tabs = [
@@ -275,7 +370,7 @@ const ManageAbout = () => {
                                         </div>
                                         <div className="relative group overflow-hidden rounded-[2rem] bg-slate-900 border border-slate-200 aspect-video flex items-center justify-center shadow-inner">
                                             <img
-                                                src={aboutPageData.hero.backgroundImage}
+                                                src={getImageUrl(aboutPageData.hero.backgroundImage)}
                                                 className="w-full h-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-110"
                                                 alt="Hero preview"
                                             />
@@ -305,8 +400,8 @@ const ManageAbout = () => {
                                         <div key={idx} className="bg-slate-50 border border-slate-200/60 rounded-[1.5rem] p-6 flex flex-col gap-4 group hover:shadow-xl hover:bg-white transition-all duration-300 relative overflow-hidden">
                                             <div className="flex justify-between items-start">
                                                 <div className="w-14 h-14 rounded-2xl bg-brand-primary/5 flex items-center justify-center text-brand-primary border border-brand-primary/10 p-3 shadow-sm group-hover:scale-105 transition-transform">
-                                                    {card.icon?.startsWith('data:image') || card.icon?.startsWith('/') || card.icon?.startsWith('http')
-                                                        ? <img src={card.icon} alt="" className="w-full h-full object-contain" />
+                                                    {card.icon?.startsWith('data:image') || card.icon?.includes('/uploads/') || card.icon?.startsWith('http')
+                                                        ? <img src={getImageUrl(card.icon)} alt="" className="w-full h-full object-contain" />
                                                         : (() => {
                                                             const IconComp = iconMap[card.icon] || Goal;
                                                             return <IconComp size={24} strokeWidth={2} />;
@@ -317,7 +412,7 @@ const ManageAbout = () => {
                                             </div>
                                             <div className="space-y-2">
                                                 <h4 className="font-black text-slate-800 text-[15px] tracking-tight">{card.title}</h4>
-                                                <p className="text-xs text-slate-500 line-clamp-4 leading-relaxed font-medium">{card.description}</p>
+                                                <p className="text-xs text-slate-500 line-clamp-4 leading-relaxed font-medium whitespace-pre-line">{card.description}</p>
                                             </div>
                                         </div>
                                     ))}
@@ -348,13 +443,33 @@ const ManageAbout = () => {
                                     </button>
                                 }
                             >
-                                <p className="text-xs text-slate-500 font-medium mb-6">Manage the leadership and team member profiles.</p>
+                                <div className="mb-8 p-6 bg-slate-50/50 border border-slate-100 rounded-[2.5rem] grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <FormInput
+                                        label="Section Tag"
+                                        value={aboutPageData.teamSection.tag}
+                                        onChange={(e) => setAboutPageData({
+                                            ...aboutPageData,
+                                            teamSection: { ...aboutPageData.teamSection, tag: e.target.value }
+                                        })}
+                                        placeholder="e.g. OUR TEAM"
+                                    />
+                                    <FormInput
+                                        label="Main Heading"
+                                        value={aboutPageData.teamSection.heading}
+                                        onChange={(e) => setAboutPageData({
+                                            ...aboutPageData,
+                                            teamSection: { ...aboutPageData.teamSection, heading: e.target.value }
+                                        })}
+                                        placeholder="e.g. Meet the Visionaries"
+                                    />
+                                </div>
+                                <p className="text-xs text-slate-500 font-medium mb-6 px-1">Manage the leadership and team member profiles below.</p>
                                 <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                                    {aboutPageData.aboutTeam.members.map((member, idx) => (
+                                    {aboutPageData.teamSection.members.map((member, idx) => (
                                         <div key={idx} className="group relative bg-white border border-slate-200 rounded-[2rem] overflow-hidden hover:shadow-2xl transition-all duration-300">
                                             <div className="aspect-[4/5] overflow-hidden relative">
                                                 <img
-                                                    src={member.image}
+                                                    src={getImageUrl(member.image)}
                                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                                     alt={member.name}
                                                 />
@@ -403,8 +518,8 @@ const ManageAbout = () => {
                                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1.5 font-black">Icon</label>
                                     <div className="flex items-center gap-5 p-4 bg-slate-50/80 border border-slate-100 rounded-2xl group/icon">
                                         <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center border border-slate-200 overflow-hidden p-3 shadow-sm group-hover/icon:border-brand-primary/30 transition-all">
-                                            {cardFormData.icon?.startsWith('data:image') || cardFormData.icon?.startsWith('/') || cardFormData.icon?.startsWith('http')
-                                                ? <img src={cardFormData.icon} className="w-full h-full object-contain" alt="" />
+                                            {cardFormData.icon?.startsWith('data:image') || cardFormData.icon?.includes('/uploads/') || cardFormData.icon?.startsWith('http')
+                                                ? <img src={getImageUrl(cardFormData.icon)} className="w-full h-full object-contain" alt="" />
                                                 : (() => {
                                                     const PreviewIconComp = iconMap[cardFormData.icon] || Goal;
                                                     return <PreviewIconComp size={32} className="text-brand-primary" />;
@@ -482,10 +597,15 @@ const ManageAbout = () => {
                                     <div className="flex-1 overflow-hidden relative group">
                                         {memberFormData.image ? (
                                             <>
-                                                <img src={memberFormData.image} className="w-full h-full object-cover transition-transform group-hover:scale-110" alt="" />
-                                                <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white pointer-events-none">
-                                                    <ImageIcon size={28} className="mb-2" />
-                                                    <p className="text-[10px] font-black uppercase tracking-widest">Change Media</p>
+                                                <img
+                                                    src={getImageUrl(memberFormData.image)}
+                                                    className="w-full h-full object-cover"
+                                                    alt={memberFormData.name}
+                                                />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+                                                <div className="absolute bottom-4 left-0 right-0 px-4 pointer-events-none">
+                                                    <p className="text-white text-[9px] font-bold uppercase tracking-[0.2em] opacity-80">{memberFormData.role || "Job Role"}</p>
+                                                    <h5 className="text-white font-bold text-sm tracking-tight">{memberFormData.name || "Member Name"}</h5>
                                                 </div>
                                             </>
                                         ) : (
@@ -494,11 +614,6 @@ const ManageAbout = () => {
                                                 <span className="text-[10px] mt-2 font-bold uppercase tracking-widest">No Image</span>
                                             </div>
                                         )}
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
-                                        <div className="absolute bottom-4 left-0 right-0 px-4 pointer-events-none">
-                                            <p className="text-white text-[9px] font-bold uppercase tracking-[0.2em] opacity-80">{memberFormData.role || "Job Role"}</p>
-                                            <h5 className="text-white font-bold text-sm tracking-tight">{memberFormData.name || "Member Name"}</h5>
-                                        </div>
                                     </div>
                                 </div>
                                 <div className="mt-8 w-full">

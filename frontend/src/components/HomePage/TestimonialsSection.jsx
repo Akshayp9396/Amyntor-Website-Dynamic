@@ -100,86 +100,105 @@ const TestimonialsSection = () => {
                     </motion.div>
                 </motion.div>
 
-                {/* Main Content Grid */}
-                <motion.div
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, margin: "0px" }}
-                    variants={containerVariants}
-                    className="grid grid-cols-1 lg:grid-cols-3 gap-6"
-                >
-                    {/* Testimonial Cards (Left and Center) */}
-                    {testimonials.map((testimonial) => (
-                        <motion.div
-                            key={testimonial.id}
-                            variants={itemVariants}
-                            className="bg-white rounded-[2rem] p-8 shadow-sm hover:shadow-xl hover:scale-[1.02] transition-all duration-300 relative group flex flex-col h-[380px] lg:h-[400px]"
+                {/* Main Content: Sliding Lane + Fixed Pillar */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    {/* LEFT LANE: Sliding Testimonials (Occupies 2/3 of space on Desktop) */}
+                    <div className="lg:col-span-2 overflow-hidden">
+                        <Swiper
+                            modules={[Autoplay, Pagination]}
+                            spaceBetween={24}
+                            slidesPerView={1}
+                            loop={testimonials.length > 2}
+                            autoplay={{
+                                delay: 5000,
+                                disableOnInteraction: false,
+                            }}
+                            breakpoints={{
+                                768: {
+                                    slidesPerView: 2,
+                                }
+                            }}
+                            className="testimonials-swiper !pb-12"
                         >
-                            {/* User Info */}
-                            <div className="flex items-center gap-4 mb-8">
-                                <div className="relative">
-                                    <img
-                                        src={testimonial.avatar}
-                                        alt={testimonial.name}
-                                        className="w-16 h-16 rounded-full object-cover"
-                                    />
-                                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-brand-primary rounded-full flex items-center justify-center border-2 border-white shadow-sm">
-                                        <Quote size={10} className="text-white fill-current" />
+                            {testimonials.map((testimonial) => (
+                                <SwiperSlide key={testimonial.id}>
+                                    <motion.div
+                                        variants={itemVariants}
+                                        className="bg-white rounded-[2rem] p-8 shadow-sm hover:shadow-xl hover:scale-[1.01] transition-all duration-300 relative group flex flex-col h-[400px]"
+                                    >
+                                        {/* User Info */}
+                                        <div className="flex items-center gap-4 mb-6">
+                                            <div className="relative">
+                                                {testimonial.avatar && (
+                                                    <img
+                                                        src={testimonial.avatar}
+                                                        alt={testimonial.name}
+                                                        className="w-16 h-16 rounded-full object-cover border-2 border-slate-50"
+                                                    />
+                                                )}
+                                                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-brand-primary rounded-full flex items-center justify-center border-2 border-white shadow-sm">
+                                                    <Quote size={10} className="text-white fill-current" />
+                                                </div>
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <h4 className="text-slate-900 font-bold text-lg">{testimonial.name}</h4>
+                                                <span className="text-slate-500 text-sm font-medium">{testimonial.designation}</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Divider */}
+                                        <hr className="border-slate-100 mb-6" />
+
+                                        {/* Quote & Description */}
+                                        <div className="flex-grow">
+                                          
+                                            <h3 className="text-xl font-bold text-slate-900 mb-4 leading-tight whitespace-pre-line">"{testimonial.quote}"</h3>
+                                            <p className="text-slate-500 leading-relaxed line-clamp-5 italic whitespace-pre-line">
+                                                {testimonial.feedback}
+                                            </p>
+                                        </div>
+                                    </motion.div>
+                                </SwiperSlide>
+                            ))}
+                        </Swiper>
+                    </div>
+
+                    {/* RIGHT PILLAR: Fixed Stat Card */}
+                    <div className="lg:col-span-1">
+                        <motion.div
+                            variants={itemVariants}
+                            className="bg-[#0b1021] rounded-[2rem] shadow-2xl hover:scale-[1.02] transition-all duration-300 relative overflow-hidden flex flex-col justify-end h-[400px] w-full"
+                        >
+                            {/* Pre-designed Background */}
+                            <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                            {testimonialHeader?.sideImage && (
+                                <img
+                                    src={testimonialHeader?.sideImage}
+                                    alt="Satisfied Professional"
+                                    className="w-full h-full object-cover object-center bg-slate-800"
+                                />
+                            )}
+                            </div>
+
+                            {/* Gradient Overlay */}
+                            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#0b1021] via-[#0b1021]/80 to-transparent z-20 pointer-events-none"></div>
+
+                            {/* Bottom Stats Overlay */}
+                            <div className="relative z-30 p-8 flex items-end justify-center">
+                                <div className="flex items-center gap-3 bg-white/10 backdrop-blur-md px-6 py-4 rounded-2xl border border-white/10 shadow-2xl">
+                                    <div className="w-8 h-8 rounded-full bg-brand-primary flex items-center justify-center shadow-lg">
+                                        <CheckCircle size={18} className="text-white" fill="currentColor" stroke="none" />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="text-white font-black text-xl leading-tight">{testimonialHeader?.statValue}</span>
+                                        <span className="text-gray-300 text-xs font-bold uppercase tracking-widest">{testimonialHeader?.statText}</span>
                                     </div>
                                 </div>
-                                <div className="flex flex-col">
-                                    <h4 className="text-slate-900 font-bold text-lg">{testimonial.name}</h4>
-                                    <span className="text-slate-500 text-sm">{testimonial.designation}</span>
-                                </div>
                             </div>
-
-                            {/* Divider Line */}
-                            <hr className="border-slate-100 mb-8" />
-
-                            {/* Quote & Description */}
-                            <h3 className="text-xl font-bold  mb-4">"{testimonial.quote}"</h3>
-                            <p className="text-slate-500 leading-relaxed mb-auto pb-8">
-                                {testimonial.feedback}
-                            </p>
-
-
-
                         </motion.div>
-                    ))}
-
-                    {/* Status Custom Background Card (Right) */}
-                    <motion.div
-                        variants={itemVariants}
-                        className="bg-[#0b1021] rounded-[2rem] shadow-2xl hover:scale-[1.02] transition-all duration-300 relative overflow-hidden flex flex-col justify-end h-[380px] lg:h-[400px] w-full max-w-[420px] mx-auto lg:max-w-none"
-                    >
-                        {/* Pre-designed Background & Subject Combined Image */}
-                        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                            <img
-                                src={testimonialHeader?.sideImage}
-                                alt="Satisfied Professional"
-                                className="w-full h-full object-cover object-center"
-                            />
-                        </div>
-
-                        {/* Gradient Overlay for bottom text readability */}
-                        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[#0b1021] via-[#0b1021]/80 to-transparent z-20 pointer-events-none"></div>
-
-                        {/* Bottom Stats Overlay */}
-                        <div className="relative z-30 p-8 flex items-end justify-center">
-                            <div className="flex items-center gap-3">
-                                <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center shadow-lg">
-                                    <CheckCircle size={16} className="text-brand-primary" fill="currentColor" stroke="white" />
-                                </div>
-                                <div className="flex flex-col">
-                                    <span className="text-white font-medium text-lg leading-tight">{testimonialHeader?.statValue}</span>
-                                    <span className="text-gray-300 text-sm">{testimonialHeader?.statText}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                    </motion.div>
-
-                </motion.div>
+                    </div>
+                </div>
 
             </div>
         </section>

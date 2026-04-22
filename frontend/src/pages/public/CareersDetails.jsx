@@ -5,7 +5,7 @@
  */
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, SearchX, Briefcase, Calendar, Clock, MapPin } from 'lucide-react';
+import { ArrowLeft, ArrowRight, SearchX, Briefcase, Calendar, Clock, MapPin, Users, ChevronRight } from 'lucide-react';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { useContent } from '../../context/ContentContext';
@@ -43,115 +43,142 @@ const CareersDetails = () => {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
+        <div className="min-h-screen bg-white flex flex-col font-sans">
             <Navbar />
 
-            {/* Premium Hero Wrapper */}
-            <section className="w-full bg-slate-50 px-4 md:px-8 py-4 md:py-6">
-                <div className="relative w-full h-[40vh] min-h-[320px] max-h-[400px] rounded-[2rem] md:rounded-[2.5rem] flex flex-col items-center justify-center bg-[#050B14] overflow-hidden shadow-2xl">
+            {/* Primary Hero Section — Standardized height matched with ServiceDetails */}
+            <section className="w-full bg-[#F8FAFC] px-4 md:px-8 py-4 md:py-6 text-center">
+                <div className="relative w-full h-[50vh] min-h-[380px] max-h-[500px] rounded-[2rem] md:rounded-[2.5rem] flex flex-col items-center justify-center bg-[#050B14] overflow-hidden shadow-2xl transition-all duration-300">
                     <div className="absolute inset-0 z-0">
                         <img
                             src="https://images.unsplash.com/photo-1573164713988-8665fc963095"
                             alt="Job Role Background"
-                            className="w-full h-full object-cover opacity-[0.2]"
+                            className="w-full h-full object-cover opacity-[0.35]"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050B14]/60 to-[#050B14]"></div>
+                        <div className="absolute inset-0 bg-[#050B14]/40 mix-blend-multiply"></div>
+                        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050B14]/30 to-[#050B14]/90"></div>
                     </div>
-                    <div className="relative z-10 text-center px-6 max-w-4xl mx-auto w-full">
-                        <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white text-[13px] font-semibold tracking-wide shadow-lg mb-6">
-                            <Briefcase size={14} />
-                            {job.category}
-                        </span>
-                        <h1 className="text-3xl md:text-5xl font-bold text-white mb-6 drop-shadow-md">
-                            {job.title}
-                        </h1>
+
+                    <div className="relative z-10 text-center px-6 max-w-4xl mx-auto w-full h-full flex flex-col items-center justify-center">
+                        <div className="flex flex-col items-center">
+                            <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-brand-dark to-brand-primary text-white text-[13px] sm:text-sm font-semibold tracking-wide shadow-lg mb-6 shadow-brand-primary/20">
+                                <Briefcase size={16} strokeWidth={2.5} />
+                                CAREERS
+                            </span>
+                            <h1 className="text-4xl md:text-5xl lg:text-7xl font-black text-white tracking-tight drop-shadow-md">
+                                Amyntor Tech Solutions
+                            </h1>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            {/* Main Content Split Area */}
-            <main className="flex-grow max-w-[1400px] mx-auto w-full px-4 md:px-8 py-16">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+            {/* Main Unified Content Container — Aligned with Navbar at max-w-[1400px] */}
+            <main className="flex-grow max-w-[1400px] mx-auto w-full px-4 md:px-8 py-12">
+                <div className="bg-white border border-slate-100 rounded-[2.5rem] shadow-sm overflow-hidden">
 
-                    {/* Left Column (Job Details) */}
-                    <div className="lg:col-span-2 bg-white rounded-[2rem] p-8 md:p-12 shadow-sm border border-slate-100">
-                        <h2 className="text-2xl font-bold text-[#0b1021] mb-6">Role Overview</h2>
-                        <p className="text-slate-600 text-[15.5px] md:text-lg leading-relaxed mb-8 text-justify">
-                            {job.roleOverview}
-                        </p>
+                    {/* Header Section within Container */}
+                    <div className="p-8 md:p-12 border-b border-slate-100">
+                        {/* Security Tag (job.category) removed as requested */}
 
-                        <h3 className="text-xl font-bold text-[#0b1021] mb-4">Job Responsibilities</h3>
-                        <ul className="list-disc pl-5 space-y-3 text-slate-600 text-[15.5px] mb-8 marker:text-brand-primary">
-                            {job.responsibilities?.map((item, index) => (
-                                <li key={index} className="leading-relaxed text-justify">{item}</li>
-                            ))}
-                        </ul>
+                        <h2 className="text-3xl md:text-5xl font-extrabold text-[#0b1021] mb-10 tracking-tight">
+                            {job.title}
+                        </h2>
 
-                        <h3 className="text-xl font-bold text-[#0b1021] mb-4">Qualifications and General Skills</h3>
-                        <ul className="list-disc pl-5 space-y-3 text-slate-600 text-[15.5px] mb-8 marker:text-brand-primary">
-                            {job.qualifications?.map((item, index) => (
-                                <li key={index} className="leading-relaxed text-justify">{item}</li>
-                            ))}
-                        </ul>
+                        {/* Stretched Horizontal Metadata Row with Bar Separators */}
+                        <div className="flex flex-wrap items-center justify-between gap-y-6">
+                            <div className="flex items-center flex-1">
+                                <div className="flex items-center gap-3">
+                                    <Clock size={20} className="text-brand-primary shrink-0" />
+                                    <div>
+                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">Experience</p>
+                                        <p className="font-bold text-[#0b1021] text-[15px]">{job.experience}</p>
+                                    </div>
+                                </div>
+                                <div className="hidden lg:block mx-auto w-px h-8 bg-slate-200" /> {/* Centered Bar */}
+                            </div>
 
-                        {/* Apply Section moved to bottom of Left Column */}
-                        <div className="mt-8">
-                            <h3 className="text-xl font-bold text-[#0b1021] mb-4">How to Apply</h3>
+                            <div className="flex items-center flex-1">
+                                <div className="flex items-center gap-3">
+                                    <Users size={20} className="text-brand-primary shrink-0" />
+                                    <div>
+                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">Openings</p>
+                                        <p className="font-bold text-[#0b1021] text-[15px]">{job.openings} Positions</p>
+                                    </div>
+                                </div>
+                                <div className="hidden lg:block mx-auto w-px h-8 bg-slate-200" /> {/* Centered Bar */}
+                            </div>
+
+                            <div className="flex items-center flex-1">
+                                <div className="flex items-center gap-3">
+                                    <Briefcase size={20} className="text-brand-primary shrink-0" />
+                                    <div>
+                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">Job Type</p>
+                                        <p className="font-bold text-[#0b1021] text-[15px]">{job.type || 'Full-Time'}</p>
+                                    </div>
+                                </div>
+                                <div className="hidden lg:block mx-auto w-px h-8 bg-slate-200" /> {/* Centered Bar */}
+                            </div>
+
+                            <div className="flex items-center flex-1">
+                                <div className="flex items-center gap-3">
+                                    <MapPin size={20} className="text-brand-primary shrink-0" />
+                                    <div>
+                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-0.5">Job Location</p>
+                                        <p className="font-bold text-[#0b1021] text-[15px]">Trivandrum (Hybrid)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Content Section within same Container */}
+                    <div className="p-8 md:p-12 space-y-12 bg-white">
+                        <div>
+                            <h3 className="text-2xl font-bold text-[#0b1021] mb-6">Role Overview</h3>
                             <p className="text-slate-600 text-[15.5px] md:text-lg leading-relaxed text-justify">
+                                {job.roleOverview}
+                            </p>
+                        </div>
+
+                        <div>
+                            <h3 className="text-xl font-bold text-[#0b1021] mb-4">Job Responsibilities</h3>
+                            <ul className="list-disc pl-5 space-y-3 text-slate-600 text-[15.5px] marker:text-brand-primary">
+                                {job.responsibilities?.map((item, index) => (
+                                    <li key={index} className="leading-relaxed text-justify">{item}</li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 className="text-xl font-bold text-[#0b1021] mb-4">Qualifications and General Skills</h3>
+                            <ul className="list-disc pl-5 space-y-3 text-slate-600 text-[15.5px] marker:text-brand-primary">
+                                {job.qualifications?.map((item, index) => (
+                                    <li key={index} className="leading-relaxed text-justify">{item}</li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        <div className="pt-8 border-t border-slate-100">
+                            <h3 className="text-xl font-bold text-[#0b1021] mb-4">How to Apply</h3>
+                            <p className="text-slate-600 text-[15.5px] md:text-lg leading-relaxed text-justify mb-8">
                                 {job.howToApply ? (
                                     <span>{job.howToApply}</span>
                                 ) : (
                                     <>
-                                        To apply for this position, please send your resume to <a href={`mailto:hr@amyntortech.com?subject=Application for ${job.title}`} className="text-brand-primary font-semibold hover:underline">hr@amyntortech.com</a>. Be sure to include the job title in the subject line.
+                                        To apply for this position, please send your resume and cover letter to our HR department at <a href={`mailto:hr@amyntortech.com?subject=Application for ${job.title}`} className="text-brand-primary font-semibold hover:underline">hr@amyntortech.com</a>, or submit your details using the application form below.
                                     </>
                                 )}
                             </p>
+
+                            <Link
+                                to={`/careers/${job.slug}/apply`}
+                                className="group relative inline-flex items-center gap-3 px-10 py-4 rounded-full bg-gradient-to-r from-brand-dark to-brand-primary text-white font-bold tracking-wide shadow-lg hover:shadow-brand-primary/30 transition-all duration-300 transform hover:-translate-y-0.5"
+                            >
+                                <span className="relative z-10">Apply Now</span>
+                                <ArrowRight size={18} className="relative z-10 transform transition-transform group-hover:translate-x-1" />
+                            </Link>
                         </div>
-                    </div>
-
-                    {/* Right Sticky Sidebar */}
-                    <div className="lg:col-span-1 border border-slate-100 bg-white rounded-[2rem] p-8 shadow-sm lg:sticky lg:top-24">
-                        <h3 className="text-xl font-bold text-[#0b1021] mb-6 border-b border-slate-100 pb-4">Job Summary</h3>
-
-                        <div className="space-y-6 mb-8">
-                            <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                                    <Clock size={18} />
-                                </div>
-                                <div>
-                                    <p className="text-sm text-slate-400 font-medium">Experience Level</p>
-                                    <p className="font-semibold text-[#0b1021]">{job.experience}</p>
-                                </div>
-                            </div>
-                            <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                                    <Briefcase size={18} />
-                                </div>
-                                <div>
-                                    <p className="text-sm text-slate-400 font-medium">Openings</p>
-                                    <p className="font-semibold text-[#0b1021]">{job.openings}</p>
-                                </div>
-                            </div>
-                            <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                                    <Calendar size={18} />
-                                </div>
-                                <div>
-                                    <p className="text-sm text-slate-400 font-medium">Date Posted</p>
-                                    <p className="font-semibold text-[#0b1021]">{job.postedDate}</p>
-                                </div>
-                            </div>
-                            <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-                                    <MapPin size={18} />
-                                </div>
-                                <div>
-                                    <p className="text-sm text-slate-400 font-medium">Location</p>
-                                    <p className="font-semibold text-[#0b1021]">Trivandrum (Hybrid)</p>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
             </main>

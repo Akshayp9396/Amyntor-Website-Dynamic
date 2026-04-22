@@ -36,6 +36,8 @@ import {
 } from 'lucide-react';
 import { useContent } from '../../context/ContentContext';
 import { AdminCard, FormInput, FormTextarea } from '../components/AdminUI';
+import ContentService from '../../services/contentService';
+import { useNotification } from '../context/NotificationContext'; // 🛡️ MISSION: Absolute UI Parity
 
 const iconMap = {
     Fingerprint: Fingerprint,
@@ -44,11 +46,13 @@ const iconMap = {
     Headset: Headphones,
     Boxes: Boxes,
     FileKey: FileKey,
-    Server: Server
+    Server: Server,
+    ShieldCheck: ShieldCheck
 };
 
 const ManageServices = () => {
-    const { servicesPageData, setServicesPageData } = useContent();
+    const { servicesPageData, setServicesPageData, refreshContent } = useContent();
+    const { showNotification } = useNotification(); // 🕵️ MISSION: Notification Authority
     const [activeTab, setActiveTab] = useState('hero');
     const [isSaving, setIsSaving] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -69,17 +73,35 @@ const ManageServices = () => {
 
     // === Handlers ===
 
-    const handleSave = () => {
-        setIsSaving(true);
-        setTimeout(() => {
+    const handleSave = async () => {
+        try {
+            setIsSaving(true);
+            // 🛡️ MISSION: Persist Hero & Intro
+            const res = await ContentService.updateServicesContent({
+                hero: servicesPageData.hero,
+                serviceIntro: servicesPageData.serviceIntro
+            });
+
+            if (res.success) {
+                await refreshContent();
+                showNotification("Changes saved successfully!", 'success');
+            }
+        } catch (err) {
+            console.error("❌ Persistence Error:", err);
+            showNotification("ERROR: Failed to save changes. Please try again.", 'error');
+        } finally {
             setIsSaving(false);
-            alert("Services Page content updated successfully!");
-        }, 800);
+        }
     };
 
     const handleImageUpload = (e, section, key) => {
         const file = e.target.files[0];
         if (file) {
+            // 🛡️ MISSION: Size Authority (5MB Check)
+            if (file.size > 5 * 1024 * 1024) {
+                showNotification("Upload failed: File size must be under 5MB.", 'error');
+                return;
+            }
             const reader = new FileReader();
             reader.onloadend = () => {
                 setServicesPageData({
@@ -105,48 +127,64 @@ const ManageServices = () => {
         setIsServiceModalOpen(true);
     };
 
-    const handleSaveService = () => {
+    const handleSaveService = async () => {
         if (!serviceFormData.title || !serviceFormData.slug) {
-            alert("Title and Slug are required.");
+            showNotification("Please fill in all fields before updating.", 'error');
             return;
         }
 
-        if (editingServiceId) {
-            const updatedItems = servicesPageData.servicesList.items.map(item =>
-                item.id === editingServiceId ? { ...serviceFormData, id: item.id } : item
-            );
-            setServicesPageData({
-                ...servicesPageData,
-                servicesList: { ...servicesPageData.servicesList, items: updatedItems }
-            });
-        } else {
-            const newId = servicesPageData.servicesList.items.length > 0
-                ? Math.max(...servicesPageData.servicesList.items.map(i => i.id)) + 1
-                : 1;
-            setServicesPageData({
-                ...servicesPageData,
-                servicesList: {
-                    ...servicesPageData.servicesList,
-                    items: [...servicesPageData.servicesList.items, { ...serviceFormData, id: newId }]
-                }
-            });
+        try {
+            setIsSaving(true);
+
+            // 🕵️ MISSION: Absolute Payload Optimization (Single Image Data Courier)
+            const submissionData = { ...serviceFormData };
+            if (submissionData.image) {
+                submissionData.image_url = submissionData.image;
+                delete submissionData.image; // 🚦 Remove redundant 5MB+ base64 from payload!
+            }
+            submissionData.id = editingServiceId;
+
+            const res = await ContentService.upsertService(submissionData);
+
+            if (res.success) {
+                await refreshContent();
+                setIsServiceModalOpen(false);
+                showNotification("Expertise mission established successfully!", 'success');
+            }
+        } catch (err) {
+            console.error("❌ Service Save Error:", err);
+            showNotification("ERROR: Failed to save expertise card. Check foundations.", 'error');
+        } finally {
+            setIsSaving(false);
         }
-        setIsServiceModalOpen(false);
     };
 
-    const handleDeleteService = (id) => {
+    const handleDeleteService = async (id) => {
         if (window.confirm("Are you sure you want to remove this service? This action cannot be undone.")) {
-            const updatedItems = servicesPageData.servicesList.items.filter(item => item.id !== id);
-            setServicesPageData({
-                ...servicesPageData,
-                servicesList: { ...servicesPageData.servicesList, items: updatedItems }
-            });
+            try {
+                setIsSaving(true);
+                const res = await ContentService.deleteService(id);
+                if (res.success) {
+                    await refreshContent();
+                    showNotification("Service de-commissioned successfully.", 'success');
+                }
+            } catch (err) {
+                console.error("❌ Deletion Error:", err);
+                showNotification("ERROR: Failed to delete service. Please try again.", 'error');
+            } finally {
+                setIsSaving(false);
+            }
         }
     };
 
     const handleServiceImageUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
+            // 🛡️ MISSION: 5MB Capacity Sealing
+            if (file.size > 5 * 1024 * 1024) {
+                showNotification("Security Protocol: Background must be under 5MB.", 'error');
+                return;
+            }
             const reader = new FileReader();
             reader.onloadend = () => {
                 setServiceFormData({ ...serviceFormData, image: reader.result });
@@ -158,6 +196,11 @@ const ManageServices = () => {
     const handleServiceIconUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
+            // 🛡️ MISSION: 5MB Icon Policy
+            if (file.size > 5 * 1024 * 1024) {
+                showNotification("Security Protocol: PNG Icon must be under 5MB.", 'error');
+                return;
+            }
             const reader = new FileReader();
             reader.onloadend = () => {
                 setServiceFormData({ ...serviceFormData, icon: reader.result });
@@ -181,7 +224,7 @@ const ManageServices = () => {
 
     const handleSaveCard = () => {
         if (!cardFormData.title) {
-            alert("Card title is required.");
+            showNotification("Validation Mission: Card title is required.", 'error');
             return;
         }
 
@@ -206,6 +249,11 @@ const ManageServices = () => {
     const handleCardIconUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
+            // 🛡️ MISSION: 5MB Sub-Card Security
+            if (file.size > 5 * 1024 * 1024) {
+                showNotification("Security Protocol: Card media must be under 5MB.", 'error');
+                return;
+            }
             const reader = new FileReader();
             reader.onloadend = () => {
                 setCardFormData({ ...cardFormData, icon: reader.result });
@@ -301,11 +349,18 @@ const ManageServices = () => {
                                         <span className="text-[10px] font-bold text-brand-primary uppercase tracking-tighter">Recommended: 1920 x 1080 PX</span>
                                     </div>
                                     <div className="relative group overflow-hidden rounded-[2rem] bg-slate-900 border border-slate-200 aspect-video flex items-center justify-center shadow-inner">
-                                        <img
-                                            src={servicesPageData.hero.backgroundImage}
-                                            className="w-full h-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-110"
-                                            alt="Hero background preview"
-                                        />
+                                        {servicesPageData.hero?.backgroundImage ? (
+                                            <img
+                                                src={servicesPageData.hero.backgroundImage}
+                                                className="w-full h-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-110"
+                                                alt="Hero background preview"
+                                            />
+                                        ) : (
+                                            <div className="flex flex-col items-center justify-center text-slate-500 italic text-[11px] font-bold">
+                                                <ImageIcon size={28} className="mb-2 opacity-20" />
+                                                No Media Established
+                                            </div>
+                                        )}
                                         <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white cursor-pointer pointer-events-none">
                                             <ImageIcon size={28} className="mb-2" />
                                             <p className="text-[11px] font-black uppercase tracking-widest">Change Media</p>
@@ -355,9 +410,9 @@ const ManageServices = () => {
                                                 <tr key={service.id} className="group hover:bg-slate-50/50 transition-colors">
                                                     <td className="px-6 py-4">
                                                         <div className="flex items-center gap-4">
-                                                            <div className="w-10 h-10 rounded-xl bg-brand-primary/10 flex items-center justify-center text-brand-primary border border-brand-primary/20 overflow-hidden p-1.5">
-                                                                {service.icon?.startsWith('data:image') || service.icon?.startsWith('/') || service.icon?.startsWith('http')
-                                                                    ? <img src={service.icon} alt="" className="w-full h-full object-contain" />
+                                                            <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-brand-primary border border-slate-200/60 overflow-hidden p-1.5">
+                                                                {service.icon && (service.icon.startsWith('data:image') || service.icon.startsWith('/') || service.icon.startsWith('http'))
+                                                                    ? <img src={service.icon} alt="" className="w-full h-full object-contain" style={{ filter: 'invert(48%) sepia(79%) saturate(2476%) hue-rotate(186deg) brightness(101%) contrast(101%)' }} />
                                                                     : (() => {
                                                                         const IconComp = iconMap[service.icon] || Server;
                                                                         return <IconComp size={20} />;
@@ -373,9 +428,9 @@ const ManageServices = () => {
                                                     <td className="px-6 py-4">
                                                         <div className="flex -space-x-2">
                                                             {Array.isArray(service.cards) && service.cards.slice(0, 4).map((c, i) => (
-                                                                <div key={i} className="w-7 h-7 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center overflow-hidden">
-                                                                    {c.icon?.startsWith('data:image') || c.icon?.startsWith('/') || c.icon?.startsWith('http')
-                                                                        ? <img src={c.icon} className="w-full h-full object-cover" />
+                                                                <div key={i} className="w-7 h-7 rounded-full border-2 border-white bg-slate-50 flex items-center justify-center overflow-hidden p-1">
+                                                                    {c.icon && (c.icon.startsWith('data:image') || c.icon.startsWith('/') || c.icon.startsWith('http'))
+                                                                        ? <img src={c.icon} className="w-full h-full object-cover" style={{ filter: 'invert(48%) sepia(79%) saturate(2476%) hue-rotate(186deg) brightness(101%) contrast(101%)' }} />
                                                                         : (() => {
                                                                             const CardIconComp = iconMap[c.icon] || ShieldCheck;
                                                                             return <CardIconComp size={10} className="text-slate-400" />;
@@ -426,15 +481,19 @@ const ManageServices = () => {
                             <div className="w-full md:w-[380px] p-8 bg-slate-50 flex flex-col items-center border-r border-slate-100 overflow-y-auto custom-scrollbar">
                                 <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Live Card Preview</h4>
                                 <div className="relative w-full aspect-[3/4] rounded-[2.5rem] overflow-hidden shadow-2xl bg-slate-950 group mb-8">
-                                    {serviceFormData.image && (
+                                    {serviceFormData.image ? (
                                         <img src={serviceFormData.image} className="absolute inset-0 w-full h-full object-cover opacity-60" alt="" />
+                                    ) : (
+                                        <div className="absolute inset-0 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm">
+                                            <ImageIcon size={32} className="text-slate-500 opacity-20" />
+                                        </div>
                                     )}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
                                     <div className="absolute bottom-6 left-6 right-6 p-6 bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl">
                                         <div className="flex items-center justify-between mb-3">
                                             <h5 className="font-bold text-white text-xl">{serviceFormData.title || "Service Title"}</h5>
                                             <div className="w-10 h-10 rounded-xl bg-brand-primary flex items-center justify-center text-white overflow-hidden p-2 shadow-lg">
-                                                {serviceFormData.icon && (serviceFormData.icon?.startsWith('data:image') || serviceFormData.icon?.startsWith('/') || serviceFormData.icon?.startsWith('http'))
+                                                {serviceFormData.icon && (serviceFormData.icon.startsWith('data:image') || serviceFormData.icon.startsWith('/') || serviceFormData.icon.startsWith('http'))
                                                     ? <img src={serviceFormData.icon} className="w-full h-full object-contain" />
                                                     : (() => {
                                                         const PreviewIconComp = iconMap[serviceFormData.icon] || Server;
@@ -449,11 +508,36 @@ const ManageServices = () => {
 
                                 <div className="w-full space-y-4">
                                     <div>
-                                        <div className="flex justify-between items-center mb-1.5">
-                                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Service Icon (PNG)</label>
-                                            <span className="text-[9px] font-bold text-slate-400 uppercase">Recommended: 512x512</span>
+                                        <div className="flex justify-between items-center mb-3">
+                                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Service Identity Icon</label>
+                                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Choose One Below</span>
                                         </div>
-                                        <input type="file" accept="image/png" onChange={handleServiceIconUpload} className="w-full text-[10px] file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-brand-primary/10 file:text-brand-primary font-bold cursor-pointer" />
+
+                                        {/* 🕵️ MISSION: Iconic Authority Hub */}
+                                        <div className="grid grid-cols-4 gap-2 mb-4 p-3 bg-white border border-slate-200 rounded-2xl">
+                                            {Object.entries(iconMap).map(([name, Icon]) => (
+                                                <button
+                                                    key={name}
+                                                    type="button"
+                                                    onClick={() => setServiceFormData({ ...serviceFormData, icon: name })}
+                                                    className={`p-2.5 rounded-xl border transition-all flex items-center justify-center ${serviceFormData.icon === name
+                                                        ? 'bg-brand-primary/10 border-brand-primary text-brand-primary shadow-sm scale-105'
+                                                        : 'bg-slate-50 border-transparent text-slate-400 hover:border-slate-200 hover:bg-white'}`}
+                                                >
+                                                    <Icon size={18} />
+                                                </button>
+                                            ))}
+                                        </div>
+
+                                        <div className="relative group/upload overflow-hidden">
+                                            <div className="flex items-center gap-3 p-3 bg-white border border-slate-200 border-dashed rounded-2xl hover:border-brand-primary/50 transition-all cursor-pointer">
+                                                <div className="w-8 h-8 rounded-lg bg-brand-primary/5 flex items-center justify-center text-brand-primary">
+                                                    <Upload size={14} />
+                                                </div>
+                                                <span className="text-[10px] font-black text-slate-500 group-hover/upload:text-brand-primary">Or upload custom PNG mission</span>
+                                                <input type="file" accept="image/png" onChange={handleServiceIconUpload} className="absolute inset-0 opacity-0 cursor-pointer" />
+                                            </div>
+                                        </div>
                                     </div>
                                     <div>
                                         <div className="flex justify-between items-center mb-1.5">
@@ -515,9 +599,9 @@ const ManageServices = () => {
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                             {serviceFormData.cards.map((card, idx) => (
                                                 <div key={idx} className="bg-white border border-slate-200 rounded-2xl p-4 flex items-center gap-4 group hover:shadow-lg transition-all">
-                                                    <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center overflow-hidden p-1.5">
-                                                        {card.icon && (card.icon?.startsWith('data:image') || card.icon?.startsWith('/') || card.icon?.startsWith('http'))
-                                                            ? <img src={card.icon} className="w-full h-full object-contain" />
+                                                    <div className="w-12 h-12 rounded-xl bg-slate-100 relative group overflow-hidden p-2 shadow-inner border border-slate-200">
+                                                        {card.icon && (card.icon.startsWith('data:image') || card.icon.startsWith('/') || card.icon.startsWith('http'))
+                                                            ? <img src={card.icon} className="w-full h-full object-contain" style={{ filter: 'invert(48%) sepia(79%) saturate(2476%) hue-rotate(186deg) brightness(101%) contrast(101%)' }} />
                                                             : (() => {
                                                                 const CardIconComp = iconMap[card.icon] || ShieldCheck;
                                                                 return <CardIconComp size={18} className="text-slate-400" />;
@@ -590,10 +674,10 @@ const ManageServices = () => {
                                 <div>
                                     <div className="flex items-center gap-6 bg-slate-50 border border-slate-200 rounded-2xl p-4">
                                         <div className="w-16 h-16 rounded-2xl bg-brand-primary/5 flex items-center justify-center border border-brand-primary/10 overflow-hidden p-2 group relative">
-                                            {cardFormData.icon && (cardFormData.icon?.startsWith('data:image') || cardFormData.icon?.startsWith('/') || cardFormData.icon?.startsWith('http'))
+                                            {cardFormData.icon && (cardFormData.icon.startsWith('data:image') || cardFormData.icon.startsWith('/') || cardFormData.icon.startsWith('http'))
                                                 ? (
                                                     <>
-                                                        <img src={cardFormData.icon} className="w-full h-full object-contain" />
+                                                        <img src={cardFormData.icon} className="w-full h-full object-contain" style={{ filter: 'invert(48%) sepia(79%) saturate(2476%) hue-rotate(186deg) brightness(101%) contrast(101%)' }} />
                                                         <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
                                                             <ImageIcon size={18} />
                                                         </div>
@@ -605,19 +689,30 @@ const ManageServices = () => {
                                                 })()
                                             }
                                         </div>
-                                        <div className="flex-1 space-y-2">
-                                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Upload Card Media</p>
-                                            <div className="relative overflow-hidden inline-block group/btn w-full">
-                                                <button className="w-full bg-white border border-slate-200 py-2.5 px-4 rounded-xl text-[11px] font-black text-slate-600 hover:text-brand-primary hover:border-brand-primary/30 transition-all shadow-sm flex items-center justify-center gap-2">
-                                                    <ImageIcon size={14} strokeWidth={3} />
-                                                    Change Media
-                                                </button>
-                                                <input
-                                                    type="file"
-                                                    accept="image/*"
-                                                    onChange={handleCardIconUpload}
-                                                    className="absolute inset-0 opacity-0 cursor-pointer"
-                                                />
+                                        <div className="flex-1 space-y-3">
+                                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Icon Choice</p>
+
+                                            <div className="grid grid-cols-4 gap-2">
+                                                {Object.entries(iconMap).slice(0, 4).map(([name, Icon]) => (
+                                                    <button
+                                                        key={name}
+                                                        type="button"
+                                                        onClick={() => setCardFormData({ ...cardFormData, icon: name })}
+                                                        className={`p-2 rounded-lg border transition-all ${cardFormData.icon === name
+                                                            ? 'bg-brand-primary/10 border-brand-primary text-brand-primary shadow-sm'
+                                                            : 'bg-white border-slate-200 text-slate-400 hover:border-slate-300'}`}
+                                                    >
+                                                        <Icon size={14} />
+                                                    </button>
+                                                ))}
+                                            </div>
+
+                                            <div className="relative group/card-upload overflow-hidden">
+                                                <div className="flex items-center gap-2 p-2 bg-slate-50 border border-slate-200 border-dashed rounded-xl hover:border-brand-primary/50 transition-all cursor-pointer">
+                                                    <Upload size={12} className="text-slate-400" />
+                                                    <span className="text-[9px] font-bold text-slate-500">Custom Media</span>
+                                                    <input type="file" accept="image/*" onChange={handleCardIconUpload} className="absolute inset-0 opacity-0 cursor-pointer" />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

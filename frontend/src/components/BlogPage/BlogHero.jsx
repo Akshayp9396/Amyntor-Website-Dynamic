@@ -47,8 +47,8 @@ const BlogHero = () => {
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050B14]/30 to-[#050B14]/90"></div>
                 </div>
 
-                {/* Main Content Area */}
-                <div className="relative z-10 text-center px-6 max-w-4xl mx-auto w-full mt-16 md:mt-20">
+                {/* Main Content Area — Utilizing parent Flex centering for absolute equilibrium */}
+                <div className="relative z-10 text-center px-6 max-w-4xl mx-auto w-full">
                     <motion.div
                         variants={containerVariants}
                         initial="hidden"

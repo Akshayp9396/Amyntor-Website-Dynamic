@@ -129,29 +129,29 @@ const BlogDetails = () => {
                             {/* Badge */}
                             <motion.div variants={itemVariants} className="mb-6">
                                 <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-brand-dark to-brand-primary text-white text-[13px] sm:text-sm font-semibold tracking-wide shadow-lg shadow-brand-primary/25">
-                                    <Share2 size={16} strokeWidth={2.5} />
-                                    {hero.tag}
+                                    <Calendar size={16} strokeWidth={2.5} />
+                                    {formatDate(blog.date)}
                                 </span>
                             </motion.div>
 
-                            {/* Title — Shows the blog post title */}
-                            <motion.h1 variants={itemVariants} className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 tracking-tight drop-shadow-md">
-                                {hero.title}
+                            {/* Title — Shows the specific blog post title for immediate context */}
+                            <motion.h1 variants={itemVariants} className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 tracking-tight drop-shadow-md text-center max-w-5xl">
+                                {blog.title}
                             </motion.h1>
 
-                            {/* Breadcrumbs — Home > Resources > Blog > Post Title */}
+                            {/* Breadcrumbs — Dynamic mapping */}
                             <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-white/80 text-[15px] font-medium mb-12">
-                                <Link to="/" className="hover:text-white transition-colors drop-shadow-sm">Home</Link>
-                                <ChevronRight size={14} className="text-white/60" />
-                                <span className="text-white/70">Resources</span>
-                                <ChevronRight size={14} className="text-white/60" />
-                                <span className="text-white">Blogs</span>
+                                {hero?.breadcrumbs?.map((crumb, index) => (
+                                    <React.Fragment key={index}>
+                                        <Link to={crumb.link} className="hover:text-white transition-colors drop-shadow-sm">
+                                            {crumb.label}
+                                        </Link>
+                                        {index < (hero?.breadcrumbs?.length || 0) - 1 && (
+                                            <ChevronRight size={14} className="text-white/60" />
+                                        )}
+                                    </React.Fragment>
+                                ))}
                             </motion.div>
-
-                            {/* Tagline */}
-                            <motion.p variants={itemVariants} className="text-[15px] md:text-base text-white/90 max-w-[85%] sm:max-w-2xl mx-auto leading-relaxed font-light drop-shadow-sm">
-                                {hero.tagline}
-                            </motion.p>
                         </motion.div>
                     </div>
                 </div>

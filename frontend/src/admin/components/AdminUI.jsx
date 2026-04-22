@@ -21,28 +21,37 @@ export const AdminCard = ({ title, icon: Icon, children, actions }) => (
     </div>
 );
 
-export const FormInput = ({ label, type = "text", value, onChange, placeholder, className = "" }) => (
+export const FormInput = ({ label, className = "", ...props }) => (
     <div className={`space-y-1.5 ${className}`}>
         <label className="text-[14px] font-bold text-slate-500 ml-1">{label}</label>
         <input
-            type={type}
-            value={value}
-            onChange={onChange}
-            placeholder={placeholder}
+            {...props}
             className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl px-5 py-3 text-[15px] focus:border-slate-400 focus:bg-white transition-all outline-none font-medium placeholder:text-slate-400"
         />
     </div>
 );
 
-export const FormTextarea = ({ label, value, onChange, placeholder, rows = 3 }) => (
+export const FormTextarea = ({ label, rows = 3, ...props }) => (
     <div className="space-y-1.5">
         <label className="text-[14px] font-bold text-slate-500 ml-1">{label}</label>
         <textarea
             rows={rows}
-            value={value}
-            onChange={onChange}
-            placeholder={placeholder}
+            {...props}
             className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl px-5 py-4 text-[15px] focus:border-slate-400 focus:bg-white transition-all outline-none font-medium leading-relaxed resize-none placeholder:text-slate-400"
         />
+    </div>
+);
+export const FormSelect = ({ label, options = [], ...props }) => (
+    <div className="space-y-1.5">
+        <label className="text-[14px] font-bold text-slate-500 ml-1">{label}</label>
+        <select
+            {...props}
+            className="w-full bg-slate-50/50 border border-slate-200 rounded-2xl px-5 py-3 text-[15px] focus:border-slate-400 focus:bg-white transition-all outline-none font-medium text-slate-700 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C/polyline%3E%3C/svg%3E')] bg-[length:20px] bg-[right_1.25rem_center] bg-no-repeat"
+        >
+            <option value="" disabled>Select {label}</option>
+            {options.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+        </select>
     </div>
 );

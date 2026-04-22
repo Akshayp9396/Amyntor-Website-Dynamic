@@ -5,9 +5,8 @@ import { useContent } from '../../context/ContentContext';
 
 const AboutTeam = () => {
     const { aboutPageData } = useContent();
-    const aboutTeam = aboutPageData?.aboutTeam;
-
-    if (!aboutTeam) return null;
+    const teamData = aboutPageData?.teamSection;
+    if (!teamData) return null;
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -35,7 +34,7 @@ const AboutTeam = () => {
                         className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-[#EEF4FF] border border-[#D1E0FF] shadow-sm w-fit mx-auto"
                     >
                         <div className="w-2 h-2 rounded-full bg-gradient-to-r from-brand-dark to-brand-primary"></div>
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-dark to-brand-primary font-semibold text-sm uppercase tracking-[0.2em]">{aboutTeam.tag}</span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-dark to-brand-primary font-semibold text-sm uppercase tracking-[0.2em]">{teamData.tag}</span>
                     </motion.div>
 
                     <motion.h2
@@ -43,9 +42,9 @@ const AboutTeam = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.1 }}
-                        className="whitespace-pre-line text-4xl md:text-5xl lg:text-[32px] font-bold text-[#0b1021] leading-tight max-w-4xl"
+                        className="whitespace-pre-line text-4xl md:text-5xl lg:text-3xl font-bold text-[#0b1021] leading-tight max-w-4xl"
                     >
-                        {aboutTeam.heading}
+                        {teamData.heading}
                     </motion.h2>
                 </div>
 
@@ -57,7 +56,7 @@ const AboutTeam = () => {
                     viewport={{ once: true, margin: "0px" }}
                     className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center"
                 >
-                    {aboutTeam.members.map((member) => (
+                    {teamData.members.map((member) => (
                         <motion.div
                             key={member.id}
                             variants={cardVariants}

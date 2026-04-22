@@ -83,7 +83,7 @@ const AboutHero = () => {
                         </motion.div>
 
                         {/* 4. Small Clean Tagline */}
-                        <motion.p variants={itemVariants} className="text-[15px] md:text-base text-white/90 max-w-[85%] sm:max-w-2xl mx-auto leading-relaxed font-light drop-shadow-sm">
+                        <motion.p variants={itemVariants} className="text-[15px] md:text-base text-white/90 max-w-[85%] sm:max-w-2xl mx-auto leading-relaxed font-light drop-shadow-sm whitespace-pre-line">
                             {hero.tagline}
                         </motion.p>
                     </motion.div>

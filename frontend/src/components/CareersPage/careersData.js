@@ -41,7 +41,7 @@ export const careersPageData = {
                 "Strong understanding of network protocols, operating systems, and cloud security."
             ],
             skills: ["Threat Hunting", "Incident Response", "SIEM (Splunk/QRadar)", "Vulnerability Management", "Network Security"],
-            howToApply: "To apply for this position, please send your resume to hr@amyntortech.com. Be sure to include the job title in the subject line."
+            howToApply: "To apply for this position, please send your resume and cover letter to our HR department at hr@amyntortech.com, or submit your details using the application form below."
         },
         {
             id: 2,
@@ -66,7 +66,7 @@ export const careersPageData = {
                 "Familiarity with RESTful APIs and modern frontend build pipelines."
             ],
             skills: ["React.js", "JavaScript (ES6+)", "Tailwind CSS", "HTML5 & Vanilla CSS", "Framer Motion", "Git"],
-            howToApply: "To apply for this position, please send your resume to hr@amyntortech.com. Be sure to include the job title in the subject line."
+            howToApply: "To apply for this position, please send your resume and cover letter to our HR department at hr@amyntortech.com, or submit your details using the application form below."
         },
         {
             id: 3,
@@ -91,7 +91,7 @@ export const careersPageData = {
                 "Excellent attention to detail and communication skills."
             ],
             skills: ["Manual Testing", "Bug Tracking (Jira)", "Test Case Design", "Attention to Detail", "Basic SQL / API Testing"],
-            howToApply: "To apply for this position, please send your resume to hr@amyntortech.com. Be sure to include the job title in the subject line."
+            howToApply: "To apply for this position, please send your resume and cover letter to our HR department at hr@amyntortech.com, or submit your details using the application form below."
         },
         {
             id: 4,
@@ -116,7 +116,7 @@ export const careersPageData = {
                 "Deep expertise in networking, computing, storage, and database services in the cloud."
             ],
             skills: ["AWS / Azure Core Services", "Infrastructure as Code (Terraform/CloudFormation)", "Kubernetes / Docker", "CI/CD Pipelines", "Cloud Security Architecture"],
-            howToApply: "To apply for this position, please send your resume to hr@amyntortech.com. Be sure to include the job title in the subject line."
+            howToApply: "To apply for this position, please send your resume and cover letter to our HR department at hr@amyntortech.com, or submit your details using the application form below."
         }
     ]
 };

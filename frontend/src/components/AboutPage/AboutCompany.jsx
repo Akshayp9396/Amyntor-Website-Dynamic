@@ -57,11 +57,11 @@ const AboutCompany = () => {
 
                     {/* Right Column: Paragraphs (Takes up 8/12 of space) */}
                     <div className="lg:col-span-8 flex flex-col justify-start gap-6 pt-6 lg:pt-4">
-                        <motion.p variants={slideUpVariants} className="text-slate-600 text-[15.5px] md:text-lg leading-relaxed w-full text-justify">
+                        <motion.p variants={slideUpVariants} className="text-slate-600 text-[15.5px] md:text-lg leading-relaxed w-full text-justify whitespace-pre-line">
                             {aboutCompany.description1}
                         </motion.p>
                         {aboutCompany.description2 && (
-                            <motion.p variants={slideUpVariants} className="text-slate-600 text-[15.5px] md:text-lg leading-relaxed w-full">
+                            <motion.p variants={slideUpVariants} className="text-slate-600 text-[15.5px] md:text-lg leading-relaxed w-full whitespace-pre-line">
                                 {aboutCompany.description2}
                             </motion.p>
                         )}
@@ -108,7 +108,7 @@ const AboutCompany = () => {
 
                                 {/* Right Section: Detailed Content text */}
                                 <div className="lg:col-span-8 flex items-center">
-                                    <p className="text-slate-600 text-[15.5px] leading-[1.8] font-medium text-justify w-full max-w-5xl">
+                                    <p className="text-slate-600 text-[15.5px] leading-[1.8] font-medium text-justify w-full max-w-5xl whitespace-pre-line">
                                         {card.description}
                                     </p>
                                 </div>

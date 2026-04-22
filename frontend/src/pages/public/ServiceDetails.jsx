@@ -9,23 +9,20 @@
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronRight, ArrowRight, Share2, ShieldCheck, ServerCog, CloudCog, Headphones, Boxes, FileKey, Target, SearchCode, FileCheck2, ServerCrash, Activity, Briefcase, GraduationCap } from 'lucide-react';
+import { ChevronRight, ArrowRight, Share2, ShieldCheck, ServerCog, CloudCog, Headphones, Boxes, FileKey, Server } from 'lucide-react';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { useContent } from '../../context/ContentContext';
 
 const iconMap = {
-    Fingerprint: ShieldCheck, // Fallbacks
+    Fingerprint: ShieldCheck, 
     ServerCog: ServerCog,
     CloudCog: CloudCog,
     Headset: Headphones,
     Boxes: Boxes,
-    FileKey: FileKey
-};
-
-// Map specifically for the generated metric cards to prevent crashes
-const iconMapCards = {
-    Target, SearchCode, FileCheck2, ServerCrash, Activity, Briefcase, GraduationCap
+    FileKey: FileKey,
+    Server: Server,
+    ShieldCheck: ShieldCheck
 };
 
 const ServiceDetails = () => {
@@ -142,16 +139,16 @@ const ServiceDetails = () => {
                                 {service.cards && service.cards.length > 0 && (
                                     <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6 pb-2">
                                         {service.cards.map((card, idx) => {
-                                            const CardIcon = iconMapCards[card.icon] || ShieldCheck;
+                                            const CardIcon = iconMap[card.icon] || ShieldCheck;
                                             return (
                                                 <div
                                                     key={idx}
                                                     className="p-8 rounded-[2rem] transition-all duration-300 bg-white shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-slate-100 hover:shadow-[0_20px_50px_rgba(2,161,253,0.08)] hover:-translate-y-1"
                                                 >
                                                     {/* Gradient Blue Circle Icon Wrapper */}
-                                                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-[#02A1FD] to-[#0167F3] text-white flex items-center justify-center mb-6 shadow-md shadow-blue-500/30 overflow-hidden">
+                                                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-[#02A1FD] to-[#0167F3] text-white flex items-center justify-center mb-6 shadow-md shadow-blue-500/30 overflow-hidden p-2">
                                                         {card.icon && (card.icon.startsWith('data:image') || card.icon.startsWith('/') || card.icon.startsWith('http'))
-                                                            ? <img src={card.icon} alt={card.title} className="w-full h-full object-contain p-2.5" />
+                                                            ? <img src={card.icon} alt={card.title} className="w-full h-full object-contain" style={{ filter: 'brightness(0) invert(1)' }} />
                                                             : <CardIcon size={22} strokeWidth={2} />
                                                         }
                                                     </div>
@@ -202,13 +199,13 @@ const ServiceDetails = () => {
                                     <h3 className="text-[22px] font-bold text-black mb-4 tracking-tight leading-tight text-center">
                                         Need a Custom Solution?
                                     </h3>
-                                    
+
                                     <p className="text-slate-500 text-[14.5px] leading-relaxed text-justify mb-10 w-full opacity-90">
                                         Speak directly with our engineering team to architect a solution perfectly fitted to your enterprise.
                                     </p>
 
-                                    <Link 
-                                        to="/contact" 
+                                    <Link
+                                        to="/contact"
                                         className="w-fit inline-flex items-center justify-center gap-2.5 py-3.5 px-10 bg-white border border-slate-200 rounded-full font-bold tracking-widest text-sm hover:border-brand-primary hover:-translate-y-1 transition-all duration-300 shadow-[0_10px_25px_-5px_rgba(0,0,0,0.05)] hover:shadow-brand-primary/10 group/btn"
                                     >
                                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-dark to-brand-primary">

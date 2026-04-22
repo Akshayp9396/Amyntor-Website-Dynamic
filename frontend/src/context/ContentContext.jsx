@@ -1,170 +1,228 @@
 import React, { createContext, useContext, useState } from 'react';
-import { Users, Briefcase, Award } from 'lucide-react';
-import ShieldImage from '../assets/images/cybersecurity-shield.jpg';
-import DataCenterImage from '../assets/images/data-center.jpg';
-import ResilienceImage from '../assets/images/resilience.jpg';
-import AboutUs1 from '../assets/images/about-us1.jpg';
-import AboutUs2 from '../assets/images/about-us2.jpg';
-import { mockAboutPageData } from '../components/AboutPage/aboutData';
-import { mockServicesPageData } from '../components/ServicesPage/servicesData';
-import { galleryPageData as mockGalleryData } from '../components/GalleryPage/galleryData';
-import { mockCaseStudyPageData } from '../components/CaseStudyPage/caseStudyData';
-import { careersPageData as mockCareersData } from '../components/CareersPage/careersData';
-import { contactPageData as mockContactData } from '../components/ContactPage/contactData';
-import { mockBlogPageData } from '../components/BlogPage/blogData';
+import ContentService from '../services/contentService';
 
-import Testimonial1 from '../assets/images/testimonial1.png';
+// All components should now rely exclusively on live hydration from ContentService.
+// No mock imports allowed in dynamic production environment.
 
 const ContentContext = createContext();
 
 export const useContent = () => useContext(ContentContext);
 
 export const ContentProvider = ({ children }) => {
-    // ==== DEMO INITIAL STATE MAPPED FROM PUBLIC SITE ====
+    // ==== 🛡️ REFINED INDUSTRY-STANDARD STATE (CLEAN START) ====
 
     // 1. Hero Slides
-    const [heroSlides, setHeroSlides] = useState([
-        {
-            id: 1,
-            tag: "CYBERSECURITY EXCELLENCE",
-            title: "Ensuring IT Excellence and Cybersecurity",
-            subtitle: "Securing your digital future with IT excellence and cybersecurity expertise.",
-            image: ShieldImage,
-            buttonText: "Start A Project"
-        },
-        {
-            id: 2,
-            tag: "CLOUD TRANSFORMATION",
-            title: "Unleashing the Potential of Cloud Technology",
-            subtitle: "Secure your transition to the cloud. We design zero-trust architectures to ensure continuous compliance and data integrity.",
-            image: DataCenterImage,
-            buttonText: "Start A Project"
-        },
-        {
-            id: 3,
-            tag: "FUTURE-PROOF INFRASTRUCTURE",
-            title: "Enabling Digital Resilience, Today and Tomorrow",
-            subtitle: "Building digital resilience for a secure and adaptable future.",
-            image: ResilienceImage,
-            buttonText: "Start A Project"
-        }
-    ]);
+    const [heroSlides, setHeroSlides] = useState([]);
 
-    // 2. About Section
+    // 2. About Section (Home)
     const [aboutData, setAboutData] = useState({
-        tag: "Get to Know Us",
-        title: "Transforming Businesses Through Technology",
-        description: "Amyntor Tech Solutions, helmed by a diverse team of young and seasoned professionals, encompasses a rich tapestry of skills. With our headquarters nestled in Thiruvananthapuram, we extend our presence across the vast expanse of India. As proud sentinels of Cybersecurity Services, complete IT and Cloud Infrastructure solutions, and managed services prowess, we invite you to embark on a remarkable journey with us. Our unwavering dedication has garnered resounding endorsements from customers spanning the globe, attesting to our sterling reputation. Placing paramount importance on exceptional customer service, we fervently prioritize the unique needs and requirements of our esteemed clientele. Our unwavering mission is to deliver services of unparalleled quality, complemented by an unwavering commitment to exceptional after-sales support.",
-        leftCardValue: "300+",
-        leftCardText: "Projects Completed",
-        leftCardDescription: "We serve businesses of all sizes around the world",
-        ctaText: "Learn More",
-        ctaLink: "/about",
-        mainImage: AboutUs1,
-        topImage: AboutUs2,
+        tag: "", title: "", description: "",
+        leftCardValue: "", leftCardText: "", leftCardDescription: "",
+        ctaText: "", ctaLink: "",
+        mainImage: null, topImage: null
     });
 
     // 3. Stats Row
-    const [statsData, setStatsData] = useState([
-        {
-            id: 1,
-            title: "Happy",
-            subtitle: "Clients",
-            value: "352",
-            icon: "Users" // String to allow dynamic mapping later
-        },
-        {
-            id: 2,
-            title: "Government",
-            subtitle: "Projects",
-            value: "127",
-            icon: "Briefcase"
-        },
-        {
-            id: 3,
-            title: "Expert",
-            subtitle: "Workforce",
-            value: "57",
-            icon: "Award"
-        }
-    ]);
+    const [statsData, setStatsData] = useState([]);
 
-    // 4. Testimonials
+    // 4. Testimonials (Header & Feed)
     const [testimonialHeader, setTestimonialHeader] = useState({
-        tag: "Testimonial",
-        title: "What Our Customers\nAre Saying",
-        sideImage: Testimonial1,
-        statValue: "97% Customers",
-        statText: "Satisfaction Rate"
+        tag: "", title: "", sideImage: null, statValue: "", statText: ""
+    });
+    const [testimonials, setTestimonials] = useState([]);
+
+    // 5. Partners Hub
+    const [partners, setPartners] = useState([]);
+    const [partnersPageHero, setPartnersPageHero] = useState({
+        tag: "",
+        title: "",
+        tagline: "",
+        backgroundImage: null
     });
 
-    const [testimonials, setTestimonials] = useState([
-        {
-            id: 1,
-            name: "Maisha Jakulin",
-            designation: "UI/UX Designer",
-            quote: "Amazing Services!",
-            feedback: "Technically sound chains main business and paids marketplace technology that's targeted audience simplify interoperable vortals via reliable done",
-            avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150"
+    // 6. Detailed Page Missions (About & Services)
+    const [aboutPageData, setAboutPageData] = useState({
+        hero: { tag: "", title: "", tagline: "", backgroundImage: null, breadcrumbs: [] },
+        aboutCompany: { tag: "", heading: "", description1: "", description2: "", mainImage: null, experienceYears: "", experienceText: "", cards: [] },
+        teamSection: { tag: "", heading: "", description: "", members: [] }
+    });
+    const [servicesPageData, setServicesPageData] = useState({
+        hero: {
+            tag: "",
+            title: "",
+            tagline: "",
+            backgroundImage: "",
+            breadcrumbs: []
         },
-        {
-            id: 2,
-            name: "Jobaer Khanom",
-            designation: "App Developer",
-            quote: "Amazing Services!",
-            feedback: "Technically sound chains main business and paids marketplace technology that's targeted audience simplify interoperable vortals via reliable done",
-            avatar: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&q=80&w=150"
+        serviceIntro: {
+            tag: "",
+            heading: "",
+            description: "",
+            features: []
+        },
+        servicesList: { items: [] }
+    });
+    const [galleryPageData, setGalleryPageData] = useState({ events: [] });
+    const [galleryPageHero, setGalleryPageHero] = useState({
+        tag: "",
+        title: "",
+        tagline: "",
+        backgroundImage: null
+    });
+    const [caseStudyPageData, setCaseStudyPageData] = useState({ 
+        hero: { tag: "", title: "", tagline: "", backgroundImage: null, breadcrumbs: [] },
+        items: [] 
+    });
+    const [careersPageData, setCareersPageData] = useState({
+        hero: { tag: "", title: "", tagline: "", backgroundImage: null, breadcrumbs: [] },
+        intro: { heading: "", description: "", image: null },
+        openRoles: [] 
+    });
+    const [applicants, setApplicants] = useState([]);
+    const [contactPageData, setContactPageData] = useState({ 
+        hero: { tag: "", title: "", tagline: "", backgroundImage: null, breadcrumbs: [] }, 
+        info: { 
+            emails: [], socials: [], 
+            phone: { number: "", hours: "" }, 
+            whatsapp: { number: "", label: "" } 
+        }, 
+        branches: { tag: "", title: "", description: "", cards: [] } 
+    });
+    const [blogPageData, setBlogPageData] = useState(null);
+
+    // 🕵️ CLOUD CONNECTION ENGINE (The Master Sync)
+    const [loading, setLoading] = useState(true);
+
+    const refreshContent = React.useCallback(async () => {
+        try {
+            setLoading(true);
+
+            // 🛡️ MISSION 1: Load Hero Data
+            const heroData = await ContentService.getHeroSlides();
+            setHeroSlides(heroData);
+
+            // 🛡️ MISSION 2: Load Stats Row
+            const stData = await ContentService.getStats();
+            setStatsData(stData);
+
+            // 🛡️ MISSION 3: Load Home About Summary
+            const homeAbout = await ContentService.getAboutSection();
+            if (homeAbout) setAboutData(homeAbout);
+
+            // 🛡️ MISSION 4: Load Testimonials (Combined)
+            const testimonialData = await ContentService.getTestimonials();
+            if (testimonialData.header) setTestimonialHeader(testimonialData.header);
+            setTestimonials(testimonialData.list);
+
+            // 🛡️ MISSION 5: Load Partners
+            const partnerData = await ContentService.getPartners();
+            setPartners(partnerData);
+
+            // 🛡️ MISSION 6: Load Full About Page
+            const aboutPageFull = await ContentService.getAboutPageFull();
+            if (aboutPageFull) setAboutPageData(aboutPageFull);
+
+            // 🛡️ MISSION 7: Load Full Services Page
+            const servicesPageFull = await ContentService.getServicesPageFull();
+            if (servicesPageFull) setServicesPageData(servicesPageFull);
+
+            // 🛡️ MISSION 8: Load Full Case Studies Page
+            const caseStudyFull = await ContentService.getCaseStudiesFull();
+            if (caseStudyFull) setCaseStudyPageData(caseStudyFull);
+
+            // 🛡️ MISSION 9: Load Full Blog Page
+            const blogRes = await ContentService.getBlogsFull();
+            if (blogRes && blogRes.success) {
+                setBlogPageData(blogRes);
+            }
+
+            // 🛡️ MISSION 10: Load Full Gallery
+            const galleryRes = await ContentService.getGalleryFull();
+            if (galleryRes && galleryRes.events) {
+                setGalleryPageData(prev => ({
+                    ...prev,
+                    events: galleryRes.events
+                }));
+            }
+
+            // 🛡️ MISSION 11: Load Partners Page Hero
+            const pPageHero = await ContentService.getPartnersPageHero();
+            if (pPageHero) setPartnersPageHero(pPageHero);
+
+            // 🛡️ MISSION 12: Load Gallery Page Hero
+            const gPageHero = await ContentService.getGalleryPageHero();
+            if (gPageHero) setGalleryPageHero(gPageHero);
+
+            // 🛡️ MISSION 13: Load Full Careers Page from MySQL
+            // IMPORTANT: We deep-merge API data into the existing mock structure.
+            // This preserves required fields like 'breadcrumbs' that the public components
+            // need but the API does not return.
+            try {
+                const careersRes = await ContentService.getCareersFull();
+                if (careersRes) {
+                    setCareersPageData(prev => ({
+                        ...prev,
+                        // Deep merge hero: keep all mock fields, only overwrite what API provides
+                        hero: {
+                            ...prev.hero,
+                            ...(careersRes.hero?.tag ? { tag: careersRes.hero.tag } : {}),
+                            ...(careersRes.hero?.title ? { title: careersRes.hero.title } : {}),
+                            ...(careersRes.hero?.tagline ? { tagline: careersRes.hero.tagline } : {}),
+                            ...(careersRes.hero?.backgroundImage ? { backgroundImage: careersRes.hero.backgroundImage } : {})
+                        },
+                        // Deep merge intro similarly
+                        intro: {
+                            ...prev.intro,
+                            ...(careersRes.intro?.heading ? { heading: careersRes.intro.heading } : {}),
+                            ...(careersRes.intro?.description ? { description: careersRes.intro.description } : {}),
+                            ...(careersRes.intro?.image ? { image: careersRes.intro.image } : {})
+                        },
+                        // Replace openRoles with DB content. If DB is empty, show empty list.
+                        openRoles: Array.isArray(careersRes.openRoles) ? careersRes.openRoles : (prev.openRoles || [])
+                    }));
+                }
+            } catch (careersErr) {
+                console.warn('Careers API unavailable, using mock data:', careersErr.message);
+            }
+
+        } catch (error) {
+            console.error("Critical Content Failure:", error);
+        } finally {
+            // 11. Contact Page Infrastructure
+            const contactData = await ContentService.getContactFull();
+            if (contactData) {
+                setContactPageData(contactData);
+            }
+
+            setLoading(false);
         }
-    ]);
+    }, []);
 
-    // 5. Partners
-    const [partners, setPartners] = useState([
-        { id: 1, name: "Google Cloud", logo: "https://upload.wikimedia.org/wikipedia/commons/5/51/Google_Cloud_logo.svg", width: 90 },
-        { id: 2, name: "Cisco", logo: "https://upload.wikimedia.org/wikipedia/commons/0/08/Cisco_logo_blue_2016.svg", width: 70 },
-        { id: 3, name: "TP-Link", logo: "https://upload.wikimedia.org/wikipedia/commons/e/e4/TP-Link_logo_2016.svg", width: 100 },
-        { id: 4, name: "Aruba", logo: "https://upload.wikimedia.org/wikipedia/commons/2/23/Aruba_Networks_logo.svg", width: 70 },
-        { id: 5, name: "Hewlett Packard Enterprise", logo: "https://upload.wikimedia.org/wikipedia/commons/4/46/Hewlett_Packard_Enterprise_logo.svg", width: 90 },
-        { id: 6, name: "Dell", logo: "https://upload.wikimedia.org/wikipedia/commons/2/2ebe/Dell_logo_2016.svg", width: 50 },
-        { id: 7, name: "Check Point", logo: "https://upload.wikimedia.org/wikipedia/commons/6/6f/Check_Point_logo.svg", width: 100 },
-        { id: 8, name: "Sophos", logo: "https://upload.wikimedia.org/wikipedia/commons/4/41/Sophos_logo.svg", width: 80 }
-    ]);
-
-    // 6. About Page Specific Content
-    const [aboutPageData, setAboutPageData] = useState(mockAboutPageData);
-
-    // 7. Services Page Specific Content
-    const [servicesPageData, setServicesPageData] = useState(mockServicesPageData);
-
-    // 8. Gallery Page Specific Content
-    const [galleryPageData, setGalleryPageData] = useState(mockGalleryData);
-    const [caseStudyPageData, setCaseStudyPageData] = useState(mockCaseStudyPageData);
-    const [careersPageData, setCareersPageData] = useState(mockCareersData);
-    const [contactPageData, setContactPageData] = useState(mockContactData);
-    const [blogPageData, setBlogPageData] = useState(mockBlogPageData);
-
-    const value = {
-        heroSlides, setHeroSlides,
-        aboutData, setAboutData,
-        statsData, setStatsData,
-        testimonials, setTestimonials,
-        testimonialHeader, setTestimonialHeader,
-        partners, setPartners,
-        aboutPageData, setAboutPageData,
-        servicesPageData, setServicesPageData,
-        galleryPageData,
-        setGalleryPageData,
-        caseStudyPageData,
-        setCaseStudyPageData,
-        careersPageData,
-        setCareersPageData,
-        contactPageData,
-        setContactPageData,
-        blogPageData,
-        setBlogPageData
-    };
+    React.useEffect(() => {
+        refreshContent();
+    }, [refreshContent]);
 
     return (
-        <ContentContext.Provider value={value}>
+        <ContentContext.Provider value={{
+            heroSlides, setHeroSlides,
+            aboutData, setAboutData,
+            statsData, setStatsData,
+            testimonialHeader, setTestimonialHeader,
+            testimonials, setTestimonials,
+            partners, setPartners,
+            partnersPageHero, setPartnersPageHero,
+            aboutPageData, setAboutPageData,
+            servicesPageData, setServicesPageData,
+            galleryPageHero, setGalleryPageHero,
+            galleryPageData, setGalleryPageData,
+            caseStudyPageData, setCaseStudyPageData,
+            careersPageData, setCareersPageData,
+            applicants, setApplicants,
+            contactPageData, setContactPageData,
+            blogPageData, setBlogPageData,
+            loading,
+            refreshContent
+        }}>
             {children}
         </ContentContext.Provider>
     );

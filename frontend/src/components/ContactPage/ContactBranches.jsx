@@ -31,7 +31,7 @@ const ContactBranches = () => {
 
                 {/* Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                    {branches.cards.map((branch, idx) => (
+                    {(branches?.cards || []).map((branch, idx) => (
                         <div key={branch.id || idx} className="bg-white rounded-[2.5rem] p-10 shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-slate-100 hover:shadow-[0_20px_50px_rgba(0,0,0,0.06)] transition-all duration-300">
 
                             {/* Circular Image with Dotted Border */}

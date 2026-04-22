@@ -72,15 +72,15 @@ const CareersIntro = () => {
                             whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.8 }}
-                            className="relative w-full aspect-square md:aspect-video lg:aspect-square rounded-[2.5rem] overflow-hidden shadow-2xl"
+                            className="relative w-full aspect-[21/9] lg:aspect-[16/10] rounded-[2rem] overflow-hidden shadow-xl"
                         >
-                            {/* Decorative Blur behind image */}
-                            <div className="absolute -inset-4 bg-gradient-to-tr from-brand-primary/30 to-brand-dark/30 blur-2xl z-0" />
+                            {/* Decorative Blur behind image - Reduced Intensity */}
+                            <div className="absolute -inset-2 bg-gradient-to-tr from-brand-primary/10 to-brand-dark/10 blur-xl z-0" />
 
                             <img
                                 src={intro.image}
                                 alt="Our Company Culture"
-                                className="relative z-10 w-full h-full object-cover rounded-[2.5rem]"
+                                className="relative z-10 w-full h-full object-cover rounded-[2rem]"
                             />
                         </motion.div>
                     </div>

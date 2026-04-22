@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { Link } from 'react-router-dom';
+import { useContent } from '../../context/ContentContext';
 
 /**
  * Code Walkthrough
@@ -20,41 +21,14 @@ import { Link } from 'react-router-dom';
  *   card boundaries, and layouts perfectly static as requested.
  */
 
-const mockBlogs = [
-    {
-        id: 1,
-        title: "Installation Sales Navigator Extension on Chrome",
-        date: "February 22, 2026",
-        image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&q=80&w=800",
-        // category: "Cybersecurity"
-    },
-    {
-        id: 2,
-        title: "Business Growing Tips for Sales Globally",
-        date: "February 22, 2026",
-        image: "https://images.unsplash.com/photo-1556761175-4b46a572b786?auto=format&fit=crop&q=80&w=800",
-        // category: "Strategy"
-    },
-    {
-        id: 3,
-        title: "How to Install Droip into Local WP Server?",
-        date: "February 22, 2026",
-        image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=800",
-        // category: "Development"
-    },
-    {
-        id: 4,
-        title: "Future of Cloud Security and AI Integration",
-        date: "March 01, 2026",
-        image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800",
-        // category: "AI & Data"
-    }
-];
-
 const BlogSection = () => {
+    const { blogPageData } = useContent();
     const [activeCard, setActiveCard] = useState(null);
     // Initialize Embla for a purely manual, physics-driven, infinite loop experience.
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, dragFree: true });
+
+    const rawBlogs = blogPageData?.blogList?.items || [];
+    const blogs = [...rawBlogs].sort((a, b) => new Date(b.date) - new Date(a.date));
 
     const scrollPrev = useCallback(() => {
         if (emblaApi) emblaApi.scrollPrev();
@@ -63,6 +37,8 @@ const BlogSection = () => {
     const scrollNext = useCallback(() => {
         if (emblaApi) emblaApi.scrollNext();
     }, [emblaApi]);
+
+    if (!blogs.length) return null;
 
     return (
         <section className="py-20 bg-[#F5F8FA]">
@@ -122,7 +98,7 @@ const BlogSection = () => {
                 >
                     {/* Embla Container (The sliding track) */}
                     <div className="embla__container flex touch-pan-y">
-                        {mockBlogs.map((blog) => (
+                        {blogs.map((blog) => (
                             <div key={blog.id} className="embla__slide flex-[0_0_90%] sm:flex-[0_0_50%] lg:flex-[0_0_31%] min-w-0 px-4">
                                 {/* The physical static card */}
                                 <motion.article
@@ -150,7 +126,7 @@ const BlogSection = () => {
                                         <div className="absolute bottom-0 left-0 bg-white pr-6 pl-4 pt-4 rounded-tr-[2rem]">
                                             <div className="flex items-center gap-2">
                                                 <span className="w-2.5 h-2.5 rounded-full bg-brand-primary"></span>
-                                                <span className="text-[14px] font-bold text-[#0b1021]">{blog.date}</span>
+                                                <span className="text-[14px] font-bold text-[#0b1021]">{new Date(blog.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -158,7 +134,7 @@ const BlogSection = () => {
                                     {/* Static Content Body */}
                                     <div className="px-6 md:px-8 flex flex-col flex-grow bg-white">
                                         {/* Bold Heading (No text color change on hover) */}
-                                        <h3 className="text-lg md:text-2xl font-bold text-[#0b1021] mb-4 md:mb-8 leading-snug">
+                                        <h3 className="text-lg md:text-2xl font-bold text-[#0b1021] mb-4 md:mb-8 leading-snug line-clamp-3">
                                             {blog.title}
                                         </h3>
 
@@ -167,7 +143,7 @@ const BlogSection = () => {
                                             {/* Explore More link (Gradient hover on text) */}
                                             <div className="flex items-center">
                                                 <Link
-                                                    to="/blogs"
+                                                    to={`/blogs/${blog.slug}`}
                                                     onClick={(e) => {
                                                         if (activeCard !== blog.id) {
                                                             e.preventDefault();

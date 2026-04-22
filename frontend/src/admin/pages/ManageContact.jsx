@@ -32,10 +32,22 @@ import {
     ExternalLink
 } from 'lucide-react';
 import { useContent } from '../../context/ContentContext';
+import { useNotification } from '../context/NotificationContext';
+import ContentService from '../../services/contentService';
 import { AdminCard, FormInput, FormTextarea } from '../components/AdminUI';
 
+// 🕵️ HELPER: Resolve real computer photo paths for Admin Preview
+const resolveMedia = (path) => {
+    if (!path) return null;
+    if (path.startsWith('/uploads/')) {
+        return `http://localhost:5050${path}`;
+    }
+    return path;
+};
+
 const ManageContact = () => {
-    const { contactPageData, setContactPageData } = useContent();
+    const { contactPageData, setContactPageData, refreshContent } = useContent();
+    const { showNotification } = useNotification();
     const [activeTab, setActiveTab] = useState('hero');
     const [isSaving, setIsSaving] = useState(false);
 
@@ -56,29 +68,83 @@ const ManageContact = () => {
 
     // === Global Handlers ===
 
-    const handleSave = () => {
-        setIsSaving(true);
-        setTimeout(() => {
-            setIsSaving(false);
-            alert("Contact content pushed to live successfully!");
-        }, 800);
+    // 🕵️ SECURITY GATEKEEPER: Unified Rule for all local image picks
+    const validateFile = (file) => {
+        if (!file) return false;
+        const MAX_SIZE = 5 * 1024 * 1024; // Robust 5MB Limit for High-Res Visuals
+        if (file.size > MAX_SIZE) {
+            showNotification("Upload failed: File size must be less than 5MB.", 'error');
+            return false;
+        }
+        return true;
     };
 
-    const handleImageUpload = (e, path) => {
+    const handleSave = async () => {
+        setIsSaving(true);
+        try {
+            // 1. Core Content (Hero & Info)
+            await ContentService.updateContactContent({
+                hero: contactPageData.hero,
+                info: contactPageData.info
+            });
+
+            // 2. Emails & Socials
+            await ContentService.updateContactEmails(contactPageData.info?.emails);
+            // Assuming socials might also be here if we added them to the state
+            if (contactPageData.info?.socials) {
+                await ContentService.updateContactSocials(contactPageData.info.socials);
+            }
+
+            // 3. Branches
+            if (contactPageData.branches) {
+                await ContentService.updateContactBranches({
+                    header: {
+                        tag: contactPageData.branches.tag,
+                        title: contactPageData.branches.title,
+                        description: contactPageData.branches.description
+                    },
+                    cards: contactPageData.branches.cards
+                });
+            }
+
+            showNotification("Changes saved successfully!", "success");
+            await refreshContent();
+        } catch (err) {
+            console.error("❌ Save Failed:", err);
+            showNotification("ERROR: Failed to save changes. Please try again.", "error");
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleImageUpload = async (e, path) => {
         const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
+        if (!validateFile(file)) {
+            e.target.value = "";
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        try {
+            setIsSaving(true);
+            const res = await ContentService.uploadImage(formData);
+            if (res.success) {
                 const newData = { ...contactPageData };
                 const pathParts = path.split('.');
                 let current = newData;
                 for (let i = 0; i < pathParts.length - 1; i++) {
                     current = current[pathParts[i]];
                 }
-                current[pathParts[pathParts.length - 1]] = reader.result;
+                current[pathParts[pathParts.length - 1]] = res.url;
                 setContactPageData(newData);
-            };
-            reader.readAsDataURL(file);
+            }
+        } catch (err) {
+            console.error("Asset Upload Protocol Error:", err);
+            showNotification("The file could not be uploaded. Please try again.", "error");
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -229,7 +295,7 @@ const ManageContact = () => {
                                     </div>
                                     <div className="relative group overflow-hidden rounded-[2rem] bg-slate-900 border border-slate-200 aspect-video flex items-center justify-center shadow-inner">
                                         <img
-                                            src={contactPageData.hero.backgroundImage}
+                                            src={resolveMedia(contactPageData.hero.backgroundImage)}
                                             className="w-full h-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-110"
                                             alt="Hero background preview"
                                         />
@@ -307,7 +373,7 @@ const ManageContact = () => {
                                             ...contactPageData,
                                             info: {
                                                 ...contactPageData.info,
-                                                emails: [...contactPageData.info.emails, { id: Date.now(), label: "New Email", value: "info@amyntortech.com" }]
+                                                emails: [...(contactPageData.info.emails || []), { id: Date.now(), label: "New Email", value: "info@amyntortech.com" }]
                                             }
                                         })}
                                         className="group relative flex items-center gap-2 px-6 py-2 bg-white border border-slate-200/60 rounded-xl text-[13px] font-black transition-all hover:shadow-xl hover:shadow-slate-200/50 active:scale-95 overflow-hidden"
@@ -320,7 +386,7 @@ const ManageContact = () => {
                                 }
                             >
                                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-4">
-                                    {contactPageData.info.emails.map((email, idx) => (
+                                    {(contactPageData.info.emails || []).map((email, idx) => (
                                         <div key={email.id} className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center gap-4">
                                             <div className="flex-grow space-y-3">
                                                 <FormInput
@@ -348,6 +414,66 @@ const ManageContact = () => {
                                                     info: {
                                                         ...contactPageData.info,
                                                         emails: contactPageData.info.emails.filter(e => e.id !== email.id)
+                                                    }
+                                                })}
+                                                className="p-2 text-slate-300 hover:text-rose-600 transition-colors bg-white border border-slate-200 rounded-lg shadow-sm"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </AdminCard>
+
+                            <AdminCard
+                                title="Social Media Links"
+                                actions={
+                                    <button
+                                        onClick={() => setContactPageData({
+                                            ...contactPageData,
+                                            info: {
+                                                ...contactPageData.info,
+                                                socials: [...(contactPageData.info.socials || []), { id: Date.now(), platform: "Platform", link: "https://" }]
+                                            }
+                                        })}
+                                        className="group relative flex items-center gap-2 px-6 py-2 bg-white border border-slate-200/60 rounded-xl text-[13px] font-black transition-all hover:shadow-xl hover:shadow-slate-200/50 active:scale-95 overflow-hidden"
+                                    >
+                                        <Plus size={16} strokeWidth={3} className="text-brand-primary group-hover:scale-110 transition-transform" />
+                                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-primary to-brand-dark">
+                                            Add Link
+                                        </span>
+                                    </button>
+                                }
+                            >
+                                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-4">
+                                    {(contactPageData.info.socials || []).map((social, idx) => (
+                                        <div key={social.id} className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center gap-4">
+                                            <div className="flex-grow space-y-3">
+                                                <FormInput
+                                                    label="Platform (e.g. LinkedIn)"
+                                                    value={social.platform}
+                                                    onChange={(e) => {
+                                                        const newSocials = [...contactPageData.info.socials];
+                                                        newSocials[idx].platform = e.target.value;
+                                                        setContactPageData({ ...contactPageData, info: { ...contactPageData.info, socials: newSocials } });
+                                                    }}
+                                                />
+                                                <FormInput
+                                                    label="URL Link"
+                                                    value={social.link}
+                                                    onChange={(e) => {
+                                                        const newSocials = [...contactPageData.info.socials];
+                                                        newSocials[idx].link = e.target.value;
+                                                        setContactPageData({ ...contactPageData, info: { ...contactPageData.info, socials: newSocials } });
+                                                    }}
+                                                />
+                                            </div>
+                                            <button
+                                                onClick={() => setContactPageData({
+                                                    ...contactPageData,
+                                                    info: {
+                                                        ...contactPageData.info,
+                                                        socials: contactPageData.info.socials.filter(s => s.id !== social.id)
                                                     }
                                                 })}
                                                 className="p-2 text-slate-300 hover:text-rose-600 transition-colors bg-white border border-slate-200 rounded-lg shadow-sm"
@@ -432,7 +558,7 @@ const ManageContact = () => {
                                         <div key={branch.id || idx} className="bg-slate-50 border border-slate-200 rounded-[2rem] p-6 group hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
                                             <div className="flex items-center gap-4 mb-6">
                                                 <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 border-2 border-brand-primary/10">
-                                                    <img src={branch.image} className="w-full h-full object-cover" alt={branch.city} />
+                                                    <img src={resolveMedia(branch.image)} className="w-full h-full object-cover" alt={branch.city} />
                                                 </div>
                                                 <div>
                                                     <h4 className="font-black text-slate-800">{branch.city}</h4>
@@ -496,12 +622,12 @@ const ManageContact = () => {
                                     <FormInput
                                         label="City / Location"
                                         value={branchFormData.city}
-                                        onChange={(val) => setBranchFormData({ ...branchFormData, city: val })}
+                                        onChange={(e) => setBranchFormData({ ...branchFormData, city: e.target.value })}
                                     />
                                     <FormInput
                                         label="Branch Type"
                                         value={branchFormData.type}
-                                        onChange={(val) => setBranchFormData({ ...branchFormData, type: val })}
+                                        onChange={(e) => setBranchFormData({ ...branchFormData, type: e.target.value })}
                                     />
                                 </div>
 
@@ -509,19 +635,19 @@ const ManageContact = () => {
                                     label="Address"
                                     rows={3}
                                     value={branchFormData.address}
-                                    onChange={(val) => setBranchFormData({ ...branchFormData, address: val })}
+                                    onChange={(e) => setBranchFormData({ ...branchFormData, address: e.target.value })}
                                 />
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <FormInput
                                         label="Phone Number"
                                         value={branchFormData.phone}
-                                        onChange={(val) => setBranchFormData({ ...branchFormData, phone: val })}
+                                        onChange={(e) => setBranchFormData({ ...branchFormData, phone: e.target.value })}
                                     />
                                     <FormInput
                                         label="Email Address"
                                         value={branchFormData.email}
-                                        onChange={(val) => setBranchFormData({ ...branchFormData, email: val })}
+                                        onChange={(e) => setBranchFormData({ ...branchFormData, email: e.target.value })}
                                     />
                                 </div>
 
@@ -531,7 +657,7 @@ const ManageContact = () => {
                                         <div className="w-16 h-16 rounded-2xl bg-brand-primary/5 flex items-center justify-center border border-brand-primary/10 overflow-hidden p-2 group relative">
                                             {branchFormData.image ? (
                                                 <>
-                                                    <img src={branchFormData.image} className="w-full h-full object-cover" alt="" />
+                                                    <img src={resolveMedia(branchFormData.image)} className="w-full h-full object-cover" alt="" />
                                                     <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
                                                         <ImageIcon size={16} />
                                                     </div>
@@ -550,12 +676,25 @@ const ManageContact = () => {
                                                 <input
                                                     type="file"
                                                     accept="image/*"
-                                                    onChange={(e) => {
+                                                    onChange={async (e) => {
                                                         const file = e.target.files[0];
-                                                        if (file) {
-                                                            const reader = new FileReader();
-                                                            reader.onloadend = () => setBranchFormData({ ...branchFormData, image: reader.result });
-                                                            reader.readAsDataURL(file);
+                                                        if (!validateFile(file)) {
+                                                            e.target.value = "";
+                                                            return;
+                                                        }
+                                                        const formData = new FormData();
+                                                        formData.append('image', file);
+                                                        try {
+                                                            setIsSaving(true);
+                                                            const res = await ContentService.uploadImage(formData);
+                                                            if (res.success) {
+                                                                setBranchFormData({ ...branchFormData, image: res.url });
+                                                            }
+                                                        } catch (err) {
+                                                            console.error("Asset Upload Protocol Error:", err);
+                                                            showNotification("The file could not be uploaded. Please try again.", "error");
+                                                        } finally {
+                                                            setIsSaving(false);
                                                         }
                                                     }}
                                                     className="absolute inset-0 opacity-0 cursor-pointer"

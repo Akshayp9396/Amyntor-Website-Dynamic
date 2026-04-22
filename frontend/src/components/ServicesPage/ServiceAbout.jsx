@@ -62,7 +62,7 @@ const ServiceAbout = () => {
 
                         {/* Feature Bullets (Specific to Services) */}
                         <motion.div variants={slideUpVariants} className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-                            {serviceIntro.features.map((feature, idx) => (
+                            {serviceIntro.features?.map((feature, idx) => (
                                 <div key={idx} className="flex items-center gap-3">
                                     <div className="flex-shrink-0 w-6 h-6 rounded-full bg-brand-primary/10 flex items-center justify-center">
                                         <CheckCircle2 size={14} className="text-brand-primary" strokeWidth={3} />

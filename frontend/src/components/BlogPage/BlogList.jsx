@@ -75,7 +75,9 @@ const BlogList = () => {
                     viewport={{ once: true, margin: "0px" }}
                     className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
                 >
-                    {blogList.items.map((blog) => (
+                    {[...blogList.items]
+                        .sort((a, b) => new Date(b.date) - new Date(a.date))
+                        .map((blog) => (
                         <motion.article
                             key={blog.id}
                             variants={cardVariants}
@@ -109,7 +111,7 @@ const BlogList = () => {
                             {/* Static Content Body */}
                             <div className="px-8 pb-8 flex flex-col flex-grow bg-white">
                                 <h3 className="text-xl md:text-2xl font-bold text-[#0b1021] mb-8 leading-snug hover:text-brand-primary transition-colors duration-300">
-                                    <Link to={`/blogs/${blog.slug}`}>
+                                    <Link to={`/blogs/${blog.slug}`} className="line-clamp-3">
                                         {blog.title}
                                     </Link>
                                 </h3>

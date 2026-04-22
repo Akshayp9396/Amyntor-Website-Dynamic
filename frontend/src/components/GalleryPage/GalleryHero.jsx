@@ -5,9 +5,14 @@ import { ChevronRight, Image as ImageIcon } from 'lucide-react';
 import { useContent } from '../../context/ContentContext';
 
 const GalleryHero = () => {
-    const { galleryPageData } = useContent();
-    if (!galleryPageData) return null;
-    const { hero } = galleryPageData;
+    const { galleryPageHero } = useContent();
+    if (!galleryPageHero) return null;
+    
+    // Add default breadcrumbs if missing in dynamic data
+    const breadcrumbs = [
+        { label: 'Home', link: '/' },
+        { label: 'Gallery', link: '/gallery' }
+    ];
 
     // Framer Motion Variants for Staggered Entrance
     const containerVariants = {
@@ -37,7 +42,7 @@ const GalleryHero = () => {
                 {/* Background Image with precise readable Overlays */}
                 <div className="absolute inset-0 z-0">
                     <img
-                        src={hero.backgroundImage}
+                        src={galleryPageHero.backgroundImage}
                         alt="Gallery Background"
                         className="w-full h-full object-cover opacity-[0.35]"
                     />
@@ -58,23 +63,23 @@ const GalleryHero = () => {
                         <motion.div variants={itemVariants} className="mb-6">
                             <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-brand-dark to-brand-primary text-white text-[13px] sm:text-sm font-semibold tracking-wide shadow-lg shadow-brand-primary/25">
                                 <ImageIcon size={16} strokeWidth={2.5} />
-                                {hero.tag}
+                                {galleryPageHero.tag}
                             </span>
                         </motion.div>
 
                         {/* 2. Bold, Large Main Title */}
                         <motion.h1 variants={itemVariants} className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 tracking-tight drop-shadow-md">
-                            {hero.title}
+                            {galleryPageHero.title}
                         </motion.h1>
 
                         {/* 3. Clean Text Breadcrumbs (No Box) */}
                         <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-white/80 text-[15px] font-medium mb-12">
-                            {hero.breadcrumbs.map((crumb, index) => (
+                            {breadcrumbs.map((crumb, index) => (
                                 <React.Fragment key={index}>
                                     <Link to={crumb.link} className="hover:text-white transition-colors drop-shadow-sm">
                                         {crumb.label}
                                     </Link>
-                                    {index < hero.breadcrumbs.length - 1 && (
+                                    {index < breadcrumbs.length - 1 && (
                                         <ChevronRight size={14} className="text-white/60" />
                                     )}
                                 </React.Fragment>
@@ -83,7 +88,7 @@ const GalleryHero = () => {
 
                         {/* 4. Small Clean Tagline */}
                         <motion.p variants={itemVariants} className="text-[15px] md:text-base text-white/90 max-w-[85%] sm:max-w-2xl mx-auto leading-relaxed font-light drop-shadow-sm">
-                            {hero.tagline}
+                            {galleryPageHero.tagline}
                         </motion.p>
                     </motion.div>
                 </div>

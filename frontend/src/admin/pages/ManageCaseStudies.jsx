@@ -37,16 +37,19 @@ import {
 } from 'lucide-react';
 import { useContent } from '../../context/ContentContext';
 import { AdminCard, FormInput, FormTextarea } from '../components/AdminUI';
+import ContentService from '../../services/contentService';
+import { useNotification } from '../context/NotificationContext'; // 🛡️ MISSION: Absolute UI Parity
 
 const ManageCaseStudies = () => {
-    const { caseStudyPageData, setCaseStudyPageData } = useContent();
+    const { caseStudyPageData, setCaseStudyPageData, refreshContent } = useContent();
+    const { showNotification } = useNotification(); // 🕵️ MISSION: Notification Authority
     const [activeTab, setActiveTab] = useState('hero');
     const [isSaving, setIsSaving] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
     // Modal States for Case Study CRUD
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingStudyIdx, setEditingStudyIdx] = useState(null);
+    const [editingStudyId, setEditingStudyId] = useState(null);
     const [studyFormData, setStudyFormData] = useState({
         id: null,
         title: "",
@@ -60,21 +63,41 @@ const ManageCaseStudies = () => {
         conclusion: ""
     });
 
-    if (!caseStudyPageData) return <div className="p-8 text-slate-400 font-bold">Loading Case Studies Data...</div>;
+    if (!caseStudyPageData) return <div className="p-8 text-slate-400 font-bold tracking-widest uppercase text-[10px]">Registry Hydrating...</div>;
 
     // === Global Handlers ===
 
-    const handleSave = () => {
-        setIsSaving(true);
-        setTimeout(() => {
+    const handleSave = async () => {
+        try {
+            setIsSaving(true);
+            // 🛡️ MISSION: Persist Hero content
+            const res = await ContentService.updateCaseStudyHero({
+                tag: caseStudyPageData.hero.tag,
+                title: caseStudyPageData.hero.title,
+                tagline: caseStudyPageData.hero.tagline,
+                backgroundImage: caseStudyPageData.hero.backgroundImage
+            });
+
+            if (res.success) {
+                await refreshContent();
+                showNotification("Changes saved successfully!", 'success');
+            }
+        } catch (err) {
+            console.error("❌ Persistence Failure:", err);
+            showNotification("ERROR: Failed to save changes. Please try again.", 'error');
+        } finally {
             setIsSaving(false);
-            alert("Case Studies content pushed to live successfully!");
-        }, 800);
+        }
     };
 
     const handleImageUpload = (e, path) => {
         const file = e.target.files[0];
         if (file) {
+            // 🛡️ MISSION: Security Protocol (5MB Capacity)
+            if (file.size > 5 * 1024 * 1024) {
+                showNotification("Upload failed: File size must be under 5MB.", 'error');
+                return;
+            }
             const reader = new FileReader();
             reader.onloadend = () => {
                 const newData = { ...caseStudyPageData };
@@ -93,9 +116,8 @@ const ManageCaseStudies = () => {
     // --- Study CRUD Handlers ---
 
     const handleOpenAddStudy = () => {
-        setEditingStudyIdx(null);
+        setEditingStudyId(null);
         setStudyFormData({
-            id: Date.now(),
             title: "",
             tags: [],
             image: "",
@@ -109,8 +131,8 @@ const ManageCaseStudies = () => {
         setIsModalOpen(true);
     };
 
-    const handleOpenEditStudy = (study, idx) => {
-        setEditingStudyIdx(idx);
+    const handleOpenEditStudy = (study) => {
+        setEditingStudyId(study.id);
         const safeStudy = {
             ...study,
             scopeOfWork: study.scopeOfWork || { intro: "", points: [""] },
@@ -121,39 +143,66 @@ const ManageCaseStudies = () => {
         setIsModalOpen(true);
     };
 
-    const handleSaveStudy = () => {
+    const handleSaveStudy = async () => {
         if (!studyFormData.title) {
-            alert("Case study title is required.");
+            showNotification("Please fill in all fields before updating.", 'error');
             return;
         }
 
-        const newStudies = [...caseStudyPageData.caseStudies];
-        if (editingStudyIdx !== null) {
-            newStudies[editingStudyIdx] = studyFormData;
-        } else {
-            newStudies.unshift(studyFormData);
-        }
+        try {
+            setIsSaving(true);
+            
+            // Prepare payload for JSON persistence
+            const submissionData = {
+                ...studyFormData,
+                scope_of_work: studyFormData.scopeOfWork,
+                site_actions_intro: studyFormData.siteActionsIntro,
+                site_actions: studyFormData.siteActions,
+                results_and_benefits: studyFormData.resultsAndBenefits,
+                id: editingStudyId
+            };
 
-        setCaseStudyPageData({
-            ...caseStudyPageData,
-            caseStudies: newStudies
-        });
-        setIsModalOpen(false);
+            const res = await ContentService.upsertCaseStudy(submissionData);
+
+            if (res.success) {
+                await refreshContent();
+                setIsModalOpen(false);
+                showNotification("Success story mission established successfully!", 'success');
+            }
+        } catch (err) {
+            console.error("❌ Save Failure:", err);
+            showNotification("ERROR: Failed to save success story. Check foundations.", 'error');
+        } finally {
+            setIsSaving(false);
+        }
     };
 
-    const handleDeleteStudy = (idx) => {
+    const handleDeleteStudy = async (id) => {
         if (window.confirm("Delete this case study? This action cannot be undone.")) {
-            const newStudies = caseStudyPageData.caseStudies.filter((_, i) => i !== idx);
-            setCaseStudyPageData({
-                ...caseStudyPageData,
-                caseStudies: newStudies
-            });
+            try {
+                setIsSaving(true);
+                const res = await ContentService.deleteCaseStudy(id);
+                if (res.success) {
+                    await refreshContent();
+                    showNotification("Case study de-commissioned successfully.", 'success');
+                }
+            } catch (err) {
+                console.error("❌ Deletion Failure:", err);
+                showNotification("ERROR: Decommission mission failed.", 'error');
+            } finally {
+                setIsSaving(false);
+            }
         }
     };
 
     const handleStudyImageUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
+            // 🛡️ MISSION: Asset Capacity Check (5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                showNotification("Upload failed: File size must be under 5MB.", 'error');
+                return;
+            }
             const reader = new FileReader();
             reader.onloadend = () => {
                 setStudyFormData({ ...studyFormData, image: reader.result });
@@ -265,11 +314,13 @@ const ManageCaseStudies = () => {
                                         <span className="text-[10px] font-bold text-brand-primary uppercase tracking-tighter">Recommended: 1920 x 1080 PX</span>
                                     </div>
                                     <div className="relative group overflow-hidden rounded-[2rem] bg-slate-900 border border-slate-200 aspect-video flex items-center justify-center shadow-inner">
-                                        <img
-                                            src={caseStudyPageData.hero.backgroundImage}
-                                            className="w-full h-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-110"
-                                            alt="Hero"
-                                        />
+                                        {caseStudyPageData.hero.backgroundImage && (
+                                            <img
+                                                src={caseStudyPageData.hero.backgroundImage}
+                                                className="w-full h-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-110"
+                                                alt="Hero"
+                                            />
+                                        )}
                                         <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white cursor-pointer pointer-events-none">
                                             <ImageIcon size={28} className="mb-2" />
                                             <p className="text-[11px] font-black uppercase tracking-widest">Change Media</p>
@@ -312,12 +363,12 @@ const ManageCaseStudies = () => {
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-100">
-                                            {caseStudyPageData.caseStudies.map((study, idx) => (
-                                                <tr key={study.id || idx} className="group hover:bg-slate-50/50 transition-colors">
+                                            {caseStudyPageData.caseStudies.map((study) => (
+                                                <tr key={study.id} className="group hover:bg-slate-50/50 transition-colors">
                                                     <td className="px-6 py-4">
                                                         <div className="flex items-center gap-4">
                                                             <div className="w-12 h-12 rounded-xl bg-brand-primary/10 flex items-center justify-center text-brand-primary border border-brand-primary/20 overflow-hidden shadow-sm">
-                                                                <img src={study.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="" />
+                                                                {study.image && <img src={study.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="" />}
                                                             </div>
                                                             <div>
                                                                 <p className="font-bold text-slate-800">{study.title}</p>
@@ -331,8 +382,8 @@ const ManageCaseStudies = () => {
                                                     </td>
                                                     <td className="px-6 py-4 text-right">
                                                         <div className="flex items-center justify-end gap-2">
-                                                            <button onClick={() => handleOpenEditStudy(study, idx)} className="p-2 text-slate-400 hover:text-brand-primary hover:bg-brand-primary/5 rounded-xl transition-colors"><Edit3 size={16} /></button>
-                                                            <button onClick={() => handleDeleteStudy(idx)} className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-colors"><Trash2 size={16} /></button>
+                                                            <button onClick={() => handleOpenEditStudy(study)} className="p-2 text-slate-400 hover:text-brand-primary hover:bg-brand-primary/5 rounded-xl transition-colors"><Edit3 size={16} /></button>
+                                                            <button onClick={() => handleDeleteStudy(study.id)} className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-colors"><Trash2 size={16} /></button>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -365,7 +416,7 @@ const ManageCaseStudies = () => {
                             <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-white">
                                 <div>
                                     <h3 className="text-xl font-black text-slate-800 tracking-tight">
-                                        {editingStudyIdx !== null ? "Modify Success Story" : "Design New Case Study"}
+                                        {editingStudyId !== null ? "Modify Success Story" : "Design New Case Study"}
                                     </h3>
                                 </div>
                                 <button onClick={() => setIsModalOpen(false)} className="p-3 bg-white border border-slate-100 rounded-2xl text-slate-400 hover:text-rose-500 shadow-sm hover:shadow-md transition-all active:scale-95"><X size={20} strokeWidth={3} /></button>
@@ -638,7 +689,7 @@ const ManageCaseStudies = () => {
                                     onClick={handleSaveStudy}
                                     className="bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white px-12 py-3.5 rounded-2xl text-sm font-black transition-all shadow-xl shadow-emerald-500/25"
                                 >
-                                    {editingStudyIdx !== null ? "Update " : "Confirm"}
+                                    {editingStudyId !== null ? "Update " : "Confirm"}
                                 </button>
                             </div>
                         </motion.div>
@@ -648,5 +699,6 @@ const ManageCaseStudies = () => {
         </motion.div>
     );
 };
+
 
 export default ManageCaseStudies;

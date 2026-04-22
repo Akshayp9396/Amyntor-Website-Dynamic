@@ -29,7 +29,12 @@ const mockFooterData = {
         { label: "Services", path: "/services" },
         { label: "Blogs", path: "/blogs" },
         { label: "Case Study", path: "/case-study" },
-        { label: "Contact Us", path: "/contact" }
+    ],
+    resourceLinks: [
+        { label: "Our Partners", path: "/partners" },
+        { label: "Privacy Policy", path: "/privacy-policy" },
+        { label: "Amyntor InfoSec", path: "https://infosec.amyntortech.com", external: true },
+        { label: "Careers", path: "/careers" }
     ],
     serviceLinks: [
         { label: "IT Infrastructure", path: "/services/it-infrastructure" },
@@ -76,7 +81,7 @@ const Footer = () => {
                                     <Mail size={28} className="text-white" />
                                 </div>
                                 <div className="text-center md:text-left">
-                                    <h3 className="text-xl md:text-2xl font-bold text-white mb-1.5">Contact Us</h3>
+                                    <h3 className="text-lg md:text-xl font-bold text-white mb-1.5">Contact Us</h3>
                                     <p className="text-white/90 text-sm md:text-base font-medium leading-relaxed">
                                         We build greater futures through innovation and collective knowledge.
                                     </p>
@@ -128,11 +133,11 @@ const Footer = () => {
                     {/* Right Frame: Links, Contact, and Copyright */}
                     <div className="w-full lg:w-[72%] flex flex-col justify-between">
                         {/* Top Group: Columns Grid */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 lg:gap-12 lg:pl-10 w-full">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 lg:pl-10 w-full">
 
                             {/* Column 2: Contact Info */}
                             <div className="flex flex-col gap-6 py-2">
-                                <h4 className="text-white text-xl font-bold mb-2 relative inline-block">
+                                <h4 className="text-white text-lg font-semibold mb-2 relative inline-block">
                                     Contact Us
                                 </h4>
 
@@ -165,26 +170,54 @@ const Footer = () => {
                                 </div>
                             </div>
 
-                            {/* Column 3: Explore */}
-                            <div className="flex flex-col gap-6">
-                                <h4 className="text-white text-xl font-bold mb-2">Explore</h4>
-                                <ul className="space-y-3">
-                                    {mockFooterData.exploreLinks.map((link, idx) => (
-                                        <li key={idx}>
-                                            <Link
-                                                to={link.path}
-                                                className="text-slate-400 text-sm font-medium hover:text-white hover:translate-x-1 inline-block transition-all"
-                                            >
-                                                {link.label}
-                                            </Link>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
+                             {/* Column 3: Explore */}
+                             <div className="flex flex-col gap-6">
+                                 <h4 className="text-white text-lg font-semibold mb-2">Explore</h4>
+                                 <ul className="space-y-3">
+                                     {mockFooterData.exploreLinks.map((link, idx) => (
+                                         <li key={idx}>
+                                             <Link
+                                                 to={link.path}
+                                                 className="text-slate-400 text-sm font-medium hover:text-white hover:translate-x-1 inline-block transition-all"
+                                             >
+                                                 {link.label}
+                                             </Link>
+                                         </li>
+                                     ))}
+                                 </ul>
+                             </div>
+ 
+                             {/* Column 4: Resources */}
+                             <div className="flex flex-col gap-6">
+                                 <h4 className="text-white text-lg font-semibold mb-2">Resources</h4>
+                                 <ul className="space-y-3">
+                                     {mockFooterData.resourceLinks.map((link, idx) => (
+                                         <li key={idx}>
+                                             {link.external ? (
+                                                 <a
+                                                     href={link.path}
+                                                     target="_blank"
+                                                     rel="noopener noreferrer"
+                                                     className="text-slate-400 text-sm font-medium hover:text-white hover:translate-x-1 inline-block transition-all"
+                                                 >
+                                                     {link.label}
+                                                 </a>
+                                             ) : (
+                                                 <Link
+                                                     to={link.path}
+                                                     className="text-slate-400 text-sm font-medium hover:text-white hover:translate-x-1 inline-block transition-all"
+                                                 >
+                                                     {link.label}
+                                                 </Link>
+                                             )}
+                                         </li>
+                                     ))}
+                                 </ul>
+                             </div>
 
-                            {/* Column 4: Services */}
+                            {/* Column 5: Services */}
                             <div className="flex flex-col gap-6">
-                                <h4 className="text-white text-xl font-bold mb-2">Services</h4>
+                                <h4 className="text-white text-lg font-semibold mb-2">Services</h4>
                                 <ul className="space-y-3">
                                     {mockFooterData.serviceLinks.map((link, idx) => (
                                         <li key={idx}>

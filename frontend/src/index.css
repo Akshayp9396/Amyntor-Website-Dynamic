@@ -29,3 +29,14 @@
         font-family: inherit;
     }
 }
+
+@layer utilities {
+    /* ✨ THE STEALTH SCROLL: Full functionality, Zero visual clutter */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .no-scrollbar {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+}

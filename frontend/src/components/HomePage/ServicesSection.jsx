@@ -16,14 +16,16 @@ const iconMap = {
     CloudCog: CloudCog,
     Headset: Headphones,
     Boxes: Boxes,
-    FileKey: FileKey
+    FileKey: FileKey,
+    Server: Server,
+    ShieldCheck: ShieldCheck
 };
 
 const ServicesSection = () => {
     const { servicesPageData } = useContent();
     const serviceIntro = servicesPageData?.serviceIntro;
     const servicesItems = servicesPageData?.servicesList?.items || [];
-    
+
     const [swiperInstance, setSwiperInstance] = useState(null);
     const [activeCard, setActiveCard] = useState(null);
 
@@ -170,8 +172,8 @@ const ServicesSection = () => {
                                             <div className="flex items-center justify-between shrink-0 h-[42px]">
                                                 <h3 className="text-xl md:text-xl font-bold text-white pr-4">{service.title}</h3>
                                                 <div className="w-10 h-10 rounded-full bg-gradient-to-r from-brand-dark to-brand-primary flex items-center justify-center text-white shrink-0 shadow-lg shadow-brand-dark/40 overflow-hidden p-2">
-                                                    {service.icon?.startsWith('data:image') || service.icon?.startsWith('/') || service.icon?.startsWith('http') 
-                                                        ? <img src={service.icon} alt="" className="w-full h-full object-contain" />
+                                                    {service.icon?.startsWith('data:image') || service.icon?.startsWith('/') || service.icon?.startsWith('http')
+                                                        ? <img src={service.icon} alt="" className="w-full h-full object-contain" style={{ filter: 'brightness(0) invert(1)' }} />
                                                         : <IconComp size={20} />
                                                     }
                                                 </div>

@@ -41,11 +41,15 @@ const ServiceHero = () => {
 
                 {/* Background Image with precise readable Overlays */}
                 <div className="absolute inset-0 z-0">
-                    <img
-                        src={hero.backgroundImage}
-                        alt="Background"
-                        className="w-full h-full object-cover object-[center_75%] opacity-[0.35]"
-                    />
+                    {hero.backgroundImage ? (
+                        <img
+                            src={hero.backgroundImage}
+                            alt="Background"
+                            className="w-full h-full object-cover object-[center_75%] opacity-[0.35]"
+                        />
+                    ) : (
+                        <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm shadow-inner"></div>
+                    )}
                     {/* Deep gradient overlays matching screenshot vibe */}
                     <div className="absolute inset-0 bg-[#050B14]/40 mix-blend-multiply"></div>
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050B14]/30 to-[#050B14]/90"></div>
@@ -74,7 +78,7 @@ const ServiceHero = () => {
 
                         {/* 3. Clean Text Breadcrumbs (No Box) */}
                         <motion.div variants={itemVariants} className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-white/80 text-[15px] font-medium mb-12">
-                            {hero.breadcrumbs.map((crumb, index) => (
+                            {hero.breadcrumbs?.map((crumb, index) => (
                                 <React.Fragment key={index}>
                                     <Link to={crumb.link} className="hover:text-white transition-colors drop-shadow-sm">
                                         {crumb.label}

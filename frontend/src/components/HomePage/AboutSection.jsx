@@ -33,6 +33,11 @@ const CountUpNumber = ({ end, suffix = "", duration = 2.5 }) => {
 const AboutSection = () => {
     const { aboutData, statsData } = useContent();
 
+    // 🛡️ Loading Guard
+    if (!aboutData || !statsData || statsData.length === 0) {
+        return null;
+    }
+
     // Animation variants for scroll reveals
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -75,7 +80,9 @@ const AboutSection = () => {
 
                                 {/* Top Image */}
                                 <motion.div variants={slideUpVariants} className="w-full h-[200px] lg:h-[240px] rounded-[2rem] overflow-hidden shadow-xl">
+                                {aboutData.topImage && (
                                     <img src={aboutData.topImage} alt="Team" className="w-full h-full object-cover object-center" />
+                                )}
                                 </motion.div>
 
                                 {/* Bottom Card - Global Clients */}
@@ -106,7 +113,9 @@ const AboutSection = () => {
 
                             {/* Main Right Image */}
                             <motion.div variants={slideRightVariants} className="w-full max-w-[380px] sm:max-w-none sm:flex-1 rounded-[2.5rem] overflow-hidden shadow-xl relative h-[400px] sm:h-[464px] lg:h-[564px] mx-auto sm:mx-0">
-                                <img src={aboutData.mainImage} alt="Team Meeting" className="w-full h-full object-cover" />
+                                {aboutData.mainImage && (
+                                    <img src={aboutData.mainImage} alt="Team Meeting" className="w-full h-full object-cover" />
+                                )}
 
                                 {/* Circular Badge Override overlapping */}
 
@@ -136,7 +145,7 @@ const AboutSection = () => {
                             </motion.h2>
 
                             {/* Description */}
-                            <motion.p variants={slideUpVariants} className="text-gray-600 text-[15px] leading-relaxed mb-8 text-justify">
+                            <motion.p variants={slideUpVariants} className="text-gray-600 text-[15px] leading-relaxed mb-8 text-justify whitespace-pre-line">
                                 {aboutData.description}
                             </motion.p>
 

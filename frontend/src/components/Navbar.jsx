@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Phone, ChevronDown, Menu, X } from 'lucide-react';
+import { Phone, ChevronDown, Menu, X, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Logo from '../assets/images/amyntor-logo.png';
 
@@ -33,6 +33,7 @@ const Navbar = () => {
         { label: 'Home', path: '/' },
         { label: 'About Us', path: '/about' },
         { label: 'Services', path: '/services' },
+        { label: 'Amyntor InfoSec', path: 'https://amyntorinfosec.com/', external: true }, // 🚀 External Premier Link
         {
             label: 'Resources',
             dropdown: true,
@@ -40,10 +41,11 @@ const Navbar = () => {
                 { label: 'Case Study', path: '/case-study' },
                 { label: 'Gallery', path: '/gallery' },
                 { label: 'Blogs', path: '/blogs' },
+                { label: 'Our Partners', path: '/partners' }, // 🛡️ Strategic Partners
+                { label: 'Privacy Policy', path: '/privacy-policy' }, // ⚖️ Legal Framework
             ]
         },
         { label: 'Careers', path: '/careers' },
-        // { label: 'Contact', path: '/contact' }, // Hidden as requested
     ];
 
     return (
@@ -79,6 +81,20 @@ const Navbar = () => {
                                         </div>
                                     </div>
                                 </div>
+                            );
+                        }
+                        if (item.external) {
+                            return (
+                                <a
+                                    key={index}
+                                    href={item.path}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-1.5 text-gray-700 hover:text-brand-primary font-medium transition-colors text-sm py-2"
+                                >
+                                    {item.label}
+                                    <ExternalLink size={12} className="opacity-60" />
+                                </a>
                             );
                         }
                         return (
@@ -178,6 +194,17 @@ const Navbar = () => {
                                                 )}
                                             </AnimatePresence>
                                         </>
+                                    ) : item.external ? (
+                                        <a
+                                            href={item.path}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            onClick={() => setMobileMenuOpen(false)}
+                                            className="text-lg font-bold text-slate-800 hover:text-brand-primary transition-colors flex items-center justify-between"
+                                        >
+                                            {item.label}
+                                            <ExternalLink size={18} className="text-slate-400" />
+                                        </a>
                                     ) : (
                                         <Link
                                             to={item.path}

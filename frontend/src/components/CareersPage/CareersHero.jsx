@@ -21,19 +21,19 @@ const CareersHero = () => {
     };
 
     return (
-        <section className="w-full bg-[#F8FAFC] px-4 md:px-8 py-4 md:py-6">
+        <section className="w-full bg-[#F8FAFC] px-4 md:px-8 pt-4 md:pt-6 pb-2">
             <div className="relative w-full h-[50vh] min-h-[380px] max-h-[500px] rounded-[2rem] md:rounded-[2.5rem] flex flex-col items-center justify-center bg-[#050B14] overflow-hidden shadow-2xl">
                 <div className="absolute inset-0 z-0">
                     <img
                         src={hero.backgroundImage}
                         alt="Careers Background"
-                        className="w-full h-full object-cover opacity-[0.35]"
+                        className="w-full h-full object-cover opacity-[0.15] grayscale-[20%]"
                     />
-                    <div className="absolute inset-0 bg-[#050B14]/40 mix-blend-multiply"></div>
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050B14]/30 to-[#050B14]/90"></div>
+                    <div className="absolute inset-0 bg-[#050B14]/30 mix-blend-multiply"></div>
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050B14]/20 to-[#050B14]/80"></div>
                 </div>
 
-                <div className="relative z-10 text-center px-6 max-w-4xl mx-auto w-full mt-16 md:mt-20">
+                <div className="relative z-10 text-center px-6 max-w-4xl mx-auto w-full flex flex-col items-center justify-center h-full">
                     <motion.div variants={containerVariants} initial="hidden" animate="visible" className="flex flex-col items-center">
                         <motion.div variants={itemVariants} className="mb-6">
                             <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-brand-dark to-brand-primary text-white text-[13px] sm:text-sm font-semibold tracking-wide shadow-lg shadow-brand-primary/25">

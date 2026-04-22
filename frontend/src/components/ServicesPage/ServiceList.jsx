@@ -22,7 +22,12 @@ const iconMap = {
 
 const ServiceList = () => {
     const { servicesPageData } = useContent();
-    const servicesList = servicesPageData?.servicesList || { items: [] };
+    const servicesList = servicesPageData?.servicesList || {};
+    
+    // 🛡️ MISSION: Absolute Heritage Fallbacks (Ensures zero-friction visualization)
+    const tag = servicesList.tag || "SERVICE";
+    const heading = servicesList.heading || "Our Multi-Process Engineering Solutions";
+    const items = servicesList.items || [];
     const navigate = useNavigate();
     const [activeCard, setActiveCard] = useState(null);
 
@@ -53,7 +58,7 @@ const ServiceList = () => {
                         className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-[#EEF4FF] border border-[#D1E0FF] shadow-sm"
                     >
                         <div className="w-2 h-2 rounded-full bg-gradient-to-r from-brand-dark to-brand-primary"></div>
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-dark to-brand-primary font-semibold text-sm uppercase tracking-[0.2em]">{servicesList.tag}</span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-dark to-brand-primary font-semibold text-sm uppercase tracking-[0.2em]">{tag}</span>
                     </motion.div>
 
                     <motion.h2
@@ -63,7 +68,7 @@ const ServiceList = () => {
                         transition={{ delay: 0.1 }}
                         className="text-xl md:text-2xl lg:text-3xl font-semibold text-[#0b1021] leading-snug max-w-3xl tracking-tight"
                     >
-                        {servicesList.heading}
+                        {heading}
                     </motion.h2>
                 </div>
 
@@ -75,7 +80,7 @@ const ServiceList = () => {
                     viewport={{ once: true, margin: "0px" }}
                     className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
                 >
-                    {servicesList.items.map((service, idx) => {
+                    {items.map((service, idx) => {
                         const IconComponent = iconMap[service.icon] || ShieldCheck;
 
                         // Limit to approx 140 characters and add ellipsis

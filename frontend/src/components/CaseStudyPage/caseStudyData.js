@@ -10,6 +10,7 @@ export const mockCaseStudyPageData = {
         title: "Case Studies",
         breadcrumbs: [
             { label: "Home", link: "/" },
+            { label: "Resources", link: "#" }, 
             { label: "Case Studies", link: "/case-study" }
         ],
         tagline: "Explore how we have empowered businesses with cutting-edge cybersecurity, IT infrastructure, and robust networking solutions.",

@@ -34,15 +34,18 @@ import {
 } from 'lucide-react';
 import { useContent } from '../../context/ContentContext';
 import { AdminCard, FormInput, FormTextarea } from '../components/AdminUI';
+import ContentService from '../../services/contentService';
+import { useNotification } from '../context/NotificationContext';
 
 const ManageBlogs = () => {
-    const { blogPageData, setBlogPageData } = useContent();
+    const { blogPageData, setBlogPageData, refreshContent } = useContent();
+    const { showNotification } = useNotification();
     const [activeTab, setActiveTab] = useState('hero');
     const [isSaving, setIsSaving] = useState(false);
 
     // Modal States for Blog CRUD
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingBlogIdx, setEditingBlogIdx] = useState(null);
+    const [editingBlogId, setEditingBlogId] = useState(null);
     const [blogFormData, setBlogFormData] = useState({
         id: null,
         title: "",
@@ -67,21 +70,39 @@ const ManageBlogs = () => {
         }
     };
 
-    if (!blogPageData) return <div className="p-8 text-slate-400 font-bold">Loading Blog Data...</div>;
+    if (!blogPageData) return <div className="p-8 text-slate-400 font-bold tracking-widest uppercase text-[10px]">Registry Hydrating...</div>;
 
     // === Global Handlers ===
 
-    const handleSave = () => {
-        setIsSaving(true);
-        setTimeout(() => {
+    const handleSave = async () => {
+        try {
+            setIsSaving(true);
+            const res = await ContentService.updateBlogHero({
+                tag: blogPageData.hero.tag,
+                title: blogPageData.hero.title,
+                tagline: blogPageData.hero.tagline,
+                backgroundImage: blogPageData.hero.backgroundImage
+            });
+
+            if (res.success) {
+                await refreshContent();
+                showNotification("Changes saved successfully!", 'success');
+            }
+        } catch (err) {
+            console.error("❌ Persistence Failure:", err);
+            showNotification("ERROR: Failed to save changes. Please try again.", 'error');
+        } finally {
             setIsSaving(false);
-            alert("Blog content pushed to live successfully!");
-        }, 800);
+        }
     };
 
     const handleImageUpload = (e, path) => {
         const file = e.target.files[0];
         if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                showNotification("Upload failed: File size must be under 5MB.", 'error');
+                return;
+            }
             const reader = new FileReader();
             reader.onloadend = () => {
                 const newData = { ...blogPageData };
@@ -100,7 +121,7 @@ const ManageBlogs = () => {
     // --- Blog CRUD Handlers ---
 
     const handleOpenAddBlog = () => {
-        setEditingBlogIdx(null);
+        setEditingBlogId(null);
         setBlogFormData({
             id: Date.now(),
             title: "",
@@ -114,8 +135,8 @@ const ManageBlogs = () => {
         setIsModalOpen(true);
     };
 
-    const handleOpenEditBlog = (blog, idx) => {
-        setEditingBlogIdx(idx);
+    const handleOpenEditBlog = (blog) => {
+        setEditingBlogId(blog.id);
 
         // Ensure date is in YYYY-MM-DD format for native date input
         let dateValue = blog.date;
@@ -139,42 +160,62 @@ const ManageBlogs = () => {
         setIsModalOpen(true);
     };
 
-    const handleSaveBlog = () => {
+    const handleSaveBlog = async () => {
         if (!blogFormData.title) {
-            alert("Blog title is required.");
+            showNotification("Please fill in all fields before updating.", 'error');
             return;
         }
 
-        const newItems = [...blogPageData.blogList.items];
-        const slug = blogFormData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-        const finalData = { ...blogFormData, slug };
+        try {
+            setIsSaving(true);
+            const slug = blogFormData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
-        if (editingBlogIdx !== null) {
-            newItems[editingBlogIdx] = finalData;
-        } else {
-            newItems.unshift(finalData);
+            const submissionData = {
+                ...blogFormData,
+                slug,
+                id: editingBlogId
+            };
+
+            const res = await ContentService.upsertBlog(submissionData);
+
+            if (res.success) {
+                await refreshContent();
+                setIsModalOpen(false);
+                showNotification("Blog narrative established successfully!", 'success');
+            }
+        } catch (err) {
+            console.error("❌ Save Failure:", err);
+            showNotification("ERROR: Failed to save blog. Check foundations.", 'error');
+        } finally {
+            setIsSaving(false);
         }
-
-        setBlogPageData({
-            ...blogPageData,
-            blogList: { ...blogPageData.blogList, items: newItems }
-        });
-        setIsModalOpen(false);
     };
 
-    const handleDeleteBlog = (idx) => {
+    const handleDeleteBlog = async (id) => {
         if (window.confirm("Delete this blog post? This action cannot be undone.")) {
-            const newItems = blogPageData.blogList.items.filter((_, i) => i !== idx);
-            setBlogPageData({
-                ...blogPageData,
-                blogList: { ...blogPageData.blogList, items: newItems }
-            });
+            try {
+                setIsSaving(true);
+                const res = await ContentService.deleteBlog(id);
+                if (res.success) {
+                    await refreshContent();
+                    showNotification("Blog post de-commissioned successfully.", 'success');
+                }
+            } catch (err) {
+                console.error("❌ Deletion Failure:", err);
+                showNotification("ERROR: Decommission mission failed.", 'error');
+            } finally {
+                setIsSaving(false);
+            }
         }
     };
 
     const handleBlogImageUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                showNotification("Upload failed: File size must be under 5MB.", 'error');
+                return;
+            }
             const reader = new FileReader();
             reader.onloadend = () => {
                 setBlogFormData({ ...blogFormData, image: reader.result });
@@ -283,11 +324,13 @@ const ManageBlogs = () => {
                                         <span className="text-[10px] font-bold text-brand-primary uppercase tracking-tighter">Recommended: 1920 x 1080 PX</span>
                                     </div>
                                     <div className="relative group overflow-hidden rounded-[2rem] bg-slate-900 border border-slate-200 aspect-video flex items-center justify-center shadow-inner">
-                                        <img
-                                            src={blogPageData.hero.backgroundImage}
-                                            className="w-full h-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-110"
-                                            alt="Hero"
-                                        />
+                                        {blogPageData.hero.backgroundImage && (
+                                            <img
+                                                src={blogPageData.hero.backgroundImage}
+                                                className="w-full h-full object-cover opacity-60 transition-transform duration-500 group-hover:scale-110"
+                                                alt="Hero"
+                                            />
+                                        )}
                                         <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white cursor-pointer pointer-events-none">
                                             <ImageIcon size={28} className="mb-2" />
                                             <p className="text-[11px] font-black uppercase tracking-widest">Change Media</p>
@@ -330,12 +373,14 @@ const ManageBlogs = () => {
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-100">
-                                            {blogPageData.blogList.items.map((blog, idx) => (
+                                            {[...blogPageData.blogList.items]
+                                                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                                                .map((blog, idx) => (
                                                 <tr key={blog.id || idx} className="group hover:bg-slate-50/50 transition-colors">
                                                     <td className="px-6 py-4">
                                                         <div className="flex items-center gap-4">
                                                             <div className="w-12 h-12 rounded-xl bg-brand-primary/10 flex items-center justify-center text-brand-primary border border-brand-primary/20 overflow-hidden shadow-sm p-1">
-                                                                <img src={blog.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 rounded-lg" alt="" />
+                                                                {blog.image && <img src={blog.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 rounded-lg" alt="" />}
                                                             </div>
                                                             <div>
                                                                 <p className="font-bold text-slate-800">{blog.title}</p>
@@ -347,8 +392,8 @@ const ManageBlogs = () => {
                                                     </td>
                                                     <td className="px-6 py-4 text-right">
                                                         <div className="flex items-center justify-end gap-2">
-                                                            <button onClick={() => handleOpenEditBlog(blog, idx)} className="p-2 text-slate-400 hover:text-brand-primary hover:bg-brand-primary/5 rounded-xl transition-colors"><Edit3 size={16} /></button>
-                                                            <button onClick={() => handleDeleteBlog(idx)} className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-colors"><Trash2 size={16} /></button>
+                                                            <button onClick={() => handleOpenEditBlog(blog)} className="p-2 text-slate-400 hover:text-brand-primary hover:bg-brand-primary/5 rounded-xl transition-colors"><Edit3 size={16} /></button>
+                                                            <button onClick={() => handleDeleteBlog(blog.id)} className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-colors"><Trash2 size={16} /></button>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -381,7 +426,7 @@ const ManageBlogs = () => {
                             <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-white">
                                 <div>
                                     <h3 className="text-xl font-black text-slate-800 tracking-tight">
-                                        {editingBlogIdx !== null ? "Edit Blog Post" : "Create New Blog Post"}
+                                        {editingBlogId !== null ? "Edit Blog Post" : "Create New Blog Post"}
                                     </h3>
                                 </div>
                                 <button onClick={() => setIsModalOpen(false)} className="p-3 bg-white border border-slate-100 rounded-2xl text-slate-400 hover:text-rose-500 shadow-sm hover:shadow-md transition-all active:scale-95"><X size={20} strokeWidth={3} /></button>
@@ -569,7 +614,7 @@ const ManageBlogs = () => {
                                     onClick={handleSaveBlog}
                                     className="bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white px-12 py-3.5 rounded-2xl text-[13px] font-black transition-all shadow-xl shadow-emerald-500/25 uppercase tracking-widest"
                                 >
-                                    {editingBlogIdx !== null ? "Update" : "Confirm"}
+                                    {editingBlogId !== null ? "Update" : "Confirm"}
                                 </button>
                             </div>
                         </motion.div>

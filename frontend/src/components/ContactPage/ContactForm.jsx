@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { User, Mail, Phone, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
 import { useContent } from '../../context/ContentContext';
+import ContentService from '../../services/contentService';
 
 const ContactForm = () => {
     const { contactPageData } = useContent();
@@ -19,37 +20,53 @@ const ContactForm = () => {
         setFormData({ ...formData, [name]: type === 'checkbox' ? checked : value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.name || !formData.phone || !formData.message) {
-            alert("Please fill in your name, phone number, and message.");
+        // 🛡️ BASIC VALIDATION GATEKEEPER
+        if (!formData.name || !formData.email || !formData.phone || !formData.message) {
+            alert("Please fill in your name, email, phone number, and message.");
             return;
         }
 
-        setStatus('submitting');
-
-        setTimeout(() => {
-            setStatus('success');
-            setFormData({ name: '', email: '', phone: '', service: '', message: '' });
-        }, 1500);
+        try {
+            setStatus('submitting');
+            
+            // 🚀 DISPATCH: Send to dual-protocol backend (DB + Email)
+            const res = await ContentService.submitContactInquiry(formData);
+            
+            if (res.success) {
+                setStatus('success');
+                // Optional: Clear form on success
+                setFormData({ name: '', email: '', phone: '', service: '', message: '' });
+            } else {
+                throw new Error(res.message || "Submission failed");
+            }
+        } catch (err) {
+            console.error("❌ Strategic Submission Failed:", err);
+            setStatus('error');
+            alert("Protocol Error: The server could not establish the inquiry. Please try again later.");
+        }
     };
 
     if (status === 'success') {
         return (
-            <div className="bg-white rounded-[2rem] p-10 md:p-14 shadow-[0_10px_40px_rgba(0,0,0,0.04)] h-full flex flex-col items-center justify-center text-center">
-                <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mb-6 text-green-500">
-                    <CheckCircle2 size={40} strokeWidth={1.5} />
+            <div className="bg-white rounded-[2rem] p-10 md:p-14 shadow-sm border border-slate-100 h-full flex flex-col items-center justify-center text-center">
+                <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mb-6 text-emerald-500">
+                    <CheckCircle2 size={32} strokeWidth={2} />
                 </div>
-                <h3 className="text-3xl font-bold text-[#0b1021] mb-4">Message Sent Successfully!</h3>
-                <p className="text-slate-500 text-lg mb-8 max-w-sm">
-                    Thank you for connecting with us. Our team will review your inquiry and reach out shortly.
+                <h3 className="text-xl font-extrabold text-[#0b1021] mb-2 uppercase tracking-wide">Message Sent Successfully</h3>
+                <p className="text-[14px] text-slate-500 mb-8 max-w-[280px] leading-relaxed font-medium">
+                    Thank you for connecting with us. <br/> Our team will review your inquiry and reach out shortly.
                 </p>
                 <button
                     onClick={() => setStatus('idle')}
-                    className="px-8 py-3.5 bg-brand-primary hover:bg-brand-dark text-white rounded-full font-semibold transition-all inline-flex items-center gap-2"
+                    className="group flex items-center gap-2 px-8 py-3 bg-white border border-slate-200 rounded-full font-bold transition-all hover:border-brand-primary/50 hover:shadow-md"
                 >
-                    Send Another Message <ArrowRight size={18} />
+                    <span className="text-[12px] uppercase tracking-widest bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent group-hover:from-blue-700 group-hover:to-cyan-600">
+                        Send Another Message
+                    </span>
+                    <ArrowRight size={16} className="text-blue-600 group-hover:translate-x-1 transition-transform" />
                 </button>
             </div>
         );
@@ -87,7 +104,8 @@ const ContactForm = () => {
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
-                            placeholder="Email Address (Optional)"
+                            placeholder="Email Address *"
+                            required
                             className="w-full bg-white border border-slate-200 text-slate-700 rounded-full pl-12 pr-6 py-4 focus:outline-none focus:border-slate-300 focus:ring-1 focus:ring-slate-300 transition-all placeholder:text-slate-400"
                         />
                     </div>
@@ -116,7 +134,7 @@ const ContactForm = () => {
                             onChange={handleChange}
                             className="w-full bg-white border border-slate-200 text-slate-600 rounded-full px-6 py-4 focus:outline-none focus:border-slate-300 focus:ring-1 focus:ring-slate-300 transition-all appearance-none"
                         >
-                            <option value="">Select Service</option>
+                            <option value="">Select Service (Optional)</option>
                             <option value="cyber-security">Cyber Security</option>
                             <option value="it-infrastructure">IT Infrastructure</option>
                             <option value="cloud-devops">Cloud & DevOps</option>

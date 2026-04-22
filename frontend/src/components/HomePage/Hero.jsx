@@ -22,6 +22,47 @@ const Hero = () => {
         return () => clearInterval(timer);
     }, [slides.length]);
 
+    // 🛡️ PREMIUM CRASH GUARD (Shows beautifully if the database has no slides yet)
+    if (!slides || slides.length === 0) {
+        return (
+            <div className="w-full bg-white px-4 md:px-8 py-4 md:py-8">
+                <div className="relative h-[85vh] min-h-[600px] w-full mx-auto overflow-hidden rounded-[2rem] bg-slate-950 flex flex-col items-center justify-center text-center p-12">
+                    {/* Animated Background Pulse */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-brand-primary/20 via-transparent to-brand-primary/10 animate-pulse" />
+                    
+                    <motion.div 
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="relative z-10"
+                    >
+                        {/* Animated Icon Container */}
+                        <motion.div 
+                            animate={{ y: [0, -10, 0] }}
+                            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                            className="w-20 h-20 bg-brand-primary/10 border border-brand-primary/20 rounded-3xl flex items-center justify-center mb-8 mx-auto"
+                        >
+                            <svg className="w-10 h-10 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 011-1h1a2 2 0 100-4H7a1 1 0 01-1-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" />
+                            </svg>
+                        </motion.div>
+                        
+                        <h2 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight uppercase">
+                            Section Under <span className="text-brand-primary">Construction</span>
+                        </h2>
+                        <p className="text-slate-400 text-lg max-w-xl mx-auto font-medium leading-relaxed mb-8">
+                            Please visit the Admin Panel to manage and update your hero slides and push them live to the database.
+                        </p>
+
+                        
+                    </motion.div>
+
+                    {/* Subtle Overlay Decoration */}
+                    <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-slate-950 to-transparent pointer-events-none" />
+                </div>
+            </div>
+        );
+    }
+
     // Animation Variants for Staggered Content
     const containerVariants = {
         hidden: { opacity: 0 },
