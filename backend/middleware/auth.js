@@ -11,19 +11,29 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const authMiddleware = (req, res, next) => {
-    // 1. Get the 'key' (token) from the request headers
+    // 1. Get the 'key' (token) from Headers OR Secure Cookies
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Standard: 'Bearer myTokenHere'
+    let token = authHeader && authHeader.split(' ')[1];
+
+    // 🕵️ EXTRA SECURITY: Check cookies if header is missing (Industry Standard)
+    if (!token && req.headers.cookie) {
+        const cookies = req.headers.cookie.split(';').reduce((acc, cookie) => {
+            const [key, value] = cookie.trim().split('=');
+            acc[key] = value;
+            return acc;
+        }, {});
+        token = cookies['amyntor_auth_token'];
+    }
 
     // 2. If no token found, block the request instantly
-    if (token == null) {
-        return res.status(401).json({ message: '🚫 Access Denied: No Token Provided' });
+    if (!token) {
+        return res.status(401).json({ success: false, message: '🚫 Access Denied: No Token Provided' });
     }
 
     // 3. Verify the token using your JWT_SECRET from .env
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
         if (err) {
-            return res.status(403).json({ message: '⚠️ Invalid or Expired Token' });
+            return res.status(403).json({ success: false, message: '⚠️ Invalid or Expired Token' });
         }
 
         // 4. Attach the user info to the request so controllers can use it

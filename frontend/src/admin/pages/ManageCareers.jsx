@@ -12,6 +12,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Save,
@@ -44,11 +45,21 @@ const DEFAULT_INTRO = { tag: '', heading: '', description: '', image: null };
 const ManageCareers = () => {
     const { showNotification } = useNotification();
 
+    const location = useLocation();
     // ── UI State ─────────────────────────────────────────────────────────────
-    const [activeTab, setActiveTab] = useState('hero');
+    const [activeTab, setActiveTab] = useState(location.state?.activeTab || 'hero');
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
+
+    // Auto-open 'Add Opening' if coming from dashboard
+    useEffect(() => {
+        if (!isLoading && location.state?.addOpening) {
+            handleOpenAddRole();
+            // Clear state to prevent re-opening on manual tab change
+            window.history.replaceState({}, document.title);
+        }
+    }, [isLoading, location.state]);
 
     // ── Data State (from MySQL) ───────────────────────────────────────────────
     const [hero, setHero] = useState(DEFAULT_HERO);
@@ -416,7 +427,7 @@ const ManageCareers = () => {
                                     )
                                 }
                             >
-                                <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden mt-4 shadow-sm">
+                                <div className="bg-white border border-slate-200 rounded-2xl overflow-x-auto overflow-y-hidden mt-4 shadow-sm no-scrollbar">
                                     <table className="w-full text-left text-sm whitespace-nowrap">
                                         <thead className="bg-slate-50/80 border-b border-slate-200">
                                             <tr>
@@ -437,7 +448,7 @@ const ManageCareers = () => {
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         <div>
-                                                            <p className="font-bold text-slate-800 transition-colors">{role.title}</p>
+                                                            <p className="font-bold text-slate-800 transition-colors truncate max-w-[300px] md:max-w-[400px]">{role.title}</p>
                                                             <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{role.category}</p>
                                                         </div>
                                                     </td>

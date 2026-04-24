@@ -8,13 +8,20 @@
 
 import axios from 'axios';
 
-export const API_BASE_URL = 'http://localhost:5050/api/public';
+// 🕵️ Environmental Configuration
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5050/api';
+const UPLOAD_BASE = import.meta.env.VITE_UPLOAD_URL || 'http://localhost:5050/uploads';
 
-// 🕵️ HELPER: Resolve real computer photo paths from the backend (Port 5050)
+export const API_BASE_URL = `${BASE_URL}/public`;
+
+// 🕵️ HELPER: Resolve real computer photo paths from the backend
 const fixUrl = (path) => {
     if (!path) return null;
     if (path.startsWith('/uploads/')) {
-        return `http://localhost:5050${path}`;
+        // Remove the leading /uploads/ from path before joining with UPLOAD_BASE
+        // or just ensure UPLOAD_BASE is used correctly. 
+        // If path is '/uploads/image.jpg', we want 'http://localhost:5050/uploads/image.jpg'
+        return `${UPLOAD_BASE.replace('/uploads', '')}${path}`;
     }
     return path;
 };
@@ -521,6 +528,11 @@ const ContentService = {
     
     updateInquiryStatus: async (id, status) => {
         const res = await axios.put(`${API_BASE_URL}/contact/submissions/${id}/status`, { status });
+        return res.data;
+    },
+
+    markInquiryAsRead: async (id) => {
+        const res = await axios.patch(`${API_BASE_URL}/contact/submissions/${id}/read`);
         return res.data;
     }
 };

@@ -420,7 +420,7 @@ const ManageServices = () => {
                                                                 }
                                                             </div>
                                                             <div>
-                                                                <p className="font-bold text-slate-800">{service.title}</p>
+                                                                <p className="font-bold text-slate-800 truncate max-w-[300px] md:max-w-[500px]">{service.title}</p>
                                                                 <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{service.description.substring(0, 30)}...</p>
                                                             </div>
                                                         </div>

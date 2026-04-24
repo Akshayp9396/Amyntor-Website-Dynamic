@@ -55,12 +55,12 @@ const CaseStudyDetailsHero = ({ project }) => {
                         <motion.div variants={itemVariants} className="mb-6">
                             <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-[13px] sm:text-sm font-semibold tracking-wide shadow-lg uppercase">
                                 <Target size={16} strokeWidth={2.5} className="text-brand-primary" />
-                                {project.tags[0]}
+                                {project?.tags?.[0] || 'Uncategorized'}
                             </span>
                         </motion.div>
 
                         {/* Project Title */}
-                        <motion.h1 variants={itemVariants} className="text-3xl md:text-5xl lg:text-5xl font-bold text-white mb-8 tracking-tight drop-shadow-md leading-tight max-w-[95%]">
+                        <motion.h1 variants={itemVariants} className="text-xl md:text-3xl lg:text-3xl font-bold text-white mb-8 tracking-tight drop-shadow-md leading-tight max-w-[95%]">
                             {project.title}
                         </motion.h1>
 

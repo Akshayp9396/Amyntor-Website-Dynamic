@@ -27,7 +27,7 @@ const Home = () => {
                 <CaseStudySection />
                 <PartnersSection />
                 <BlogSection />
-                
+
                 {/* Future sections (Case Studies, etc.) will go here */}
             </main>
             <Footer />

@@ -63,6 +63,9 @@ const ManageCaseStudies = () => {
         conclusion: ""
     });
 
+    // 🛡️ MISSION: Tag Input Stability
+    const [tagInput, setTagInput] = useState("");
+
     if (!caseStudyPageData) return <div className="p-8 text-slate-400 font-bold tracking-widest uppercase text-[10px]">Registry Hydrating...</div>;
 
     // === Global Handlers ===
@@ -117,6 +120,7 @@ const ManageCaseStudies = () => {
 
     const handleOpenAddStudy = () => {
         setEditingStudyId(null);
+        setTagInput(""); // Reset tag buffer
         setStudyFormData({
             title: "",
             tags: [],
@@ -133,6 +137,7 @@ const ManageCaseStudies = () => {
 
     const handleOpenEditStudy = (study) => {
         setEditingStudyId(study.id);
+        setTagInput(study.tags?.join(', ') || ""); // Load tag buffer
         const safeStudy = {
             ...study,
             scopeOfWork: study.scopeOfWork || { intro: "", points: [""] },
@@ -152,9 +157,16 @@ const ManageCaseStudies = () => {
         try {
             setIsSaving(true);
             
+            // 🛡️ MISSION: Process the Tag Buffer
+            const processedTags = tagInput
+                .split(',')
+                .map(t => t.trim())
+                .filter(t => t !== "");
+
             // Prepare payload for JSON persistence
             const submissionData = {
                 ...studyFormData,
+                tags: processedTags, // Final clean array
                 scope_of_work: studyFormData.scopeOfWork,
                 site_actions_intro: studyFormData.siteActionsIntro,
                 site_actions: studyFormData.siteActions,
@@ -216,9 +228,9 @@ const ManageCaseStudies = () => {
         { id: 'list', label: 'Case Studies' },
     ];
 
-    const filteredStudies = caseStudyPageData.caseStudies.filter(s =>
-        s.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        s.tags.some(t => t.toLowerCase().includes(searchTerm.toLowerCase()))
+    const filteredStudies = (caseStudyPageData?.caseStudies || []).filter(s =>
+        s.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (s.tags || []).some(t => t.toLowerCase().includes(searchTerm.toLowerCase()))
     );
 
     return (
@@ -363,7 +375,7 @@ const ManageCaseStudies = () => {
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-100">
-                                            {caseStudyPageData.caseStudies.map((study) => (
+                                            {filteredStudies.map((study) => (
                                                 <tr key={study.id} className="group hover:bg-slate-50/50 transition-colors">
                                                     <td className="px-6 py-4">
                                                         <div className="flex items-center gap-4">
@@ -371,7 +383,7 @@ const ManageCaseStudies = () => {
                                                                 {study.image && <img src={study.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="" />}
                                                             </div>
                                                             <div>
-                                                                <p className="font-bold text-slate-800">{study.title}</p>
+                                                                <p className="font-bold text-slate-800 truncate max-w-[300px] md:max-w-[500px]">{study.title}</p>
                                                                 <div className="flex flex-wrap gap-1 mt-1">
                                                                     {study.tags?.slice(0, 3).map((tag, tIdx) => (
                                                                         <span key={tIdx} className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{tag}</span>
@@ -457,8 +469,8 @@ const ManageCaseStudies = () => {
                                         />
                                         <FormInput
                                             label=" Tags"
-                                            value={studyFormData.tags?.join(', ')}
-                                            onChange={(e) => setStudyFormData({ ...studyFormData, tags: e.target.value.split(',').map(t => t.trim()) })}
+                                            value={tagInput}
+                                            onChange={(e) => setTagInput(e.target.value)}
                                             placeholder="Example: Networking, Security..."
                                         />
                                         <FormTextarea

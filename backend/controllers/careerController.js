@@ -128,7 +128,7 @@ exports.deleteRole = async (req, res) => {
 exports.submitApplication = async (req, res) => {
     // req.body contains text fields, req.file contains the resume
     const { job_id, first_name, last_name, email, phone, message } = req.body;
-    
+
     // Construct the public URL path for the database
     const resume_url = req.file ? `/uploads/resumes/${req.file.filename}` : '';
     const original_resume_name = req.file ? req.file.originalname : '';
@@ -175,11 +175,12 @@ exports.updateApplicationStatus = async (req, res) => {
     const statusMap = {
         'applied': 'New',
         'shortlisted': 'Shortlisted',
-        'hired': 'Shortlisted',
+        'hired': 'Hired',
         'rejected': 'Rejected',
         'New': 'New',
         'Reviewing': 'Reviewing',
         'Shortlisted': 'Shortlisted',
+        'Hired': 'Hired',
         'Rejected': 'Rejected'
     };
     const dbStatus = statusMap[status] || 'New';

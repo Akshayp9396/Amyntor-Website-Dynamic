@@ -13,6 +13,7 @@
  */
 
 import React, { useState, useMemo, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Search,
@@ -41,8 +42,9 @@ const ManageApplications = () => {
     const { showNotification } = useNotification();
 
     // Application States
+    const location = useLocation();
     const [searchTerm, setSearchTerm] = useState('');
-    const [activeStatusTab, setActiveStatusTab] = useState('all');
+    const [activeStatusTab, setActiveStatusTab] = useState(location.state?.activeTab || 'all');
     const [dateRange, setDateRange] = useState({ from: '', to: '' });
     const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
     const [viewingResume, setViewingResume] = useState(null);
@@ -74,6 +76,7 @@ const ManageApplications = () => {
                             'New': 'applied',
                             'Reviewing': 'applied',
                             'Shortlisted': 'shortlisted',
+                            'Hired': 'hired',
                             'Rejected': 'rejected'
                         }[app.status] || 'applied'
                     }));
@@ -142,8 +145,8 @@ const ManageApplications = () => {
 
                 // Only filter if BOTH From and To dates are provided
                 const isRangeComplete = fromDate && toDate;
-                const matchesDate = isRangeComplete 
-                    ? (appDate >= fromDate && appDate <= toDate) 
+                const matchesDate = isRangeComplete
+                    ? (appDate >= fromDate && appDate <= toDate)
                     : true;
 
                 return matchesSearch && matchesStatus && matchesDate;
@@ -179,12 +182,8 @@ const ManageApplications = () => {
             app.id === id ? { ...app, status: newStatus } : app
         ));
         try {
-            const result = await ContentService.updateApplicationStatus(id, newStatus);
-            if (result.success) {
-                showNotification('Status updated successfully!', 'success');
-            } else {
-                showNotification('ERROR: Failed to update status.', 'error');
-            }
+            // SILENT PERSIST: Auto-save without success protocol
+            await ContentService.updateApplicationStatus(id, newStatus);
         } catch (err) {
             console.error('❌ Status Update Error:', err);
             showNotification('ERROR: Failed to update status.', 'error');
@@ -284,7 +283,7 @@ const ManageApplications = () => {
 
             {/* 📜 PIPELINE TABLE */}
             <div className="mt-2 min-h-[600px]">
-                <AdminCard 
+                <AdminCard
                     title={`${activeStatusTab.charAt(0).toUpperCase() + activeStatusTab.slice(1)} Applications`}
                     actions={
                         <div className="relative group/search">
@@ -299,7 +298,7 @@ const ManageApplications = () => {
                         </div>
                     }
                 >
-                    <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden mt-4 shadow-sm">
+                    <div className="bg-white border border-slate-200 rounded-2xl overflow-x-auto mt-4 shadow-sm pb-2">
                         <table className="w-full text-left text-sm whitespace-nowrap">
                             <thead className="bg-slate-50/80 border-b border-slate-200">
                                 <tr>
@@ -337,56 +336,56 @@ const ManageApplications = () => {
                             <tbody className="divide-y divide-slate-100">
                                 {paginatedApplicants.length > 0 ? (
                                     paginatedApplicants.map((app) => (
-                                    <tr key={app.id} className="group hover:bg-slate-50/50 transition-colors">
-                                        <td className="px-6 py-4">
-                                            <span className="text-[13px] font-medium text-slate-800">{app.jobCode}</span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className="text-[13px] font-medium text-slate-800">
-                                                {(() => {
-                                                    const d = new Date(app.date);
-                                                    const day = d.getDate().toString().padStart(2, '0');
-                                                    const month = (d.getMonth() + 1).toString().padStart(2, '0');
-                                                    const year = d.getFullYear();
-                                                    return `${day}-${month}-${year}`;
-                                                })()}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <p className="font-medium text-slate-800 text-[13px]">{app.name}</p>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className="text-[13px] font-medium text-slate-800">{app.role}</span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className="text-[13px] font-medium text-slate-800">{app.email}</span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <span className="text-[13px] font-medium text-slate-800">{app.phone}</span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center justify-center gap-2">
-                                                <button
-                                                    onClick={() => setViewingResume(app)}
-                                                    className="p-2 text-slate-400 hover:text-brand-primary hover:bg-brand-primary/5 rounded-xl transition-all"
-                                                    title="View Resume"
-                                                >
-                                                    <Eye size={16} />
-                                                </button>
-                                                {app.resume_url && (
+                                        <tr key={app.id} className="group hover:bg-slate-50/50 transition-colors">
+                                            <td className="px-6 py-4">
+                                                <span className="text-[13px] font-medium text-slate-800">{app.jobCode}</span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className="text-[13px] font-medium text-slate-800">
+                                                    {(() => {
+                                                        const d = new Date(app.date);
+                                                        const day = d.getDate().toString().padStart(2, '0');
+                                                        const month = (d.getMonth() + 1).toString().padStart(2, '0');
+                                                        const year = d.getFullYear();
+                                                        return `${day}-${month}-${year}`;
+                                                    })()}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <p className="font-medium text-slate-800 text-[13px]">{app.name}</p>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className="text-[13px] font-medium text-slate-800">{app.role}</span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className="text-[13px] font-medium text-slate-800">{app.email}</span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className="text-[13px] font-medium text-slate-800">{app.phone}</span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center justify-center gap-2">
                                                     <button
-                                                        onClick={() => handleDownload(app.resume_url, app.originalName)}
-                                                        className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all"
-                                                        title="Download Resume"
+                                                        onClick={() => setViewingResume(app)}
+                                                        className="p-2 text-slate-400 hover:text-brand-primary hover:bg-brand-primary/5 rounded-xl transition-all"
+                                                        title="View Resume"
                                                     >
-                                                        <Download size={16} />
+                                                        <Eye size={16} />
                                                     </button>
-                                                )}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center justify-center">
-                                                <div className={`
+                                                    {app.resume_url && (
+                                                        <button
+                                                            onClick={() => handleDownload(app.resume_url, app.originalName)}
+                                                            className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all"
+                                                            title="Download Resume"
+                                                        >
+                                                            <Download size={16} />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center justify-center">
+                                                    <div className={`
                                                     relative flex items-center px-1.5 py-1 rounded-full border transition-all group/status cursor-pointer w-fit
                                                     ${app.status === 'applied' ? 'bg-sky-50/50 border-sky-100' : ''}
                                                     ${app.status === 'shortlisted' ? 'bg-orange-50/50 border-orange-100' : ''}
@@ -394,35 +393,35 @@ const ManageApplications = () => {
                                                     ${app.status === 'rejected' ? 'bg-rose-50/50 border-rose-100' : ''}
                                                     hover:shadow-sm
                                                 `}>
-                                                    <select
-                                                        value={app.status}
-                                                        onChange={(e) => handleStatusChange(app.id, e.target.value)}
-                                                        className={`
+                                                        <select
+                                                            value={app.status}
+                                                            onChange={(e) => handleStatusChange(app.id, e.target.value)}
+                                                            className={`
                                                             appearance-none bg-transparent text-[10px] font-black uppercase outline-none cursor-pointer pr-4 pl-1.5
                                                             ${app.status === 'applied' ? 'text-sky-600' : ''}
                                                             ${app.status === 'shortlisted' ? 'text-orange-600' : ''}
                                                             ${app.status === 'hired' ? 'text-emerald-600' : ''}
                                                             ${app.status === 'rejected' ? 'text-rose-600' : ''}
                                                         `}
-                                                    >
-                                                        <option value="applied">Applied</option>
-                                                        <option value="shortlisted">Shorlisted</option>
-                                                        <option value="hired">Hired</option>
-                                                        <option value="rejected">Reject</option>
-                                                    </select>
-                                                    <div className="absolute right-2 pointer-events-none">
-                                                        <ChevronDown size={10} className={`
+                                                        >
+                                                            <option value="applied">Applied</option>
+                                                            <option value="shortlisted">Shorlisted</option>
+                                                            <option value="hired">Hired</option>
+                                                            <option value="rejected">Reject</option>
+                                                        </select>
+                                                        <div className="absolute right-2 pointer-events-none">
+                                                            <ChevronDown size={10} className={`
                                                             ${app.status === 'applied' ? 'text-sky-500' : ''}
                                                             ${app.status === 'shortlisted' ? 'text-orange-500' : ''}
                                                             ${app.status === 'hired' ? 'text-emerald-500' : ''}
                                                             ${app.status === 'rejected' ? 'text-rose-500' : ''}
                                                         `} />
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
+                                            </td>
+                                        </tr>
+                                    ))
                                 ) : (
                                     processedApplicants.length === 0 && (
                                         <tr>
@@ -459,30 +458,28 @@ const ManageApplications = () => {
                                     {processedApplicants.length} Total Talents
                                 </span>
                             </div>
-                            
+
                             <div className="flex items-center gap-2">
                                 <button
                                     onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                                     disabled={currentPage === 1}
-                                    className={`p-2 rounded-xl border transition-all ${
-                                        currentPage === 1 
-                                        ? 'bg-slate-50 border-slate-100 text-slate-300' 
-                                        : 'bg-white border-slate-200 text-slate-600 hover:border-slate-400 hover:shadow-md'
-                                    }`}
+                                    className={`p-2 rounded-xl border transition-all ${currentPage === 1
+                                            ? 'bg-slate-50 border-slate-100 text-slate-300'
+                                            : 'bg-white border-slate-200 text-slate-600 hover:border-slate-400 hover:shadow-md'
+                                        }`}
                                 >
                                     <ChevronLeft size={16} />
                                 </button>
-                                
+
                                 <div className="flex items-center gap-1">
                                     {[...Array(totalPages)].map((_, i) => (
                                         <button
                                             key={i}
                                             onClick={() => setCurrentPage(i + 1)}
-                                            className={`w-8 h-8 rounded-lg text-[11px] font-black transition-all ${
-                                                currentPage === i + 1
-                                                ? 'bg-slate-900 text-white shadow-lg'
-                                                : 'bg-white text-slate-400 border border-slate-100 hover:border-slate-300'
-                                            }`}
+                                            className={`w-8 h-8 rounded-lg text-[11px] font-black transition-all ${currentPage === i + 1
+                                                    ? 'bg-slate-900 text-white shadow-lg'
+                                                    : 'bg-white text-slate-400 border border-slate-100 hover:border-slate-300'
+                                                }`}
                                         >
                                             {i + 1}
                                         </button>
@@ -492,11 +489,10 @@ const ManageApplications = () => {
                                 <button
                                     onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                                     disabled={currentPage === totalPages}
-                                    className={`p-2 rounded-xl border transition-all ${
-                                        currentPage === totalPages
-                                        ? 'bg-slate-50 border-slate-100 text-slate-300' 
-                                        : 'bg-white border-slate-200 text-slate-600 hover:border-slate-400 hover:shadow-md'
-                                    }`}
+                                    className={`p-2 rounded-xl border transition-all ${currentPage === totalPages
+                                            ? 'bg-slate-50 border-slate-100 text-slate-300'
+                                            : 'bg-white border-slate-200 text-slate-600 hover:border-slate-400 hover:shadow-md'
+                                        }`}
                                 >
                                     <ChevronRight size={16} />
                                 </button>
@@ -554,8 +550,8 @@ const ManageApplications = () => {
 
                                         if (isPdf) {
                                             return (
-                                                <iframe 
-                                                    src={`${viewingResume.resume_url}#toolbar=0`} 
+                                                <iframe
+                                                    src={`${viewingResume.resume_url}#toolbar=0`}
                                                     className="w-full h-full border-none shadow-inner"
                                                     title="Resume Viewer"
                                                 />
@@ -570,7 +566,7 @@ const ManageApplications = () => {
                                                     <p className="text-slate-500 text-[10px] font-medium max-w-sm mx-auto mb-8 leading-relaxed uppercase tracking-widest">
                                                         Browsers cannot preview Word files (.docx) directly. Please download the file to view the candidate's profile.
                                                     </p>
-                                                    <button 
+                                                    <button
                                                         onClick={() => handleDownload(viewingResume.resume_url, viewingResume.originalName)}
                                                         className="px-8 py-4 bg-gradient-to-r from-brand-dark to-brand-primary text-white rounded-2xl text-[10px] font-semibold uppercase tracking-[0.2em] shadow-lg hover:shadow-brand-primary/20 transition-all active:scale-95 flex items-center gap-3"
                                                     >
@@ -584,7 +580,7 @@ const ManageApplications = () => {
                                                 <div className="text-center p-20">
                                                     <Eye size={48} className="mx-auto mb-4 text-slate-200" />
                                                     <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest leading-relaxed">
-                                                        Previewing this file type is not supported.<br/>Please use the download button.
+                                                        Previewing this file type is not supported.<br />Please use the download button.
                                                     </p>
                                                 </div>
                                             );

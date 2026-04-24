@@ -102,7 +102,7 @@ const TestimonialsSection = () => {
 
                 {/* Main Content: Sliding Lane + Fixed Pillar */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    
+
                     {/* LEFT LANE: Sliding Testimonials (Occupies 2/3 of space on Desktop) */}
                     <div className="lg:col-span-2 overflow-hidden">
                         <Swiper
@@ -152,7 +152,7 @@ const TestimonialsSection = () => {
 
                                         {/* Quote & Description */}
                                         <div className="flex-grow">
-                                          
+
                                             <h3 className="text-xl font-bold text-slate-900 mb-4 leading-tight whitespace-pre-line">"{testimonial.quote}"</h3>
                                             <p className="text-slate-500 leading-relaxed line-clamp-5 italic whitespace-pre-line">
                                                 {testimonial.feedback}
@@ -172,13 +172,13 @@ const TestimonialsSection = () => {
                         >
                             {/* Pre-designed Background */}
                             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                            {testimonialHeader?.sideImage && (
-                                <img
-                                    src={testimonialHeader?.sideImage}
-                                    alt="Satisfied Professional"
-                                    className="w-full h-full object-cover object-center bg-slate-800"
-                                />
-                            )}
+                                {testimonialHeader?.sideImage && (
+                                    <img
+                                        src={testimonialHeader?.sideImage}
+                                        alt="Satisfied Professional"
+                                        className="w-full h-full object-cover object-center bg-slate-800"
+                                    />
+                                )}
                             </div>
 
                             {/* Gradient Overlay */}

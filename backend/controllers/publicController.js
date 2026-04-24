@@ -499,12 +499,12 @@ exports.updateContactContent = async (req, res) => {
             `REPLACE INTO contact_page_info (id, tag, title, description, phone_number, phone_hours, whatsapp_number, whatsapp_label, google_maps_url)
              VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
-                info.tag, 
-                info.title, 
-                info.description, 
-                info.phone?.number || info.phoneNumber || "", 
-                info.phone?.hours || info.phoneHours || "", 
-                info.whatsapp?.number || info.whatsappNumber || "", 
+                info.tag,
+                info.title,
+                info.description,
+                info.phone?.number || info.phoneNumber || "",
+                info.phone?.hours || info.phoneHours || "",
+                info.whatsapp?.number || info.whatsappNumber || "",
                 info.whatsapp?.label || info.whatsappLabel || "",
                 info.googleMapsUrl || ""
             ]
@@ -596,43 +596,44 @@ exports.submitContactInquiry = async (req, res) => {
             const mailOptions = {
                 from: `"Amyntor Strategic Console" <${process.env.EMAIL_USER}>`,
                 to: process.env.EMAIL_RECEIVER || process.env.EMAIL_USER,
-                subject: `🚨 NEW STRATEGIC INQUIRY: ${name}`,
+                subject: `🚨 AMYNTOR TECH INQUIRY: ${name}`,
                 html: `
-                    <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #e2e8f0; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
-                        <div style="background: linear-gradient(135deg, #2563eb 0%, #02a1fd 100%); padding: 40px 20px; text-align: center; color: white;">
-                            <h1 style="margin: 0; font-size: 28px; font-weight: 900; letter-spacing: -0.5px;">New Strategic Inquiry</h1>
-                            <p style="margin: 10px 0 0; opacity: 0.9; font-weight: 500; text-transform: uppercase; font-size: 11px; letter-spacing: 2px;">Lead Notification System</p>
+                    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e2e8f0; padding: 40px; color: #1e293b; border-radius: 12px;">
+                        <div style="border-bottom: 2px solid #02a1fd; padding-bottom: 20px; margin-bottom: 30px;">
+                            <h1 style="margin: 0; font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Inquiry Received</h1>
+                            <p style="margin: 5px 0 0; color: #64748b; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">AMYNTOR TECH SOLUTIONS PVT. LTD.</p>
                         </div>
-                        <div style="padding: 40px; background: white;">
-                            <div style="margin-bottom: 35px;">
-                                <p style="color: #64748b; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; margin-bottom: 15px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">Client Intelligence</p>
-                                <table style="width: 100%; border-collapse: collapse;">
-                                    <tr>
-                                        <td style="padding: 8px 0; color: #94a3b8; font-size: 13px; width: 100px;">Full Name</td>
-                                        <td style="padding: 8px 0; color: #1e293b; font-weight: 700; font-size: 15px;">${name}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 8px 0; color: #94a3b8; font-size: 13px;">Email Link</td>
-                                        <td style="padding: 8px 0; color: #2563eb; font-weight: 700; font-size: 15px;">${email}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 8px 0; color: #94a3b8; font-size: 13px;">Phone Number</td>
-                                        <td style="padding: 8px 0; color: #1e293b; font-weight: 700; font-size: 15px;">${phone}</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding: 8px 0; color: #94a3b8; font-size: 13px;">Target Service</td>
-                                        <td style="padding: 8px 0; color: #0fbbeb; font-weight: 800; font-size: 12px; text-transform: uppercase;">${service || 'General Inquiry'}</td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div style="background: #f8fafc; padding: 25px; border-radius: 16px; border: 1px solid #f1f5f9; position: relative;">
-                                <p style="color: #64748b; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; margin-bottom: 10px;">Inquiry Brief</p>
-                                <p style="color: #334155; font-size: 15px; line-height: 1.6; margin: 0; font-style: italic;">"${message}"</p>
+                        
+                        <div style="margin-bottom: 30px;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <tr>
+                                    <td style="padding: 10px 0; color: #94a3b8; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; width: 120px;">Client</td>
+                                    <td style="padding: 10px 0; color: #1e293b; font-weight: 600; font-size: 14px;">${name}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px 0; color: #94a3b8; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Email</td>
+                                    <td style="padding: 10px 0; color: #1e293b; font-weight: 600; font-size: 14px;">${email}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px 0; color: #94a3b8; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Phone</td>
+                                    <td style="padding: 10px 0; color: #1e293b; font-weight: 600; font-size: 14px;">${phone}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px 0; color: #94a3b8; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Service</td>
+                                    <td style="padding: 10px 0; color: #02a1fd; font-weight: 700; font-size: 12px; text-transform: uppercase;">${service || 'General'}</td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <div style="padding-top: 25px; border-top: 1px solid #f1f5f9;">
+                            <p style="color: #94a3b8; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px;">Inquiry Message</p>
+                            <div style="background: #f8fafc; padding: 20px; border-radius: 8px; color: #475569; font-size: 14px; line-height: 1.6; border: 1px solid #f1f5f9;">
+                                ${message}
                             </div>
                         </div>
-                        <div style="background: #f1f5f9; padding: 25px; text-align: center; color: #94a3b8; font-size: 11px; font-weight: 600;">
-                            This is an automated encrypted dispatch from the Amyntor Tech Admin Panel.<br>
-                            Please follow up within 24 operational hours.
+
+                        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #f1f5f9; color: #cbd5e1; font-size: 10px; font-weight: 500; text-align: center; text-transform: uppercase; letter-spacing: 1px;">
+                            Automated Strategic Intelligence Dispatch
                         </div>
                     </div>
                 `
@@ -665,15 +666,28 @@ exports.updateInquiryStatus = async (req, res) => {
     try {
         const { id } = req.params;
         const { status } = req.body;
-        
+
         await pool.query(
             'UPDATE contact_submissions SET status = ? WHERE id = ?',
             [status, id]
         );
-        
+
         res.status(200).json({ success: true, message: 'Status updated silently' });
     } catch (error) {
         console.error('❌ Error updating inquiry status:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+};
+
+// @desc    Mark Inquiry as Read
+// @route   PATCH /api/public/contact/submissions/:id/read
+exports.markInquiryAsRead = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await pool.query('UPDATE contact_submissions SET is_read = 1 WHERE id = ?', [id]);
+        res.status(200).json({ success: true, message: 'Inquiry marked as intelligence read' });
+    } catch (error) {
+        console.error('❌ Error marking inquiry as read:', error);
+        res.status(500).json({ success: false });
     }
 };

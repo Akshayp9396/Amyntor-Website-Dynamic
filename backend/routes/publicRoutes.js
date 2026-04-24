@@ -50,6 +50,7 @@ router.get('/partners', publicController.getPartners);
 router.post('/contact/submit', publicController.submitContactInquiry);
 router.get('/contact/submissions', publicController.getContactInquiries);
 router.put('/contact/submissions/:id/status', publicController.updateInquiryStatus);
+router.patch('/contact/submissions/:id/read', publicController.markInquiryAsRead);
 
 // === ADMIN UPLOAD ROUTE ===
 router.post('/upload', upload.single('image'), publicController.uploadImage);

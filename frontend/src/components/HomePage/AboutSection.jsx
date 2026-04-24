@@ -80,9 +80,9 @@ const AboutSection = () => {
 
                                 {/* Top Image */}
                                 <motion.div variants={slideUpVariants} className="w-full h-[200px] lg:h-[240px] rounded-[2rem] overflow-hidden shadow-xl">
-                                {aboutData.topImage && (
-                                    <img src={aboutData.topImage} alt="Team" className="w-full h-full object-cover object-center" />
-                                )}
+                                    {aboutData.topImage && (
+                                        <img src={aboutData.topImage} alt="Team" className="w-full h-full object-cover object-center" />
+                                    )}
                                 </motion.div>
 
                                 {/* Bottom Card - Global Clients */}

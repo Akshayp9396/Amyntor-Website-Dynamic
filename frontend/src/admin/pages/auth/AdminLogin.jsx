@@ -25,6 +25,7 @@ import amyntorLogo from '../../../assets/images/amyntor-logo.png';
 const AdminLogin = () => {
     // UI State
     const [isResetting, setIsResetting] = useState(false);
+    const [error, setError] = useState('');
 
     // Login State
     const [username, setUsername] = useState('');
@@ -42,49 +43,78 @@ const AdminLogin = () => {
     const navigate = useNavigate();
 
     // Handlers
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-        const success = login(username, password);
-        if (success) {
-            navigate('/admin/home');
-        } else {
-            alert('Invalid credentials.');
-        }
-    };
+        setError('');
 
-    const handleKeyVerification = (e) => {
-        e.preventDefault();
-
-        if (!resetUsername) {
-            alert('Please enter your admin username.');
+        // 🛡️ USERNAME VALIDATION: No special characters allowed
+        const usernameRegex = /^[a-zA-Z0-9_]+$/;
+        if (!usernameRegex.test(username)) {
+            setError('Security Policy: Username can only contain letters, numbers, and underscores.');
             return;
         }
 
-        if (verifyMasterKey(masterKey)) {
+        const success = await login(username, password);
+        if (success) {
+            navigate('/admin/home');
+        } else {
+            setError('Login Failed: Invalid username or password.');
+        }
+    };
+
+    const handleKeyVerification = async (e) => {
+        e.preventDefault();
+        setError('');
+
+        if (!resetUsername) {
+            setError('Please enter your admin username.');
+            return;
+        }
+
+        // 🛡️ USERNAME VALIDATION: No special characters allowed
+        const usernameRegex = /^[a-zA-Z0-9_]+$/;
+        if (!usernameRegex.test(resetUsername)) {
+            setError('Security Policy: Username can only contain letters, numbers, and underscores.');
+            return;
+        }
+
+        const result = await verifyMasterKey(resetUsername, masterKey);
+        if (result.success) {
             setIsKeyVerified(true);
         } else {
-            alert('Unauthorized: Invalid Master Key.');
+            setError(result.message);
             setMasterKey('');
         }
     };
 
-    const handlePasswordReset = (e) => {
+    const handlePasswordReset = async (e) => {
         e.preventDefault();
-        if (newPassword !== confirmPassword) {
-            alert('Password mismatch.');
+        setError('');
+
+        if (newPassword.length < 6) {
+            setError('Security Policy: Password must be at least 6 characters.');
             return;
         }
 
-        resetAdminPassword(newPassword);
-        alert('Admin password has been securely updated. Please login.');
+        if (newPassword !== confirmPassword) {
+            setError('Validation Error: Passwords do not match.');
+            return;
+        }
 
-        // Reset local state and return to login view
-        setNewPassword('');
-        setConfirmPassword('');
-        setMasterKey('');
-        setResetUsername('');
-        setIsKeyVerified(false);
-        setIsResetting(false);
+        const success = await resetAdminPassword(resetUsername, masterKey, newPassword);
+        
+        if (success) {
+            alert('Admin password has been securely updated. Please login.');
+            // Reset local state and return to login view
+            setNewPassword('');
+            setConfirmPassword('');
+            setMasterKey('');
+            setResetUsername('');
+            setIsKeyVerified(false);
+            setIsResetting(false);
+        } else {
+            setError('Reset Failed: Unauthorized attempt or account issue.');
+        }
     };
 
     // Component Rendering
@@ -160,6 +190,18 @@ const AdminLogin = () => {
                 </div>
 
                 <AnimatePresence mode="wait">
+                    {/* Error Display */}
+                    {error && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="bg-rose-50 border-l-4 border-rose-500 p-3 mb-6 flex items-center gap-3 rounded-r-xl"
+                        >
+                            <AlertCircle className="text-rose-500 shrink-0" size={18} />
+                            <p className="text-xs text-rose-700 font-bold tracking-tight">{error}</p>
+                        </motion.div>
+                    )}
+
                     {!isResetting ? (
                         /* ================= LOGIN VIEW ================= */
                         <motion.form
@@ -212,7 +254,10 @@ const AdminLogin = () => {
                             <div className="mt-5 text-center">
                                 <button
                                     type="button"
-                                    onClick={() => setIsResetting(true)}
+                                    onClick={() => {
+                                        setIsResetting(true);
+                                        setError('');
+                                    }}
                                     className="text-slate-500 hover:text-[#0066FF] text-[15px] font-bold transition-colors"
                                 >
                                     Forgot Password?

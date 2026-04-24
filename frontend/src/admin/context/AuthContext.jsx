@@ -1,78 +1,85 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import axios from 'axios';
 
 /**
- * Developer Narrative: AuthContext (Security Refinement)
- * 
+ * CODE WALKTHROUGH: AUTH CONTEXT (The Identity Hub)
+ * ────────────────────────────────────────────────
  * Purpose: Provides a global authentication state and manages the Private Key Workflow.
- * Data Flow: 
- *   - `adminPassword` holds the current valid password (mocked database). Defaults to 'admin'.
- *   - The `verifyMasterKey(input)` function acts as a high-security gate. If the input matches `MASTER_PRIVATE_KEY`, it returns true.
- *     This boolean triggers the UI to reveal the actual "New Password" fields.
- *   - `resetAdminPassword(new)` takes the newly chosen password and updates the internal `adminPassword` state.
- *   - The main `login(username, pass)` function now checks against this dynamic `adminPassword` internally 
- *     before issuing the `user` object to global state.
+ * This version communicates with the real Backend API for industry-standard security.
  */
 
 const AuthContext = createContext();
 
-export const useAuth = () => {
-    return useContext(AuthContext);
-};
+// 🕵️ Configure Axios for Secure HttpOnly Cookies
+const AUTH_API = import.meta.env.VITE_AUTH_URL || 'http://localhost:5050/api/auth';
+axios.defaults.withCredentials = true;
 
-// Extremely Secure "Cold Storage" Key
-const MASTER_PRIVATE_KEY = "AMYNTOR-MASTER-KEY-2026";
+export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-    
-    // Simulating database storage of the admin password
-    const [adminPassword, setAdminPassword] = useState('admin');
 
     useEffect(() => {
-        // Hydrate state from localStorage on initial load
+        // 🕵️ SESSION HYDRATION: Check if a user is already logged in
         const storedUser = localStorage.getItem('amyntor_admin_user');
         if (storedUser) {
             setUser(JSON.parse(storedUser));
         }
-
-        // Hydrate the dynamic password if it was changed
-        const storedPassword = localStorage.getItem('amyntor_admin_pwd');
-        if (storedPassword) {
-            setAdminPassword(storedPassword);
-        }
-
         setIsLoading(false);
     }, []);
 
-    // 1. Core Authentication Check
-    const login = (usernameInput, passwordInput) => {
-        if (usernameInput === 'admin' && passwordInput === adminPassword) {
-            const userParams = {
-                name: 'Akshay',
-                role: 'Super Admin'
-            };
-            setUser(userParams);
-            localStorage.setItem('amyntor_admin_user', JSON.stringify(userParams));
-            return true;
+    // 🕵️ MISSION 1: REAL LOGIN (Backend Verified)
+    const login = async (username, password) => {
+        try {
+            const res = await axios.post(`${AUTH_API}/login`, { username, password });
+            if (res.data.success) {
+                setUser(res.data.user);
+                localStorage.setItem('amyntor_admin_user', JSON.stringify(res.data.user));
+                return true;
+            }
+            return false;
+        } catch (err) {
+            console.error('❌ Login Failed:', err.response?.data?.message || err.message);
+            return false;
         }
-        return false;
     };
 
-    const logout = () => {
-        setUser(null);
-        localStorage.removeItem('amyntor_admin_user');
+    // 🕵️ MISSION 2: LOGOUT (Terminates Server Session)
+    const logout = async () => {
+        try {
+            await axios.post(`${AUTH_API}/logout`);
+            setUser(null);
+            localStorage.removeItem('amyntor_admin_user');
+        } catch (err) {
+            console.error('❌ Logout Failed:', err);
+        }
     };
 
-    // 2. Private Key Verification Gate
-    const verifyMasterKey = (inputKey) => {
-        return inputKey === MASTER_PRIVATE_KEY;
+    // 🕵️ MISSION 3. MASTER KEY VERIFICATION
+    const verifyMasterKey = async (username, masterKey) => {
+        try {
+            const res = await axios.post(`${AUTH_API}/verify-key`, { username, masterKey });
+            return { success: res.data.success };
+        } catch (err) {
+            return { 
+                success: false, 
+                message: err.response?.data?.message || 'Verification Failed' 
+            };
+        }
     };
 
-    // 3. Password Reset Execution
-    const resetAdminPassword = (newPassword) => {
-        setAdminPassword(newPassword);
-        localStorage.setItem('amyntor_admin_pwd', newPassword);
+    // 🕵️ MISSION 4: SECURE PASSWORD RESET
+    const resetAdminPassword = async (username, masterKey, newPassword) => {
+        try {
+            const res = await axios.post(`${AUTH_API}/reset-password`, {
+                username, masterKey, newPassword
+            });
+            return res.data.success;
+        } catch (err) {
+            console.error('❌ Reset Failed:', err.response?.data?.message || err.message);
+            return false;
+        }
     };
 
     const value = {

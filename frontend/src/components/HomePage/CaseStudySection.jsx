@@ -16,7 +16,7 @@ import { useContent } from '../../context/ContentContext';
 const CaseStudySection = () => {
     const { caseStudyPageData } = useContent();
     const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, dragFree: true });
-    
+
     const studies = caseStudyPageData?.caseStudies || [];
 
     const scrollPrev = useCallback(() => {

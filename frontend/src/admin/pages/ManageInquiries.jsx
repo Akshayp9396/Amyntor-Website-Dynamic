@@ -242,7 +242,7 @@ const ManageInquiries = () => {
                         </div>
                     }
                 >
-                    <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden mt-4 shadow-sm">
+                    <div className="bg-white border border-slate-200 rounded-2xl overflow-x-auto mt-4 shadow-sm pb-2">
                         <table className="w-full text-left text-sm whitespace-nowrap">
                             <thead className="bg-slate-50/80 border-b border-slate-200">
                                 <tr>
@@ -274,7 +274,10 @@ const ManageInquiries = () => {
                                 {filteredInquiries.length > 0 ? (
                                     filteredInquiries.map((lead) => (
                                     <tr key={lead.id} className="group hover:bg-slate-50/50 transition-colors">
-                                        <td className="px-6 py-4">
+                                        <td className="px-6 py-4 relative">
+                                            {lead.is_read === 0 && (
+                                                <div className="absolute left-2 top-1/2 -translate-y-1/2 w-2 h-2 bg-blue-500 rounded-full shadow-[0_0_8px_rgba(59,130,246,0.6)] animate-pulse" title="Unread Inquiry" />
+                                            )}
                                             <span className="text-[13px] font-medium text-slate-800">AMY-LQ-{lead.id.toString().padStart(4, '0')}</span>
                                         </td>
                                         <td className="px-6 py-4 text-slate-800 font-medium text-[13px]">
@@ -292,7 +295,19 @@ const ManageInquiries = () => {
                                         </td>
                                         <td className="px-6 py-4 text-center">
                                             <button 
-                                                onClick={() => setSelectedInquiry(lead)}
+                                                onClick={async () => {
+                                                    setSelectedInquiry(lead);
+                                                    if (lead.is_read === 0) {
+                                                        try {
+                                                            await ContentService.markInquiryAsRead(lead.id);
+                                                            setInquiries(prev => prev.map(item => 
+                                                                item.id === lead.id ? { ...item, is_read: 1 } : item
+                                                            ));
+                                                        } catch (err) {
+                                                            console.error('❌ Mark as read error:', err);
+                                                        }
+                                                    }
+                                                }}
                                                 className="p-2.5 text-slate-800 hover:text-brand-primary hover:bg-brand-primary/5 rounded-xl transition-all"
                                             >
                                                 <MessageCircle size={18} />
@@ -309,11 +324,11 @@ const ManageInquiries = () => {
                                                         value={lead.status}
                                                         onChange={(e) => handleStatusChange(lead.id, e.target.value)}
                                                         className={`
-                                                            appearance-none bg-transparent text-[10px] font-black uppercase outline-none cursor-pointer pr-4 pl-1.5
+                                                             appearance-none bg-transparent text-[10px] font-black uppercase outline-none cursor-pointer pr-4 pl-1.5
                                                             ${lead.status === 'responded' ? 'text-emerald-600' : 'text-slate-400'}
                                                         `}
                                                     >
-                                                        <option value="pending">Inquiry</option>
+                                                        <option value="new">Inquiry</option>
                                                         <option value="responded">Responded</option>
                                                     </select>
                                                     <div className="absolute right-2 pointer-events-none">

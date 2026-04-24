@@ -383,7 +383,7 @@ const ManageBlogs = () => {
                                                                 {blog.image && <img src={blog.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 rounded-lg" alt="" />}
                                                             </div>
                                                             <div>
-                                                                <p className="font-bold text-slate-800">{blog.title}</p>
+                                                                <p className="font-bold text-slate-800 truncate max-w-[300px] md:max-w-[500px]">{blog.title}</p>
                                                                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1">
                                                                     <Calendar size={10} /> {formatDate(blog.date)}
                                                                 </span>

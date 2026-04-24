@@ -27,7 +27,7 @@ const CaseStudyDetailsContent = ({ project }) => {
             <section className="mb-10">
                 <h2 className="text-[22px] font-bold text-[#0b1021] mb-5">Introduction</h2>
                 <p className="text-slate-700 leading-relaxed text-[15px] text-justify">
-                    {project.introduction}
+                    {project?.introduction || 'No introduction provided.'}
                 </p>
             </section>
 
@@ -35,10 +35,10 @@ const CaseStudyDetailsContent = ({ project }) => {
             <section className="mb-10">
                 <h2 className="text-[22px] font-bold text-[#0b1021] mb-5">Scope of Work</h2>
                 <p className="text-slate-700 leading-relaxed text-[15px] mb-4 text-justify">
-                    {project.scopeOfWork.intro}
+                    {project?.scopeOfWork?.intro || ''}
                 </p>
                 <ul className="pl-1">
-                    {project.scopeOfWork.points.map((point, idx) => (
+                    {(project?.scopeOfWork?.points || []).map((point, idx) => (
                         <CheckmarkItem key={idx}>{point}</CheckmarkItem>
                     ))}
                 </ul>
@@ -48,10 +48,10 @@ const CaseStudyDetailsContent = ({ project }) => {
             <section className="mb-10">
                 <h2 className="text-[22px] font-bold text-[#0b1021] mb-5">Site Actions Taken</h2>
                 <p className="text-slate-700 leading-relaxed text-[15px] mb-6 text-justify">
-                    {project.siteActionsIntro}
+                    {project?.siteActionsIntro || ''}
                 </p>
                 <div className="flex flex-col gap-6">
-                    {project.siteActions.map((action, idx) => (
+                    {(project?.siteActions || []).map((action, idx) => (
                         <div key={idx}>
                             <h3 className="text-[16px] font-bold text-[#0b1021] mb-2">{action.title}</h3>
                             <p className="text-slate-700 leading-relaxed text-[15px] text-justify">{action.description}</p>
@@ -64,10 +64,10 @@ const CaseStudyDetailsContent = ({ project }) => {
             <section className="mb-10">
                 <h2 className="text-[22px] font-bold text-[#0b1021] mb-5">Results and Benefits</h2>
                 <p className="text-slate-700 leading-relaxed text-[15px] mb-5 text-justify">
-                    {project.resultsAndBenefits.intro}
+                    {project?.resultsAndBenefits?.intro || ''}
                 </p>
                 <ul className="pl-1 space-y-4">
-                    {project.resultsAndBenefits.points.map((res, idx) => (
+                    {(project?.resultsAndBenefits?.points || []).map((res, idx) => (
                         <CheckmarkItem key={idx}>
                             <span className="font-semibold text-[#0b1021]">{res.title}: </span>
                             {res.description}
@@ -80,7 +80,7 @@ const CaseStudyDetailsContent = ({ project }) => {
             <section>
                 <h2 className="text-[22px] font-bold text-[#0b1021] mb-5">Conclusion</h2>
                 <p className="text-slate-700 leading-relaxed text-[15px] text-justify">
-                    {project.conclusion}
+                    {project?.conclusion || ''}
                 </p>
             </section>
 

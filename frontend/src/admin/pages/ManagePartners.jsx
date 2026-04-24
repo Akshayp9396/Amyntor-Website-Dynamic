@@ -230,7 +230,7 @@ const ManagePartners = () => {
                                                 <img src={getImageUrl(p.logo)} className="max-h-full max-w-full object-contain filter grayscale group-hover:grayscale-0 transition-all duration-500" />
                                             </div>
                                             <div className="px-1">
-                                                <h3 className="text-sm font-black text-slate-800 tracking-tight">{p.name}</h3>
+                                                <h3 className="text-sm font-black text-slate-800 tracking-tight truncate">{p.name}</h3>
                                                 <p className="text-xs text-slate-500 font-medium mt-1 line-clamp-2">{p.description}</p>
                                             </div>
                                         </div>

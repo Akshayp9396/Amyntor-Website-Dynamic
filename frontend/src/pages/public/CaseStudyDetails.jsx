@@ -25,8 +25,8 @@ const CaseStudyDetails = () => {
 
     if (!caseStudyPageData) return null;
 
-    // Find the specific project from the context
-    const project = caseStudyPageData.caseStudies.find(
+    // Find the specific project from the context (Safely handle hydration states)
+    const project = (caseStudyPageData?.caseStudies || []).find(
         (p) => p.id === parseInt(projectId)
     );
 
