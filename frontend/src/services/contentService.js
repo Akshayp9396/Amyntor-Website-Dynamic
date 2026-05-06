@@ -317,7 +317,7 @@ const ContentService = {
 
     // 🛡️ MISSION 18: GALLERY AUTHORITY (Dynamic Folders)
     getGalleryFull: async () => {
-        const res = await axios.get(`http://localhost:5050/api/gallery/public`);
+        const res = await axios.get(`${BASE_URL}/gallery/public`);
         if (res.data.success) {
             return {
                 events: res.data.events.map(event => ({
@@ -333,20 +333,20 @@ const ContentService = {
     upsertAlbum: async (albumData, token) => {
         // We'll pass token manually if interceptor doesn't exist, though usually it does.
         const method = albumData.id ? 'put' : 'post';
-        const url = albumData.id ? `http://localhost:5050/api/gallery/albums/${albumData.id}` : `http://localhost:5050/api/gallery/albums`;
+        const url = albumData.id ? `${BASE_URL}/gallery/albums/${albumData.id}` : `${BASE_URL}/gallery/albums`;
         const res = await axios[method](url, albumData, { headers: { Authorization: `Bearer ${token}` } });
         return res.data;
     },
     deleteAlbum: async (id, token) => {
-        const res = await axios.delete(`http://localhost:5050/api/gallery/albums/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+        const res = await axios.delete(`${BASE_URL}/gallery/albums/${id}`, { headers: { Authorization: `Bearer ${token}` } });
         return res.data;
     },
     addImageToAlbum: async (imageData, token) => {
-        const res = await axios.post(`http://localhost:5050/api/gallery/images`, imageData, { headers: { Authorization: `Bearer ${token}` } });
+        const res = await axios.post(`${BASE_URL}/gallery/images`, imageData, { headers: { Authorization: `Bearer ${token}` } });
         return res.data;
     },
     deleteImage: async (id, token) => {
-        const res = await axios.delete(`http://localhost:5050/api/gallery/images/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+        const res = await axios.delete(`${BASE_URL}/gallery/images/${id}`, { headers: { Authorization: `Bearer ${token}` } });
         return res.data;
     },
 
@@ -396,7 +396,7 @@ const ContentService = {
     // ─── MISSION 21: CAREER & TALENT PIPELINE ───────────────────────────────
     // 🕵️ Full hydration: hero, intro, and all open roles from MySQL
     getCareersFull: async () => {
-        const res = await axios.get('http://localhost:5050/api/careers/full');
+        const res = await axios.get(`${BASE_URL}/careers/full`);
         if (res.data.success) {
             const d = res.data.data;
             return {
@@ -410,25 +410,25 @@ const ContentService = {
 
     // 🛡️ Save hero & intro sections to careers_content table
     updateCareersContent: async (contentData) => {
-        const res = await axios.put('http://localhost:5050/api/careers/content', contentData);
+        const res = await axios.put(`${BASE_URL}/careers/content`, contentData);
         return res.data;
     },
 
     // 🛡️ Add or edit a job in the open_roles table
     upsertRole: async (roleData) => {
-        const res = await axios.post('http://localhost:5050/api/careers/role', roleData);
+        const res = await axios.post(`${BASE_URL}/careers/role`, roleData);
         return res.data;
     },
 
     // 🛡️ Permanently delete a role from the open_roles table
     deleteRole: async (id) => {
-        const res = await axios.delete(`http://localhost:5050/api/careers/role/${id}`);
+        const res = await axios.delete(`${BASE_URL}/careers/role/${id}`);
         return res.data;
     },
 
     // 🕵️ Public: Candidate submits a job application (Multi-Part FormData)
     submitApplication: async (formData) => {
-        const res = await axios.post('http://localhost:5050/api/careers/apply', formData, {
+        const res = await axios.post(`${BASE_URL}/careers/apply`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
         });
         return res.data;
@@ -436,13 +436,13 @@ const ContentService = {
 
     // 🛡️ Admin: Fetch all applications from job_applications table
     getApplications: async () => {
-        const res = await axios.get('http://localhost:5050/api/careers/applications');
+        const res = await axios.get(`${BASE_URL}/careers/applications`);
         return res.data;
     },
 
     // 🛡️ Admin: Auto-save status change (Applied → Shortlisted → Hired etc.)
     updateApplicationStatus: async (id, status) => {
-        const res = await axios.put('http://localhost:5050/api/careers/application/status', { id, status });
+        const res = await axios.put(`${BASE_URL}/careers/application/status`, { id, status });
         return res.data;
     },
 
@@ -525,7 +525,7 @@ const ContentService = {
         const res = await axios.get(`${API_BASE_URL}/contact/submissions`);
         return res.data;
     },
-    
+
     updateInquiryStatus: async (id, status) => {
         const res = await axios.put(`${API_BASE_URL}/contact/submissions/${id}/status`, { status });
         return res.data;

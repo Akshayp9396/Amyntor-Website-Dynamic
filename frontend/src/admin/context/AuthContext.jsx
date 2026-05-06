@@ -62,9 +62,9 @@ export const AuthProvider = ({ children }) => {
             const res = await axios.post(`${AUTH_API}/verify-key`, { username, masterKey });
             return { success: res.data.success };
         } catch (err) {
-            return { 
-                success: false, 
-                message: err.response?.data?.message || 'Verification Failed' 
+            return {
+                success: false,
+                message: err.response?.data?.message || 'Verification Failed'
             };
         }
     };

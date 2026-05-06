@@ -582,8 +582,24 @@ exports.updateContactBranches = async (req, res) => {
 exports.submitContactInquiry = async (req, res) => {
     const { name, email, phone, service, message } = req.body;
 
+    // 🛡️ SECURITY CHECK: Basic Input Validation
+    if (!name || !email || !message) {
+        return res.status(400).json({ success: false, message: "Required fields are missing." });
+    }
+
+    // 🛡️ SECURITY CHECK: Email Format Validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ success: false, message: "Invalid email format provided." });
+    }
+
+    // 🛡️ SECURITY CHECK: Message Length (Prevent Bloating)
+    if (message.length > 2000) {
+        return res.status(400).json({ success: false, message: "Message is too long. Limit: 2000 characters." });
+    }
+
     try {
-        // 🧪 STEP 1: Persistent Storage in MySQL
+        // 🧪 STEP 1: Persistent Storage in MySQL (Parameterized Queries block SQL Injection)
         const query = `
             INSERT INTO contact_submissions (name, email, phone, service, message)
             VALUES (?, ?, ?, ?, ?)

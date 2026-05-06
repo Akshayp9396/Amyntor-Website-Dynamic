@@ -8,6 +8,7 @@
 const express = require('express');
 const router = express.Router();
 const publicController = require('../controllers/publicController');
+const { contactFormLimiter } = require('../middleware/rateLimiter');
 const multer = require('multer');
 const path = require('path');
 
@@ -47,7 +48,7 @@ router.get('/about', publicController.getAboutSection);
 router.get('/services', publicController.getServices);
 router.get('/testimonial-header', publicController.getTestimonialHeader);
 router.get('/partners', publicController.getPartners);
-router.post('/contact/submit', publicController.submitContactInquiry);
+router.post('/contact/submit', contactFormLimiter, publicController.submitContactInquiry);
 router.get('/contact/submissions', publicController.getContactInquiries);
 router.put('/contact/submissions/:id/status', publicController.updateInquiryStatus);
 router.patch('/contact/submissions/:id/read', publicController.markInquiryAsRead);
